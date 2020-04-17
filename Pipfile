@@ -1,0 +1,22 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+mypy = "*"
+flake8 = "*"
+autopep8 = "*"
+pytest = "*"
+
+[packages]
+asciimatics = "*"
+bs4 = "*"
+lxml = "*"
+
+[requires]
+python_version = "3.8"
+
+[scripts]
+test = "pytest -v"
+start = "python src/main.py"
