@@ -28,13 +28,14 @@ def get_thread(server: str, board: str, key: str) -> Thread:
         name = meta.select(".name")[0].text.strip()
         date = meta.select(".date")[0].text.strip()
         id = meta.select(".uid")[0].text.strip()
-        msg = res.select(".message")[0].text.strip()
 
-        def repl(m):
-            w = m.end() - m.start()
-            return "\n" * (w - 1)
+        msg = res.select(".message")[0]
 
-        msg = re.sub(r"\s{2,}", repl, msg)
+        for br in msg.find_all("br"):
+            br.replace_with("\n" + br.text)
+
+        # Remove first space for each line which was not removed by the above conversion
+        msg = msg.text.strip().replace("\n ", "\n")
 
         thread.responses.append(Response(number, name, date, id, msg))
 
