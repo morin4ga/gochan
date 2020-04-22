@@ -4,6 +4,7 @@ from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
 from data import Thread
 from typing import Callable
+from views.widgets import RichText, Buffer
 
 
 class ThreadView(Frame):
@@ -13,32 +14,29 @@ class ThreadView(Frame):
                          screen.width,
                          hover_focus=True,
                          can_scroll=False,
+                         has_border=False
                          )
 
         self._model: Thread = None
 
-        self._text_box = TextBox(
+        self.palette["background"] = (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK)
+        self.palette["foreground"] = (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK)
+
+        self._rtext = RichText(
             Widget.FILL_FRAME,
+            (" ", Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK),
             name="text_box",
-            line_wrap=False,
-            as_string=True,
         )
 
-        self._text_box.disabled = True
-
         self._back_button = Button("Back", on_click=self._back)
-        self._up_button = Button("Scroll up", on_click=self._scroll_up)
-        self._down_button = Button("Scroll down", on_click=self._scroll_down)
 
         layout1 = Layout([100], fill_frame=True)
         self.add_layout(layout1)
-        layout1.add_widget(self._text_box)
+        layout1.add_widget(self._rtext)
 
         layout2 = Layout([33, 33, 34])
         self.add_layout(layout2)
         layout2.add_widget(self._back_button, 0)
-        layout2.add_widget(self._up_button, 1)
-        layout2.add_widget(self._down_button, 2)
 
         self.fix()
 
@@ -49,40 +47,48 @@ class ThreadView(Frame):
     @model.setter
     def model(self, model: Thread):
         self._model = model
-        self._text_box.value = self._model.to_text()
-        self._text_box._line = 0
+        self._rtext.reset()
+        self._rtext.value = self._convert_to_buf(model)
 
     def _back(self):
         raise NextScene("Board")
 
-    def _scroll_up(self):
-        start_line = self._text_box._start_line
-        cur_line = self._text_box._line
+    def _convert_to_buf(self, thread: Thread) -> Buffer:
+        buf = []
+        fg, att, bg, name_fg = Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK, Screen.COLOUR_GREEN
 
-        self._text_box._change_line(-1 + -(cur_line - start_line))
+        for i, r in enumerate(thread.responses):
+            meta = []
 
-    def _scroll_down(self):
-        box_h = self._text_box._h
-        cur_line = self._text_box._line
-        start_line = self._text_box._start_line
-        end_line = start_line + (box_h - 1)
+            for c in r.number:
+                meta.append((c, fg, att, bg))
 
-        self._text_box._change_line(1 + end_line - cur_line)
+            meta.append((" ", fg, att, bg))
 
-    def _go_to_top(self):
-        self._text_box._change_line(-self._text_box._line)
+            for c in r.name:
+                meta.append((c, name_fg, att, bg))
 
-    def _go_to_bottom(self):
-        self._text_box._change_line(len(self._text_box._value) - self._text_box._line)
+            meta.append((" ", fg, att, bg))
 
-    def handle_event(self, e: KeyboardEvent):
-        c = e.key_code
+            for c in r.date:
+                meta.append((c, fg, att, bg))
 
-        if c == Screen.ctrl("n"):
-            self._scroll_down()
-        elif c == Screen.ctrl("h"):
-            self._scroll_up()
-        elif c == Screen.ctrl("y"):
-            self._go_to_top()
-        elif c == Screen.ctrl("b"):
-            self._go_to_bottom()
+            meta.append((" ", fg, att, bg))
+
+            for c in r.id:
+                meta.append((c, fg, att, bg))
+
+            buf.append(meta)
+            buf.append([])
+
+            for l in r.message.split("\n"):
+                line = []
+
+                for c in l:
+                    line.append((c, fg, att, bg))
+
+                buf.append(line)
+
+            buf.append([])
+
+        return buf
