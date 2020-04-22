@@ -1,10 +1,11 @@
-from asciimatics.widgets import Frame, Widget, Layout, TextBox, Button
+from asciimatics.widgets import Frame, Widget, Layout, TextBox, Button, Divider
 from asciimatics.screen import Screen
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
 from data import Thread
 from typing import Callable
 from views.widgets import RichText, Buffer
+from style import style
 
 
 class ThreadView(Frame):
@@ -19,12 +20,13 @@ class ThreadView(Frame):
 
         self._model: Thread = None
 
-        self.palette["background"] = (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK)
-        self.palette["foreground"] = (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK)
+        self.palette["background"] = style.normal
+        self.palette["button"] = style.normal
+        self.palette["borders"] = style.normal
 
         self._rtext = RichText(
             Widget.FILL_FRAME,
-            (" ", Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK),
+            (" ", *style.normal),
             name="text_box",
         )
 
@@ -33,6 +35,7 @@ class ThreadView(Frame):
         layout1 = Layout([100], fill_frame=True)
         self.add_layout(layout1)
         layout1.add_widget(self._rtext)
+        layout1.add_widget(Divider())
 
         layout2 = Layout([33, 33, 34])
         self.add_layout(layout2)
@@ -55,28 +58,27 @@ class ThreadView(Frame):
 
     def _convert_to_buf(self, thread: Thread) -> Buffer:
         buf = []
-        fg, att, bg, name_fg = Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK, Screen.COLOUR_GREEN
 
         for i, r in enumerate(thread.responses):
             meta = []
 
             for c in r.number:
-                meta.append((c, fg, att, bg))
+                meta.append((c, *style.normal))
 
-            meta.append((" ", fg, att, bg))
+            meta.append((" ", *style.normal))
 
             for c in r.name:
-                meta.append((c, name_fg, att, bg))
+                meta.append((c, *style.name))
 
-            meta.append((" ", fg, att, bg))
+            meta.append((" ", *style.normal))
 
             for c in r.date:
-                meta.append((c, fg, att, bg))
+                meta.append((c, *style.normal))
 
-            meta.append((" ", fg, att, bg))
+            meta.append((" ", *style.normal))
 
             for c in r.id:
-                meta.append((c, fg, att, bg))
+                meta.append((c, *style.normal))
 
             buf.append(meta)
             buf.append([])
@@ -85,7 +87,7 @@ class ThreadView(Frame):
                 line = []
 
                 for c in l:
-                    line.append((c, fg, att, bg))
+                    line.append((c, *style.normal))
 
                 buf.append(line)
 

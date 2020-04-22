@@ -2,6 +2,7 @@ from asciimatics.widgets import Frame, ListBox, Layout, Widget
 from asciimatics.screen import Screen
 from data import Board, BoardHeader, ThreadHeader
 from typing import Callable
+from style import style
 
 
 class BoardView(Frame):
@@ -9,10 +10,13 @@ class BoardView(Frame):
         super().__init__(screen,
                          screen.height,
                          screen.width,
+                         has_border=False,
                          on_load=self._reload_list,
                          hover_focus=True,
                          can_scroll=False,
                          )
+
+        self.palette["field"] = style.normal
 
         self._model: Board = None
         self.on_thread_selected: Callable[[ThreadHeader], None] = None

@@ -3,6 +3,7 @@ from asciimatics.screen import Screen
 from asciimatics.exceptions import NextScene
 from data import Bbsmenu, BoardHeader
 from typing import Callable
+from style import style
 
 
 class BbsmenuView(Frame):
@@ -13,8 +14,15 @@ class BbsmenuView(Frame):
                          on_load=self._reload_list,
                          hover_focus=True,
                          can_scroll=False,
+                         has_border=False,
                          title="Bbs Menu",
                          )
+
+        self.palette["background"] = style.normal
+        self.palette["button"] = style.normal
+        self.palette["borders"] = style.normal
+        self.palette["field"] = style.normal
+        self.palette["focus_field"] = style.normal
 
         self._model = model
         self.on_board_selected = None
