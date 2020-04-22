@@ -1,5 +1,6 @@
-from asciimatics.widgets import Frame, ListBox, Layout, Widget
+from asciimatics.widgets import Frame, ListBox, Layout, Widget, Divider, Button
 from asciimatics.screen import Screen
+from asciimatics.exceptions import NextScene
 from data import Board, BoardHeader, ThreadHeader
 from typing import Callable
 from style import style
@@ -30,12 +31,22 @@ class BoardView(Frame):
             on_select=self._on_select,
         )
 
-        layout = Layout([100], fill_frame=True)
-        self.add_layout(layout)
-        layout.add_widget(self._thread_list)
+        self._back_button = Button("Back", self._on_back)
+
+        layout1 = Layout([100], fill_frame=True)
+        self.add_layout(layout1)
+        layout1.add_widget(self._thread_list)
+        layout1.add_widget(Divider())
+
+        layout2 = Layout([25, 25, 25, 25])
+        self.add_layout(layout2)
+        layout2.add_widget(self._back_button, 0)
 
         self.fix()
         self._on_pick()
+
+    def _on_back(self):
+        raise NextScene("Bbsmenu")
 
     def _on_pick(self):
         pass
