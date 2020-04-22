@@ -27,6 +27,7 @@ class ThreadView(Frame):
         self._rtext = RichText(
             Widget.FILL_FRAME,
             (" ", *style.normal),
+            True,
             name="text_box",
         )
 
