@@ -35,7 +35,8 @@ def get_thread(server: str, board: str, key: str) -> Thread:
             br.replace_with("\n" + br.text)
 
         # Remove first space for each line which was not removed by the above conversion
-        msg = msg.text.strip().replace("\n ", "\n")
+        msg = msg.text.replace("\n ", "\n")
+        msg = re.sub("^ ", "", msg)
 
         thread.responses.append(Response(number, name, date, id, msg))
 
