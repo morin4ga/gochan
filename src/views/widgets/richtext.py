@@ -10,13 +10,12 @@ Buffer = List[List[Cell]]
 
 
 class RichText(Widget):
-    def __init__(self, height, flush_cell: Cell, line_wrap: bool, **kwargs):
+    def __init__(self, height, flush_cell: Cell, **kwargs):
         super().__init__(**kwargs)
         self._required_height = height
         self._scrl_offset = 0
         self._value = []
         self._fc = flush_cell
-        self._line_wrap = line_wrap
 
     def update(self, frame_no):
         for i in range(self._h):
@@ -39,14 +38,7 @@ class RichText(Widget):
                 w = wcwidth(c[0])
 
                 if x + w > max_x:
-                    if self._line_wrap:
-                        if y + 1 > max_y:
-                            break
-                        else:
-                            x = self._x
-                            y += 1
-                    else:
-                        break
+                    break
 
                 self._frame.canvas.print_at(c[0], x, y, c[1], c[2], c[3])
                 x += w
