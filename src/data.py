@@ -52,14 +52,6 @@ class Board:
         self.board = board
         self.threads = threads
 
-    def get_items(self) -> List[Tuple[str, int]]:
-        items = []
-
-        for i, thread in enumerate(self.threads):
-            items.append((thread.title, i))
-
-        return items
-
 
 class BoardHeader:
     def __init__(self, server: str, board: str, name: str):

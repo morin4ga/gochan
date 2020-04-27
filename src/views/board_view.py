@@ -1,8 +1,8 @@
-from asciimatics.widgets import Frame, ListBox, Layout, Widget, Divider, Button
+from asciimatics.widgets import Frame, ListBox, Layout, Widget, Divider, Button, MultiColumnListBox
 from asciimatics.screen import Screen
 from asciimatics.exceptions import NextScene
 from data import Board, BoardHeader, ThreadHeader
-from typing import Callable
+from typing import Callable, List, Tuple
 from style import style
 
 
@@ -22,9 +22,11 @@ class BoardView(Frame):
         self._model: Board = None
         self.on_thread_selected: Callable[[ThreadHeader], None] = None
 
-        self._thread_list = ListBox(
+        self._thread_list = MultiColumnListBox(
             Widget.FILL_FRAME,
+            ["<4%", "<90%", "<6%"],
             [],
+            titles=["番号", "|タイトル", " |レス"],
             name="thread_list",
             add_scroll_bar=True,
             on_change=self._on_pick,
@@ -53,7 +55,7 @@ class BoardView(Frame):
 
     def _reload_list(self, new_value=None):
         if self._model is not None:
-            self._thread_list.options = self._model.get_items()
+            self._thread_list.options = to_options(self._model.threads)
 
         self._thread_list.value = new_value
 
@@ -70,4 +72,13 @@ class BoardView(Frame):
     @model.setter
     def model(self, model: Board):
         self._model = model
-        self._thread_list.options = model.get_items()
+        self._thread_list.options = to_options(model.threads)
+
+
+def to_options(threads: List[ThreadHeader]) -> List[Tuple[List[str], int]]:
+    items = []
+
+    for i, thread in enumerate(threads):
+        items.append(([str(thread.number), "|" + thread.title, " |" + str(thread.count)], i))
+
+    return items
