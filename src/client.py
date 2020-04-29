@@ -57,7 +57,7 @@ def get_board(server: str, board: str) -> Board:
 
     result = Board(server, board, [])
 
-    for (i, line) in enumerate(txt.split("\n")):
+    for (i, line) in enumerate(txt.split("\n"), 1):
         m = re.search(r"^(\d{10})\.dat<>(.*)\((\d{1,})\)$", line)
         if m is not None:
             key = m.group(1).strip()
