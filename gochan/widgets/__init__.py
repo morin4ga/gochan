@@ -1,1 +1,1 @@
-from .richtext import RichText, Buffer, Cell
+from .richtext import Buffer, Cell, RichText

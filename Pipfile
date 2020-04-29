@@ -8,6 +8,7 @@ mypy = "*"
 flake8 = "*"
 autopep8 = "*"
 pytest = "*"
+isort = "*"
 
 [packages]
 asciimatics = "*"
@@ -20,3 +21,4 @@ python_version = "3.8"
 [scripts]
 test = "pytest -v"
 start = "python -m gochan"
+isort = "isort -y"

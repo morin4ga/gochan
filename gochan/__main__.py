@@ -1,13 +1,14 @@
-from asciimatics.widgets import Frame, ListBox, Layout, Divider, Text, \
-    Button, TextBox, Widget
+import sys
+
+from asciimatics.event import KeyboardEvent
+from asciimatics.exceptions import NextScene, ResizeScreenError, StopApplication
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
-from asciimatics.event import KeyboardEvent
-from asciimatics.exceptions import ResizeScreenError, NextScene, StopApplication
-from gochan.data import Bbsmenu, BoardHeader, ThreadHeader
+from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, Text, TextBox, Widget
+
 from gochan.client import get_bbsmenu, get_board, get_thread
+from gochan.data import Bbsmenu, BoardHeader, ThreadHeader
 from gochan.views import BbsmenuView, BoardView, ThreadView
-import sys
 
 
 def demo(screen: Screen, scene: Scene):

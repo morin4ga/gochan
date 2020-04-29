@@ -1,10 +1,12 @@
-from gochan.data import Thread, Response, Board, ThreadHeader, Category, Bbsmenu, BoardHeader
-from urllib.request import urlopen, Request
-from bs4 import BeautifulSoup
-import re
 import html
+import re
 import time
 from pathlib import Path
+from urllib.request import Request, urlopen
+
+from bs4 import BeautifulSoup
+
+from gochan.data import Bbsmenu, Board, BoardHeader, Category, Response, Thread, ThreadHeader
 
 
 def get_thread(server: str, board: str, key: str) -> Thread:

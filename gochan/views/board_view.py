@@ -1,9 +1,11 @@
-from asciimatics.widgets import Frame, ListBox, Layout, Widget, Divider, Button, MultiColumnListBox
-from asciimatics.screen import Screen
-from asciimatics.exceptions import NextScene
-from asciimatics.event import KeyboardEvent
-from gochan.data import Board, BoardHeader, ThreadHeader
 from typing import Callable, List, Tuple
+
+from asciimatics.event import KeyboardEvent
+from asciimatics.exceptions import NextScene
+from asciimatics.screen import Screen
+from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, MultiColumnListBox, Widget
+
+from gochan.data import Board, BoardHeader, ThreadHeader
 from gochan.style import style
 
 

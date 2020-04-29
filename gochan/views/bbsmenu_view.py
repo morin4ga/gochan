@@ -1,8 +1,10 @@
-from asciimatics.widgets import Frame, ListBox, Layout, Widget
-from asciimatics.screen import Screen
-from asciimatics.exceptions import NextScene
-from gochan.data import Bbsmenu, BoardHeader
 from typing import Callable
+
+from asciimatics.exceptions import NextScene
+from asciimatics.screen import Screen
+from asciimatics.widgets import Frame, Layout, ListBox, Widget
+
+from gochan.data import Bbsmenu, BoardHeader
 from gochan.style import style
 
 

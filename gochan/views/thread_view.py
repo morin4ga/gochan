@@ -1,11 +1,13 @@
-from asciimatics.widgets import Frame, Widget, Layout, TextBox, Button, Divider
-from asciimatics.screen import Screen
+from typing import Callable
+
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
+from asciimatics.screen import Screen
+from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget
+
 from gochan.data import Thread
-from typing import Callable
-from gochan.widgets import RichText, Buffer
 from gochan.style import style
+from gochan.widgets import Buffer, RichText
 
 
 class ThreadView(Frame):

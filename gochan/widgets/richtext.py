@@ -1,8 +1,9 @@
-from asciimatics.widgets import Widget
+from typing import List, Tuple
+
 from asciimatics.event import KeyboardEvent
 from asciimatics.screen import Screen
+from asciimatics.widgets import Widget
 from wcwidth import wcswidth, wcwidth
-from typing import List, Tuple
 
 # [(ch, fg, att, bg)]
 Cell = Tuple[str, int, int, int]
