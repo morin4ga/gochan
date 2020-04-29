@@ -64,7 +64,7 @@ def get_board(server: str, board: str) -> Board:
             title = m.group(2).strip()
             count = m.group(3).strip()
 
-            result.threads.append(ThreadHeader(server, board, key, i, title, count))
+            result.threads.append(ThreadHeader(server, board, key, i, title, int(count)))
 
     return result
 
