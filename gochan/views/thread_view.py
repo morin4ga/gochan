@@ -2,10 +2,10 @@ from asciimatics.widgets import Frame, Widget, Layout, TextBox, Button, Divider
 from asciimatics.screen import Screen
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
-from data import Thread
+from gochan.data import Thread
 from typing import Callable
-from widgets import RichText, Buffer
-from style import style
+from gochan.widgets import RichText, Buffer
+from gochan.style import style
 
 
 class ThreadView(Frame):

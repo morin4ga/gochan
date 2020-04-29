@@ -19,4 +19,4 @@ python_version = "3.8"
 
 [scripts]
 test = "pytest -v"
-start = "python src/main.py"
+start = "python -m gochan"

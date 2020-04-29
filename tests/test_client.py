@@ -1,4 +1,4 @@
-from client import get_bbsmenu, get_board
+from gochan.client import get_bbsmenu, get_board
 
 
 def test_get_bbsmenu():

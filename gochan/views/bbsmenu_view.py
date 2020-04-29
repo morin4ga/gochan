@@ -1,9 +1,9 @@
 from asciimatics.widgets import Frame, ListBox, Layout, Widget
 from asciimatics.screen import Screen
 from asciimatics.exceptions import NextScene
-from data import Bbsmenu, BoardHeader
+from gochan.data import Bbsmenu, BoardHeader
 from typing import Callable
-from style import style
+from gochan.style import style
 
 
 class BbsmenuView(Frame):

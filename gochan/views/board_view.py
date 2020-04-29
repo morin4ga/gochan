@@ -2,9 +2,9 @@ from asciimatics.widgets import Frame, ListBox, Layout, Widget, Divider, Button,
 from asciimatics.screen import Screen
 from asciimatics.exceptions import NextScene
 from asciimatics.event import KeyboardEvent
-from data import Board, BoardHeader, ThreadHeader
+from gochan.data import Board, BoardHeader, ThreadHeader
 from typing import Callable, List, Tuple
-from style import style
+from gochan.style import style
 
 
 class BoardView(Frame):

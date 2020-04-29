@@ -4,9 +4,9 @@ from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import ResizeScreenError, NextScene, StopApplication
-from data import Bbsmenu, BoardHeader, ThreadHeader
-from client import get_bbsmenu, get_board, get_thread
-from views import BbsmenuView, BoardView, ThreadView
+from gochan.data import Bbsmenu, BoardHeader, ThreadHeader
+from gochan.client import get_bbsmenu, get_board, get_thread
+from gochan.views import BbsmenuView, BoardView, ThreadView
 import sys
 
 
