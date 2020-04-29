@@ -27,9 +27,9 @@ class BoardView(Frame):
 
         self._thread_list = MultiColumnListBox(
             Widget.FILL_FRAME,
-            ["<4%", "<90%", "<6%"],
+            ["<4%", "<82%", "<6%", "<8"],
             [],
-            titles=["番号", "|タイトル", " |レス"],
+            titles=["番号", "|タイトル", " |レス", " |勢い"],
             name="thread_list",
             add_scroll_bar=True,
             on_change=self._on_pick,
@@ -58,7 +58,7 @@ class BoardView(Frame):
 
     def _reload_list(self, new_value=None):
         if self._model is not None:
-            self._thread_list.options = [([str(x.number), "|" + x.title, " |" + str(x.count)], i)
+            self._thread_list.options = [([str(x.number), "|" + x.title, " |" + str(x.count), " |" + str(x.speed)], i)
                                          for i, x in enumerate(self._model.threads)]
 
         self._thread_list.value = new_value
@@ -101,6 +101,14 @@ class BoardView(Frame):
                 return None
             elif event.key_code == ord("E"):
                 self._model.threads.sort(key=lambda x: x.count, reverse=True)
+                self._reload_list()
+                return None
+            elif event.key_code == ord("r"):
+                self._model.threads.sort(key=lambda x: x.speed)
+                self._reload_list()
+                return None
+            elif event.key_code == ord("R"):
+                self._model.threads.sort(key=lambda x: x.speed, reverse=True)
                 self._reload_list()
                 return None
 
