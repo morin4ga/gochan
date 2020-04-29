@@ -33,7 +33,7 @@ class Thread:
 
 
 class ThreadHeader:
-    def __init__(self, server: str, board: str, key: str, number: int, title: str, count: int):
+    def __init__(self, server: str, board: str, key: str, number: int, title: str, count: int, speed: int):
         super().__init__()
 
         self.server = server
@@ -42,6 +42,7 @@ class ThreadHeader:
         self.number = number
         self.title = title
         self.count = count
+        self.speed = speed
 
 
 class Board:

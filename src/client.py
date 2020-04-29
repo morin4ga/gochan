@@ -3,6 +3,7 @@ from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup
 import re
 import html
+import time
 from pathlib import Path
 
 
@@ -57,14 +58,25 @@ def get_board(server: str, board: str) -> Board:
 
     result = Board(server, board, [])
 
+    now = int(time.time())
     for (i, line) in enumerate(txt.split("\n"), 1):
         m = re.search(r"^(\d{10})\.dat<>(.*)\((\d{1,})\)$", line)
         if m is not None:
             key = m.group(1).strip()
             title = m.group(2).strip()
-            count = m.group(3).strip()
+            count = int(m.group(3).strip())
 
-            result.threads.append(ThreadHeader(server, board, key, i, title, int(count)))
+            since = int(key)
+
+            diff = now - since
+
+            speed = 0
+
+            if diff > 0:
+                res_per_s = count / diff
+                speed = int(res_per_s * 60 * 60 * 24)
+
+            result.threads.append(ThreadHeader(server, board, key, i, title, count, speed))
 
     return result
 
