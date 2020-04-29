@@ -4,7 +4,7 @@ from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
 from data import Thread
 from typing import Callable
-from views.widgets import RichText, Buffer
+from widgets import RichText, Buffer
 from style import style
 
 
