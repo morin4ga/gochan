@@ -1,6 +1,7 @@
 from asciimatics.widgets import Frame, ListBox, Layout, Widget, Divider, Button, MultiColumnListBox
 from asciimatics.screen import Screen
 from asciimatics.exceptions import NextScene
+from asciimatics.event import KeyboardEvent
 from data import Board, BoardHeader, ThreadHeader
 from typing import Callable, List, Tuple
 from style import style
@@ -55,7 +56,8 @@ class BoardView(Frame):
 
     def _reload_list(self, new_value=None):
         if self._model is not None:
-            self._thread_list.options = to_options(self._model.threads)
+            self._thread_list.options = [([str(x.number), "|" + x.title, " |" + str(x.count)], i)
+                                         for i, x in enumerate(self._model.threads)]
 
         self._thread_list.value = new_value
 
@@ -72,13 +74,32 @@ class BoardView(Frame):
     @model.setter
     def model(self, model: Board):
         self._model = model
-        self._thread_list.options = to_options(model.threads)
 
+    def process_event(self, event):
+        if isinstance(event, KeyboardEvent):
+            if event.key_code == ord("q"):
+                self._model.threads.sort(key=lambda x: x.number)
+                self._reload_list()
+                return None
+            elif event.key_code == ord("Q"):
+                self._model.threads.sort(key=lambda x: x.number, reverse=True)
+                self._reload_list()
+                return None
+            elif event.key_code == ord("w"):
+                self._model.threads.sort(key=lambda x: x.title)
+                self._reload_list()
+                return None
+            elif event.key_code == ord("W"):
+                self._model.threads.sort(key=lambda x: x.title, reverse=True)
+                self._reload_list()
+                return None
+            elif event.key_code == ord("e"):
+                self._model.threads.sort(key=lambda x: x.count)
+                self._reload_list()
+                return None
+            elif event.key_code == ord("E"):
+                self._model.threads.sort(key=lambda x: x.count, reverse=True)
+                self._reload_list()
+                return None
 
-def to_options(threads: List[ThreadHeader]) -> List[Tuple[List[str], int]]:
-    items = []
-
-    for i, thread in enumerate(threads):
-        items.append(([str(thread.number), "|" + thread.title, " |" + str(thread.count)], i))
-
-    return items
+        return super().process_event(event)
