@@ -1,8 +1,8 @@
 import html
 import re
 import time
-from pathlib import Path
 from urllib.request import Request, urlopen
+from urllib.parse import urlencode
 
 from bs4 import BeautifulSoup
 
@@ -133,3 +133,21 @@ def get_bbsmenu() -> Bbsmenu:
         bbsmenu.categories.append(category)
 
     return bbsmenu
+
+
+def post_response(server: str, board: str, key: str, name: str, mail: str, msg: str) -> str:
+    url = f"https://{server}.5ch.net/test/bbs.cgi"
+    ref = f"https://{server}.5ch.net/test/read.cgi/{board}/{key}"
+    params = {"bbs": board, "key": key, "time": "1588219909",
+              "FROM": name, "mail": mail, "MESSAGE": msg, "submit": "書き込み"}
+
+    data = urlencode(params, encoding="shift-jis").encode()
+    hdrs = {"Referer": ref, "User-Agent": "Mozilla/5.0", "Cookie": "yuki=akari"}
+
+    req = Request(url, headers=hdrs)
+
+    res = urlopen(req, data)
+    content = res.read().decode("shift-jis")
+    res.close()
+
+    return content
