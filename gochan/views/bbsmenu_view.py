@@ -1,15 +1,15 @@
 from typing import Callable
 
-from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, Layout, ListBox, Widget
 
 from gochan.data import Bbsmenu, BoardHeader
+from gochan.state import app_state
 from gochan.style import style
 
 
 class BbsmenuView(Frame):
-    def __init__(self, screen: Screen, model: Bbsmenu):
+    def __init__(self, screen: Screen):
         super().__init__(screen,
                          screen.height,
                          screen.width,
@@ -26,12 +26,11 @@ class BbsmenuView(Frame):
         self.palette["field"] = style.normal
         self.palette["focus_field"] = style.normal
 
-        self._model = model
-        self.on_board_selected = None
+        self._model = None
 
         self._cat_list = ListBox(
             Widget.FILL_COLUMN,
-            model.get_items(),
+            [],
             name="cat_list",
             add_scroll_bar=True,
             on_change=self._on_pick_c,
@@ -55,7 +54,16 @@ class BbsmenuView(Frame):
         self.fix()
 
     def _reload_list(self, new_value=None):
-        self._cat_list.options = self._model.get_items()
+        if self._model == app_state.bbsmenu:
+            return
+
+        self._model = app_state.bbsmenu
+
+        if self._model is not None:
+            self._cat_list.options = self._model.get_items()
+        else:
+            self._cat_list.options = []
+
         self._cat_list.value = new_value
         self._on_pick_c()
 
@@ -81,4 +89,4 @@ class BbsmenuView(Frame):
         index1 = self.data['cat_list']
         index2 = self.data['board_list']
         board_hdr = self._model.categories[index1].boards[index2]
-        self.on_board_selected(board_hdr)
+        app_state.open_board(board_hdr)

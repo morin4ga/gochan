@@ -1,7 +1,7 @@
 import sys
 
 from asciimatics.event import KeyboardEvent
-from asciimatics.exceptions import NextScene, ResizeScreenError, StopApplication
+from asciimatics.exceptions import ResizeScreenError
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, Text, TextBox, Widget
@@ -12,22 +12,9 @@ from gochan.views import BbsmenuView, BoardView, ThreadView
 
 
 def demo(screen: Screen, scene: Scene):
-    bbsmenu_view = BbsmenuView(screen, bbsmenu)
+    bbsmenu_view = BbsmenuView(screen)
     board_view = BoardView(screen)
     thread_view = ThreadView(screen)
-
-    def open_board(hdr: BoardHeader):
-        board = get_board(hdr.server, hdr.board)
-        board_view.model = board
-        raise NextScene("Board")
-
-    def open_thread(hdr: ThreadHeader):
-        thread = get_thread(hdr.server, hdr.board, hdr.key)
-        thread_view.model = thread
-        raise NextScene("Thread")
-
-    bbsmenu_view.on_board_selected = open_board
-    board_view.on_thread_selected = open_thread
 
     scenes = [
         Scene([bbsmenu_view], -1, name="Bbsmenu"),
@@ -36,9 +23,6 @@ def demo(screen: Screen, scene: Scene):
     ]
 
     screen.play(scenes, stop_on_resize=True, start_scene=scene, allow_int=True)
-
-
-bbsmenu = get_bbsmenu()
 
 
 last_scene = None

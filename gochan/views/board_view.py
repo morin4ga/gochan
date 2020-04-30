@@ -1,11 +1,11 @@
 from typing import Callable, List, Tuple
 
 from asciimatics.event import KeyboardEvent
-from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, MultiColumnListBox, Widget
 
 from gochan.data import Board, BoardHeader, ThreadHeader
+from gochan.state import app_state
 from gochan.style import style
 
 
@@ -23,7 +23,6 @@ class BoardView(Frame):
         self.palette["field"] = style.normal
 
         self._model: Board = None
-        self.on_thread_selected: Callable[[ThreadHeader], None] = None
 
         self._thread_list = MultiColumnListBox(
             Widget.FILL_FRAME,
@@ -51,15 +50,21 @@ class BoardView(Frame):
         self._on_pick()
 
     def _on_back(self):
-        raise NextScene("Bbsmenu")
+        app_state.to_bbsmenu()
 
     def _on_pick(self):
         pass
 
     def _reload_list(self, new_value=None):
+        if self._model == app_state.board:
+            return
+
+        self._model = app_state.board
         if self._model is not None:
             self._thread_list.options = [([str(x.number), "|" + x.title, " |" + str(x.count), " |" + str(x.speed)], i)
                                          for i, x in enumerate(self._model.threads)]
+        else:
+            self._thread_list.options = []
 
         self._thread_list.value = new_value
 
@@ -67,7 +72,7 @@ class BoardView(Frame):
         self.save()
         index = self.data['thread_list']
         hdr = self._model.threads[index]
-        self.on_thread_selected(hdr)
+        app_state.open_thread(hdr)
 
     @property
     def model(self):

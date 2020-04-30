@@ -1,11 +1,11 @@
 from typing import Callable
 
 from asciimatics.event import KeyboardEvent
-from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget
 
 from gochan.data import Thread
+from gochan.state import app_state
 from gochan.style import style
 from gochan.widgets import Buffer, RichText
 
@@ -15,6 +15,7 @@ class ThreadView(Frame):
         super().__init__(screen,
                          screen.height,
                          screen.width,
+                         on_load=self._reload,
                          hover_focus=True,
                          can_scroll=False,
                          has_border=False
@@ -45,54 +46,57 @@ class ThreadView(Frame):
 
         self.fix()
 
-    @property
-    def model(self):
-        return self._model
+    def _reload(self):
+        if self._model == app_state.thread:
+            return
 
-    @model.setter
-    def model(self, model: Thread):
-        self._model = model
+        self._model = app_state.thread
         self._rtext.reset()
-        self._rtext.value = self._convert_to_buf(model)
+
+        if self._model is not None:
+            self._rtext.value = _convert_to_buf(self._model)
+        else:
+            self._rtext.value = []
 
     def _back(self):
-        raise NextScene("Board")
+        app_state.to_board()
 
-    def _convert_to_buf(self, thread: Thread) -> Buffer:
-        buf = []
 
-        for i, r in enumerate(thread.responses):
-            meta = []
+def _convert_to_buf(thread: Thread) -> Buffer:
+    buf = []
 
-            for c in r.number:
-                meta.append((c, *style.normal))
+    for i, r in enumerate(thread.responses):
+        meta = []
 
-            meta.append((" ", *style.normal))
+        for c in r.number:
+            meta.append((c, *style.normal))
 
-            for c in r.name:
-                meta.append((c, *style.name))
+        meta.append((" ", *style.normal))
 
-            meta.append((" ", *style.normal))
+        for c in r.name:
+            meta.append((c, *style.name))
 
-            for c in r.date:
-                meta.append((c, *style.normal))
+        meta.append((" ", *style.normal))
 
-            meta.append((" ", *style.normal))
+        for c in r.date:
+            meta.append((c, *style.normal))
 
-            for c in r.id:
-                meta.append((c, *style.normal))
+        meta.append((" ", *style.normal))
 
-            buf.append(meta)
-            buf.append([])
+        for c in r.id:
+            meta.append((c, *style.normal))
 
-            for l in r.message.split("\n"):
-                line = []
+        buf.append(meta)
+        buf.append([])
 
-                for c in l:
-                    line.append((c, *style.normal))
+        for l in r.message.split("\n"):
+            line = []
 
-                buf.append(line)
+            for c in l:
+                line.append((c, *style.normal))
 
-            buf.append([])
+            buf.append(line)
 
-        return buf
+        buf.append([])
+
+    return buf
