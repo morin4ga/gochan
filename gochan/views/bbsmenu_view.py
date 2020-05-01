@@ -5,7 +5,6 @@ from asciimatics.widgets import Frame, Layout, ListBox, Widget
 
 from gochan.data import Bbsmenu, BoardHeader
 from gochan.state import app_state
-from gochan.style import style
 
 
 class BbsmenuView(Frame):
@@ -20,11 +19,7 @@ class BbsmenuView(Frame):
                          title="Bbs Menu",
                          )
 
-        self.palette["background"] = style.normal
-        self.palette["button"] = style.normal
-        self.palette["borders"] = style.normal
-        self.palette["field"] = style.normal
-        self.palette["focus_field"] = style.normal
+        self.set_theme("user_theme")
 
         self._model = None
 

@@ -6,7 +6,7 @@ from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget
 
 from gochan.data import Thread
 from gochan.state import app_state
-from gochan.style import style
+from gochan.theme import thread_theme
 from gochan.widgets import Buffer, RichText
 
 
@@ -23,13 +23,11 @@ class ThreadView(Frame):
 
         self._model: Thread = None
 
-        self.palette["background"] = style.normal
-        self.palette["button"] = style.normal
-        self.palette["borders"] = style.normal
+        self.set_theme("user_theme")
 
         self._rtext = RichText(
             Widget.FILL_FRAME,
-            (" ", *style.normal),
+            (" ", *thread_theme.name),
             name="text_box",
         )
 
@@ -74,22 +72,22 @@ def _convert_to_buf(thread: Thread) -> Buffer:
         meta = []
 
         for c in r.number:
-            meta.append((c, *style.normal))
+            meta.append((c, *thread_theme.normal))
 
-        meta.append((" ", *style.normal))
+        meta.append((" ", *thread_theme.normal))
 
         for c in r.name:
-            meta.append((c, *style.name))
+            meta.append((c, *thread_theme.name))
 
-        meta.append((" ", *style.normal))
+        meta.append((" ", *thread_theme.normal))
 
         for c in r.date:
-            meta.append((c, *style.normal))
+            meta.append((c, *thread_theme.normal))
 
-        meta.append((" ", *style.normal))
+        meta.append((" ", *thread_theme.normal))
 
         for c in r.id:
-            meta.append((c, *style.normal))
+            meta.append((c, *thread_theme.normal))
 
         buf.append(meta)
         buf.append([])
@@ -98,7 +96,7 @@ def _convert_to_buf(thread: Thread) -> Buffer:
             line = []
 
             for c in l:
-                line.append((c, *style.normal))
+                line.append((c, *thread_theme.normal))
 
             buf.append(line)
 

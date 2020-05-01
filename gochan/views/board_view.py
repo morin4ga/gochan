@@ -6,7 +6,6 @@ from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, MultiCo
 
 from gochan.data import Board, BoardHeader, ThreadHeader
 from gochan.state import app_state
-from gochan.style import style
 
 
 class BoardView(Frame):
@@ -20,7 +19,7 @@ class BoardView(Frame):
                          can_scroll=False,
                          )
 
-        self.palette["field"] = style.normal
+        self.set_theme("user_theme")
 
         self._model: Board = None
 

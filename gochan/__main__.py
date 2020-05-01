@@ -8,6 +8,7 @@ from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, Text, T
 
 from gochan.client import get_bbsmenu, get_board, get_thread
 from gochan.data import Bbsmenu, BoardHeader, ThreadHeader
+from gochan.theme import init_user_theme
 from gochan.views import BbsmenuView, BoardView, ResponseForm, ThreadView
 
 
@@ -26,6 +27,8 @@ def demo(screen: Screen, scene: Scene):
 
     screen.play(scenes, stop_on_resize=True, start_scene=scene, allow_int=True)
 
+
+init_user_theme()
 
 last_scene = None
 while True:

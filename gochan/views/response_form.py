@@ -6,7 +6,6 @@ from asciimatics.widgets import Button, Divider, Frame, Layout, PopUpDialog, Tex
 from gochan.client import post_response
 from gochan.data import Thread
 from gochan.state import app_state
-from gochan.style import style
 
 
 class ResponseForm(Frame):
@@ -22,12 +21,7 @@ class ResponseForm(Frame):
 
         self._target: Thread = None
 
-        self.palette["background"] = style.normal
-        self.palette["button"] = style.normal
-        self.palette["borders"] = style.normal
-        self.palette["edit_text"] = style.normal
-        self.palette["label"] = style.normal
-        self.palette["focus_edit_text"] = style.normal
+        self.set_theme("user_theme")
 
         self._name_box = Text(
             label="name:",
@@ -84,7 +78,7 @@ class ResponseForm(Frame):
 
             if len(msg) > 0:
                 result = post_response(self._target.server, self._target.board, self._target.key, name, mail, msg)
-                self._scene.add_effect(PopUpDialog(self._screen, result, ["Close"], theme="monochrome",
+                self._scene.add_effect(PopUpDialog(self._screen, result, ["Close"], theme="user_theme",
                                                    on_close=lambda _: app_state.to_thread()))
             else:
-                self._scene.add_effect(PopUpDialog(self._screen, "メッセージが空です", ["Close"], theme="monochrome"))
+                self._scene.add_effect(PopUpDialog(self._screen, "メッセージが空です", ["Close"], theme="user_theme"))
