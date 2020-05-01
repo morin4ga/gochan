@@ -13,7 +13,7 @@ class AppState:
         self.bbsmenu = get_bbsmenu()
         self.board: Board = None
         self.thread: Thread = None
-        self.notification: Tuple[str, str] = None
+        self.res_form: Thread = None
 
     def to_bbsmenu(self):
         raise NextScene("Bbsmenu")
@@ -31,6 +31,10 @@ class AppState:
 
     def to_thread(self):
         raise NextScene("Thread")
+
+    def open_res_form(self, target: Thread):
+        self.res_form = target
+        raise NextScene("ResponseForm")
 
 
 app_state = AppState()

@@ -34,6 +34,7 @@ class ThreadView(Frame):
         )
 
         self._back_button = Button("Back", on_click=self._back)
+        self._write_button = Button("Write", on_click=self._write)
 
         layout1 = Layout([100], fill_frame=True)
         self.add_layout(layout1)
@@ -43,6 +44,7 @@ class ThreadView(Frame):
         layout2 = Layout([33, 33, 34])
         self.add_layout(layout2)
         layout2.add_widget(self._back_button, 0)
+        layout2.add_widget(self._write_button, 1)
 
         self.fix()
 
@@ -60,6 +62,9 @@ class ThreadView(Frame):
 
     def _back(self):
         app_state.to_board()
+
+    def _write(self):
+        app_state.open_res_form(self._model)
 
 
 def _convert_to_buf(thread: Thread) -> Buffer:

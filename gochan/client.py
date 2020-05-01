@@ -1,8 +1,8 @@
 import html
 import re
 import time
-from urllib.request import Request, urlopen
 from urllib.parse import urlencode
+from urllib.request import Request, urlopen
 
 from bs4 import BeautifulSoup
 
