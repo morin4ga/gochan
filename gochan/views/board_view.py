@@ -14,7 +14,7 @@ class BoardView(Frame):
                          screen.height,
                          screen.width,
                          has_border=False,
-                         on_load=self._reload_list,
+                         on_load=self._on_load_,
                          hover_focus=True,
                          can_scroll=False,
                          )
@@ -54,10 +54,14 @@ class BoardView(Frame):
     def _on_pick(self):
         pass
 
-    def _reload_list(self, new_value=None):
+    # _on_load is already used by Frame. So use _on_load_ here
+    def _on_load_(self):
         if self._model == app_state.board:
             return
 
+        self._reload_list()
+
+    def _reload_list(self, new_value=None):
         self._model = app_state.board
         if self._model is not None:
             self._thread_list.options = [([str(x.number), "|" + x.title, " |" + str(x.count), " |" + str(x.speed)], i)
