@@ -64,7 +64,7 @@ class ResponseForm(Frame):
             return
 
         self._target = app_state.res_form
-        self.reset()
+        self._clear_all_inputs()
 
     def _back(self):
         raise NextScene("Board")
@@ -79,6 +79,15 @@ class ResponseForm(Frame):
             if len(msg) > 0:
                 result = post_response(self._target.server, self._target.board, self._target.key, name, mail, msg)
                 self._scene.add_effect(PopUpDialog(self._screen, result, ["Close"], theme="user_theme",
-                                                   on_close=lambda _: app_state.to_thread()))
+                                                   on_close=self._on_posted))
             else:
                 self._scene.add_effect(PopUpDialog(self._screen, "メッセージが空です", ["Close"], theme="user_theme"))
+
+    def _on_posted(self, _):
+        self._clear_all_inputs()
+        app_state.to_thread()
+
+    def _clear_all_inputs(self):
+        self._name_box.value = ""
+        self._mail_box.value = ""
+        self._msg_box.value = ""
