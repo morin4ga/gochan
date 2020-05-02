@@ -28,12 +28,17 @@ def demo(screen: Screen, scene: Scene):
     screen.play(scenes, stop_on_resize=True, start_scene=scene, allow_int=True)
 
 
-init_user_theme()
+def main():
+    init_user_theme()
 
-last_scene = None
-while True:
-    try:
-        Screen.wrapper(demo, catch_interrupt=False, arguments=[last_scene])
-        sys.exit(0)
-    except ResizeScreenError as e:
-        last_scene = e.scene
+    last_scene = None
+    while True:
+        try:
+            Screen.wrapper(demo, catch_interrupt=False, arguments=[last_scene])
+            sys.exit(0)
+        except ResizeScreenError as e:
+            last_scene = e.scene
+
+
+if __name__ == "__main__":
+    main()
