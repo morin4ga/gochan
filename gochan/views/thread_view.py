@@ -71,7 +71,7 @@ def _convert_to_buf(thread: Thread) -> Buffer:
     for i, r in enumerate(thread.responses):
         meta = []
 
-        for c in r.number:
+        for c in str(r.number):
             meta.append((c, *thread_theme.normal))
 
         meta.append((" ", *thread_theme.normal))

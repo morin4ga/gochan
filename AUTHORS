@@ -2,9 +2,3 @@ This software uses the following libraries
 
     asciimatics - Apache License 2.0
     https://github.com/peterbrittain/asciimatics
-
-    beautifulsoup4 - MIT
-    https://www.crummy.com/software/BeautifulSoup/
-
-    lxml - BSD
-    https://lxml.de/

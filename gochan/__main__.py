@@ -6,7 +6,6 @@ from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, Text, TextBox, Widget
 
-from gochan.client import get_bbsmenu, get_board, get_thread
 from gochan.data import Bbsmenu, BoardHeader, ThreadHeader
 from gochan.theme import init_user_theme
 from gochan.views import BbsmenuView, BoardView, ResponseForm, ThreadView

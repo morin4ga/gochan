@@ -3,7 +3,7 @@ from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, PopUpDialog, Text, TextBox, Widget
 
-from gochan.client import post_response
+from gochan.client import client
 from gochan.data import Thread
 from gochan.state import app_state
 
@@ -77,7 +77,8 @@ class ResponseForm(Frame):
             msg = self._msg_box.value
 
             if len(msg) > 0:
-                result = post_response(self._target.server, self._target.board, self._target.key, name, mail, msg)
+                result = client.post_response(
+                    self._target.server, self._target.board, self._target.key, name, mail, msg)
                 self._scene.add_effect(PopUpDialog(self._screen, result, ["Close"], theme="user_theme",
                                                    on_close=self._on_posted))
             else:
