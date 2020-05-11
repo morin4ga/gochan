@@ -176,7 +176,6 @@ def _parse_dat(dat: str) -> Thread:
     title = re.search(r".*<>(.*?)$", lines[0]).group(1)
     thread = Thread(None, None, None, title, [], False)
     total_links = 0
-    total_imgs = 0
 
     re_res = re.compile(r"(.*?)<>(.*?)<>(.*? .*?) (.*?)<> (.*?) <>.*")
     re_b = re.compile(r"</?b>")
@@ -198,9 +197,9 @@ def _parse_dat(dat: str) -> Thread:
         msg = re.sub(" ?<br> ", "\n", msg)
 
         for img in re_img.finditer(msg):
-            thread.images.append(img.group(1))
-            msg, _ = re_img.subn(r"\1(" + str(total_imgs) + ")", msg)
-            total_imgs += 1
+            thread.links.append(img.group(1))
+            msg, _ = re_img.subn(r"\1(" + str(total_links) + ")", msg)
+            total_links += 1
 
         for link in re_link.finditer(msg):
             thread.links.append(link.group(1))
@@ -225,7 +224,6 @@ def _parse_html(html: str) -> Thread:
     thread = Thread(None, None, None, title, [], is_pastlog)
 
     total_links = 0
-    total_imgs = 0
 
     re_res = re.compile(r'<div class="post".*?"name"><b>(?:<a href="mailto:(.*?)">)?(.*?)(?:</a>)?</b></span>'
                         r'.*?"date">(.*?)<.*?"uid">(.*?)<.*?"escaped"> (.*?) </span></div></div><br>')
@@ -254,9 +252,9 @@ def _parse_html(html: str) -> Thread:
             total_links += 1
 
         for img in re_img.finditer(msg):
-            thread.images.append(img.group(1))
-            msg, _ = re_img.subn(r"\1(" + str(total_imgs) + ")", msg, 1)
-            total_imgs += 1
+            thread.links.append(img.group(1))
+            msg, _ = re_img.subn(r"\1(" + str(total_links) + ")", msg, 1)
+            total_links += 1
 
         for anchor in re_anchor.finditer(msg):
             msg, _ = re_anchor.subn(r"\1", msg, 1)

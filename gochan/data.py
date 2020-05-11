@@ -22,7 +22,6 @@ class Thread:
         self.key = key
         self.title = title
         self.responses = responses
-        self.images = []
         self.links = []
         self.is_pastlog = False
 
