@@ -228,9 +228,7 @@ def _parse_html(html: str) -> Thread:
     re_res = re.compile(r'<div class="post".*?"name"><b>(?:<a href="mailto:(.*?)">)?(.*?)(?:</a>)?</b></span>'
                         r'.*?"date">(.*?)<.*?"uid">(.*?)<.*?"escaped"> (.*?) </span></div></div><br>')
 
-    re_link = re.compile(r'<a href="http.*?>(.*?)</a>')
-
-    re_img = re.compile(r'<a class="image".*?>(.*?)</a>')
+    re_link = re.compile(r'<a href="http.*?>(.*?)</a>|<a class="image".*?>(.*?)</a>')
 
     re_anchor = re.compile(r'<a href.*?class="reply_link">(.*?)</a>')
 
@@ -247,13 +245,13 @@ def _parse_html(html: str) -> Thread:
         msg = re.sub(r'<img.*\n', "", msg)
 
         for link in re_link.finditer(msg):
-            thread.links.append(link.group(1))
-            msg, _ = re_link.subn(r"\1(" + str(total_links) + ")", msg, 1)
-            total_links += 1
+            if link.group(1) is not None:
+                thread.links.append(link.group(1))
+                msg, _ = re_link.subn(r"\1(" + str(total_links) + ")", msg, 1)
+            else:
+                thread.links.append(link.group(2))
+                msg, _ = re_link.subn(r"\2(" + str(total_links) + ")", msg, 1)
 
-        for img in re_img.finditer(msg):
-            thread.links.append(img.group(1))
-            msg, _ = re_img.subn(r"\1(" + str(total_links) + ")", msg, 1)
             total_links += 1
 
         for anchor in re_anchor.finditer(msg):
