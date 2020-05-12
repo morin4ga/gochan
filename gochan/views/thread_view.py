@@ -8,6 +8,9 @@ from gochan.data import Thread
 from gochan.state import app_state
 from gochan.theme import thread_theme
 from gochan.widgets import Buffer, RichText
+from gochan.views.command_line import CommandLine
+
+from subprocess import Popen
 
 
 class ThreadView(Frame):
@@ -22,6 +25,8 @@ class ThreadView(Frame):
                          )
 
         self._model: Thread = None
+
+        self._inputing_cmd: bool = False
 
         self.set_theme("user_theme")
 
@@ -63,6 +68,26 @@ class ThreadView(Frame):
 
     def _write(self):
         app_state.open_res_form(self._model)
+
+    def process_event(self, event):
+        if isinstance(event, KeyboardEvent):
+            if event.key_code == ord(':'):
+                if not self._inputing_cmd:
+                    self._cli = CommandLine(self._screen, "open:", self._open_link)
+                    self._scene.add_effect(self._cli)
+                return None
+
+        return super().process_event(event)
+
+    def _open_link(self, cmd: str):
+        if str.isdecimal(cmd):
+            idx = int(cmd)
+
+            if len(self._model.links) > idx:
+                link = self._model.links[idx]
+                Popen([r'/mnt/c/Program Files/Vivaldi/Application/vivaldi.exe', link])
+
+        self._inputing_cmd = False
 
 
 def _convert_to_buf(thread: Thread) -> Buffer:
