@@ -4,10 +4,10 @@ from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import ResizeScreenError
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
-from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, Text, TextBox, Widget
+from asciimatics.widgets import THEMES, Button, Divider, Frame, Layout, ListBox, Text, TextBox, Widget
 
+from gochan.config import BROWSER_PATH, THEME
 from gochan.data import Bbsmenu, BoardHeader, ThreadHeader
-from gochan.theme import init_user_theme
 from gochan.views import BbsmenuView, BoardView, ResponseForm, ThreadView
 
 
@@ -28,7 +28,8 @@ def demo(screen: Screen, scene: Scene):
 
 
 def main():
-    init_user_theme()
+    # Enable user theme
+    THEMES["user_theme"] = THEME
 
     last_scene = None
     while True:

@@ -1,16 +1,15 @@
+from subprocess import Popen
 from typing import Callable
 
 from asciimatics.event import KeyboardEvent
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget
 
+from gochan.config import BROWSER_PATH, THREAD_PALLET
 from gochan.data import Thread
 from gochan.state import app_state
-from gochan.theme import thread_theme
-from gochan.widgets import Buffer, RichText
 from gochan.views.command_line import CommandLine
-
-from subprocess import Popen
+from gochan.widgets import Buffer, RichText
 
 
 class ThreadView(Frame):
@@ -32,7 +31,7 @@ class ThreadView(Frame):
 
         self._rtext = RichText(
             Widget.FILL_FRAME,
-            (" ", *thread_theme.name),
+            (" ", *THREAD_PALLET["normal"]),
             name="text_box",
         )
 
@@ -85,7 +84,7 @@ class ThreadView(Frame):
 
             if len(self._model.links) > idx:
                 link = self._model.links[idx]
-                Popen([r'/mnt/c/Program Files/Vivaldi/Application/vivaldi.exe', link])
+                Popen([BROWSER_PATH, link])
 
         self._inputing_cmd = False
 
@@ -97,22 +96,22 @@ def _convert_to_buf(thread: Thread) -> Buffer:
         meta = []
 
         for c in str(r.number):
-            meta.append((c, *thread_theme.normal))
+            meta.append((c, *THREAD_PALLET["normal"]))
 
-        meta.append((" ", *thread_theme.normal))
+        meta.append((" ", *THREAD_PALLET["normal"]))
 
         for c in r.name:
-            meta.append((c, *thread_theme.name))
+            meta.append((c, *THREAD_PALLET["name"]))
 
-        meta.append((" ", *thread_theme.normal))
+        meta.append((" ", *THREAD_PALLET["normal"]))
 
         for c in r.date:
-            meta.append((c, *thread_theme.normal))
+            meta.append((c, *THREAD_PALLET["normal"]))
 
-        meta.append((" ", *thread_theme.normal))
+        meta.append((" ", *THREAD_PALLET["normal"]))
 
         for c in r.id:
-            meta.append((c, *thread_theme.normal))
+            meta.append((c, *THREAD_PALLET["normal"]))
 
         buf.append(meta)
         buf.append([])
@@ -121,7 +120,7 @@ def _convert_to_buf(thread: Thread) -> Buffer:
             line = []
 
             for c in l:
-                line.append((c, *thread_theme.normal))
+                line.append((c, *THREAD_PALLET["normal"]))
 
             buf.append(line)
 

@@ -1,8 +1,8 @@
-from asciimatics.widgets import Frame, Layout, Text
-from asciimatics.screen import Screen
-from asciimatics.event import KeyboardEvent
-
 from typing import Callable
+
+from asciimatics.event import KeyboardEvent
+from asciimatics.screen import Screen
+from asciimatics.widgets import Frame, Layout, Text
 
 
 class CommandLine(Frame):
