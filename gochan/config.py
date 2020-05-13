@@ -1,6 +1,9 @@
+import json
+from pathlib import Path
+
 from asciimatics.screen import Screen
 
-BROWSER_PATH = r'/mnt/c/Program Files/Vivaldi/Application/vivaldi.exe'
+BROWSER_PATH = None
 THEME = {
     "background": (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK),
     "shadow": (Screen.COLOUR_BLACK, None, Screen.COLOUR_BLACK),
@@ -27,3 +30,11 @@ THREAD_PALLET = {
     "normal": (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK),
     "name": (Screen.COLOUR_GREEN, Screen.A_BOLD, Screen.COLOUR_BLACK),
 }
+
+conf_file = Path(Path.home() / ".config/gochan/conf.json")
+
+if conf_file.is_file():
+    conf = json.loads(conf_file.read_text())
+
+    if "browser_path" in conf:
+        BROWSER_PATH = conf["browser_path"]
