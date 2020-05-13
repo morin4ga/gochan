@@ -1,10 +1,10 @@
-from subprocess import Popen
 from typing import Callable
 
 from asciimatics.event import KeyboardEvent
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget
 
+from gochan.browser import open_link
 from gochan.config import BROWSER_PATH, THREAD_PALLET
 from gochan.data import Thread
 from gochan.state import app_state
@@ -84,7 +84,7 @@ class ThreadView(Frame):
 
             if len(self._model.links) > idx:
                 link = self._model.links[idx]
-                Popen([BROWSER_PATH, link])
+                open_link(link)
 
         self._inputing_cmd = False
 
