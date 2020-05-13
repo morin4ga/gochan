@@ -5,7 +5,7 @@ from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget
 
 from gochan.browser import open_link
-from gochan.config import BROWSER_PATH, THREAD_PALLET
+from gochan.config import BROWSER_PATH, KEY_BINDINGS, THREAD_PALLET
 from gochan.data import Thread
 from gochan.state import app_state
 from gochan.views.command_line import CommandLine
@@ -70,7 +70,7 @@ class ThreadView(Frame):
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
-            if event.key_code == ord(':'):
+            if event.key_code == KEY_BINDINGS["thread"]["open_link"]:
                 if not self._inputing_cmd:
                     self._cli = CommandLine(self._screen, "open:", self._open_link)
                     self._scene.add_effect(self._cli)

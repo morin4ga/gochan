@@ -1,7 +1,19 @@
 import json
+import re
 from pathlib import Path
 
+from asciimatics.event import KeyboardEvent
 from asciimatics.screen import Screen
+
+
+def get_keycode(key: str):
+    m = re.search(r"ctrl-(.)", key)
+
+    if m is not None:
+        return Screen.ctrl(m.group(1))
+
+    return ord(key)
+
 
 BROWSER_PATH = None
 THEME = {
@@ -30,6 +42,11 @@ THREAD_PALLET = {
     "normal": (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK),
     "name": (Screen.COLOUR_GREEN, Screen.A_BOLD, Screen.COLOUR_BLACK),
 }
+KEY_BINDINGS = {
+    "thread": {
+        "open_link": ord("o"),
+    }
+}
 
 conf_file = Path(Path.home() / ".config/gochan/conf.json")
 
@@ -38,3 +55,13 @@ if conf_file.is_file():
 
     if "browser_path" in conf:
         BROWSER_PATH = conf["browser_path"]
+
+
+keybindins_file = Path(Path.home() / ".config/gochan/keybindings.json")
+
+if keybindins_file.is_file():
+    keybindings = json.loads(keybindins_file.read_text())
+
+    if "thread" in keybindings:
+        if "open_link" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["open_link"] = get_keycode(keybindings["thread"]["open_link"])
