@@ -48,7 +48,7 @@ class RichText(Widget):
             y += 1
 
     def reset(self):
-        self._scrl_offset = 0
+        pass
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
