@@ -1,5 +1,8 @@
-from asciimatics.screen import Screen
+import re
+from typing import Union
+
 from asciimatics.event import KeyboardEvent
+from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, Layout, Text
 
 
@@ -216,3 +219,33 @@ class Key:
 
     Shift = Shift
     Ctrl = Ctrl
+
+
+def _parse_key_with_ctrlshift(key: str) -> Union[int, None]:
+    return getattr(CtrlShift, key, None)
+
+
+def _parse_key_with_ctrl(key: str) -> Union[int, None]:
+    if re.match(r'(S|SHIFT)-', key):
+        return _parse_key_with_ctrlshift(re.sub(r'(S|SHIFT)-', "", key))
+
+    return getattr(Ctrl, key, None)
+
+
+def _parse_key_with_shift(key: str) -> Union[int, None]:
+    if re.match(r'(C|CTRL)-', key):
+        return _parse_key_with_ctrlshift(re.sub(r'(C|CTRL)-', "", key))
+
+    return getattr(Shift, key, None)
+
+
+def parse_key(key: str) -> Union[int, None]:
+    key = key.upper()
+
+    if re.match(r'(C|CTRL)-', key):
+        return _parse_key_with_ctrl(re.sub(r'(C|CTRL)-', "", key))
+
+    if re.match(r'(S|SHIFT)-', key):
+        return _parse_key_with_shift(re.sub(r'(S|SHIFT)-', "", key))
+
+    return getattr(Key, key, None)

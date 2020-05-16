@@ -5,16 +5,7 @@ from pathlib import Path
 from asciimatics.event import KeyboardEvent
 from asciimatics.screen import Screen
 
-from gochan.key import Key
-
-
-def get_keycode(key: str):
-    m = re.search(r"ctrl-(.)", key)
-
-    if m is not None:
-        return Screen.ctrl(m.group(1))
-
-    return ord(key)
+from gochan.key import Key, parse_key
 
 
 BROWSER_PATH = None
@@ -72,4 +63,16 @@ if keybindins_file.is_file():
 
     if "thread" in keybindings:
         if "open_link" in keybindings["thread"]:
-            KEY_BINDINGS["thread"]["open_link"] = get_keycode(keybindings["thread"]["open_link"])
+            KEY_BINDINGS["thread"]["open_link"] = parse_key(keybindings["thread"]["open_link"])
+        if "scroll_up" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["scroll_up"] = parse_key(keybindings["thread"]["scroll_up"])
+        if "scroll_down" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["scroll_down"] = parse_key(keybindings["thread"]["scroll_down"])
+        if "page_up" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["page_up"] = parse_key(keybindings["thread"]["page_up"])
+        if "page_down" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["page_down"] = parse_key(keybindings["thread"]["page_down"])
+        if "go_to_top" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["go_to_top"] = parse_key(keybindings["thread"]["go_to_top"])
+        if "go_to_bottom" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["go_to_bottom"] = parse_key(keybindings["thread"]["go_to_bottom"])
