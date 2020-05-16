@@ -5,6 +5,8 @@ from pathlib import Path
 from asciimatics.event import KeyboardEvent
 from asciimatics.screen import Screen
 
+from gochan.key import Key
+
 
 def get_keycode(key: str):
     m = re.search(r"ctrl-(.)", key)
@@ -44,13 +46,13 @@ THREAD_PALLET = {
 }
 KEY_BINDINGS = {
     "thread": {
-        "open_link": ord("o"),
-        "scroll_up": Screen.KEY_UP,
-        "scroll_down": Screen.KEY_DOWN,
-        "page_up": Screen.KEY_PAGE_UP,
-        "page_down": Screen.KEY_PAGE_DOWN,
-        "go_to_top": Screen.KEY_HOME,
-        "go_to_bottom": Screen.KEY_END
+        "open_link": Key.O,
+        "scroll_up": Key.UP,
+        "scroll_down": Key.DOWN,
+        "page_up": Key.PAGE_UP,
+        "page_down": Key.PAGE_DOWN,
+        "go_to_top": Key.HOME,
+        "go_to_bottom": Key.END
     }
 }
 
