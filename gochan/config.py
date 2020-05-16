@@ -35,6 +35,15 @@ THREAD_PALLET = {
     "name": (Screen.COLOUR_GREEN, Screen.A_BOLD, Screen.COLOUR_BLACK),
 }
 KEY_BINDINGS = {
+    "bbsmenu": {
+        "select_up": Key.UP,
+        "select_down": Key.DOWN,
+        "page_up": Key.PAGE_UP,
+        "page_down": Key.PAGE_DOWN,
+        "select_top": Key.Ctrl.HOME,
+        "select_bottom": Key.Ctrl.END,
+        "select": Key.ENTER,
+    },
     "board": {
         "select_up": Key.UP,
         "select_down": Key.DOWN,
@@ -76,6 +85,22 @@ keybindins_file = Path(Path.home() / ".config/gochan/keybindings.json")
 
 if keybindins_file.is_file():
     keybindings = json.loads(keybindins_file.read_text())
+
+    if "bbsmenu" in keybindings:
+        if "select_up" in keybindings["bbsmenu"]:
+            KEY_BINDINGS["bbsmenu"]["select_up"] = parse_key(keybindings["bbsmenu"]["select_up"])
+        if "select_down" in keybindings["bbsmenu"]:
+            KEY_BINDINGS["bbsmenu"]["select_down"] = parse_key(keybindings["bbsmenu"]["select_down"])
+        if "page_up" in keybindings["bbsmenu"]:
+            KEY_BINDINGS["bbsmenu"]["page_up"] = parse_key(keybindings["bbsmenu"]["page_up"])
+        if "page_down" in keybindings["bbsmenu"]:
+            KEY_BINDINGS["bbsmenu"]["page_down"] = parse_key(keybindings["bbsmenu"]["page_down"])
+        if "select_top" in keybindings["bbsmenu"]:
+            KEY_BINDINGS["bbsmenu"]["select_top"] = parse_key(keybindings["bbsmenu"]["select_top"])
+        if "select_bottom" in keybindings["bbsmenu"]:
+            KEY_BINDINGS["bbsmenu"]["select_bottom"] = parse_key(keybindings["bbsmenu"]["select_bottom"])
+        if "select" in keybindings["bbsmenu"]:
+            KEY_BINDINGS["bbsmenu"]["select"] = parse_key(keybindings["bbsmenu"]["select"])
 
     if "board" in keybindings:
         if "select_up" in keybindings["board"]:

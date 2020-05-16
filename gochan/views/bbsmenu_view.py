@@ -1,10 +1,12 @@
 from typing import Callable
 
 from asciimatics.screen import Screen
-from asciimatics.widgets import Frame, Layout, ListBox, Widget
+from asciimatics.widgets import Frame, Layout, Widget
 
+from gochan.config import KEY_BINDINGS
 from gochan.data import Bbsmenu, BoardHeader
 from gochan.state import app_state
+from gochan.widgets import ListBoxK
 
 
 class BbsmenuView(Frame):
@@ -23,18 +25,22 @@ class BbsmenuView(Frame):
 
         self._model = None
 
-        self._cat_list = ListBox(
+        self._keybindings = KEY_BINDINGS["bbsmenu"]
+
+        self._cat_list = ListBoxK(
             Widget.FILL_COLUMN,
             [],
+            self._keybindings,
             name="cat_list",
             add_scroll_bar=True,
             on_change=self._on_pick_c,
             on_select=self._on_select_c,
         )
 
-        self._board_list = ListBox(
+        self._board_list = ListBoxK(
             Widget.FILL_COLUMN,
             [],
+            self._keybindings,
             name="board_list",
             add_scroll_bar=True,
             on_change=self._on_pick_b,
