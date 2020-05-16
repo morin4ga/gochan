@@ -87,6 +87,13 @@ class CtrlShift:
 
 
 class Ctrl:
+    HOME = 535
+    END = 530
+    LEFT = 545
+    UP = 566
+    RIGHT = 560
+    DOWN = 525
+
     A = Screen.ctrl('a')
     B = Screen.ctrl('b')
     C = Screen.ctrl('c')

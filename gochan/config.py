@@ -51,8 +51,8 @@ KEY_BINDINGS = {
         "scroll_down": Key.DOWN,
         "page_up": Key.PAGE_UP,
         "page_down": Key.PAGE_DOWN,
-        "go_to_top": Key.HOME,
-        "go_to_bottom": Key.END
+        "go_to_top": Key.Ctrl.HOME,
+        "go_to_bottom": Key.Ctrl.END
     }
 }
 
