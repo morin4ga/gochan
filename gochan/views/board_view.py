@@ -1,11 +1,13 @@
-from typing import Callable, List, Tuple
+from typing import Callable, Dict, List, Tuple
 
 from asciimatics.event import KeyboardEvent
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, MultiColumnListBox, Widget
 
+from gochan.config import KEY_BINDINGS
 from gochan.data import Board, BoardHeader, ThreadHeader
 from gochan.state import app_state
+from gochan.widgets import MultiColumnListBoxK
 
 
 class BoardView(Frame):
@@ -23,10 +25,13 @@ class BoardView(Frame):
 
         self._model: Board = None
 
-        self._thread_list = MultiColumnListBox(
+        self._keybindings = KEY_BINDINGS["board"]
+
+        self._thread_list = MultiColumnListBoxK(
             Widget.FILL_FRAME,
             ["<4%", "<82%", "<6%", "<8"],
             [],
+            self._keybindings,
             titles=["番号", "|タイトル", " |レス", " |勢い"],
             name="thread_list",
             add_scroll_bar=True,
@@ -87,35 +92,35 @@ class BoardView(Frame):
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
-            if event.key_code == ord("q"):
+            if event.key_code == self._keybindings["sort_1"]:
                 self._model.threads.sort(key=lambda x: x.number)
                 self._reload_list()
                 return None
-            elif event.key_code == ord("Q"):
+            elif event.key_code == self._keybindings["dsort_1"]:
                 self._model.threads.sort(key=lambda x: x.number, reverse=True)
                 self._reload_list()
                 return None
-            elif event.key_code == ord("w"):
+            elif event.key_code == self._keybindings["sort_2"]:
                 self._model.threads.sort(key=lambda x: x.title)
                 self._reload_list()
                 return None
-            elif event.key_code == ord("W"):
+            elif event.key_code == self._keybindings["dsort_2"]:
                 self._model.threads.sort(key=lambda x: x.title, reverse=True)
                 self._reload_list()
                 return None
-            elif event.key_code == ord("e"):
+            elif event.key_code == self._keybindings["sort_3"]:
                 self._model.threads.sort(key=lambda x: x.count)
                 self._reload_list()
                 return None
-            elif event.key_code == ord("E"):
+            elif event.key_code == self._keybindings["dsort_3"]:
                 self._model.threads.sort(key=lambda x: x.count, reverse=True)
                 self._reload_list()
                 return None
-            elif event.key_code == ord("r"):
+            elif event.key_code == self._keybindings["sort_4"]:
                 self._model.threads.sort(key=lambda x: x.speed)
                 self._reload_list()
                 return None
-            elif event.key_code == ord("R"):
+            elif event.key_code == self._keybindings["dsort_4"]:
                 self._model.threads.sort(key=lambda x: x.speed, reverse=True)
                 self._reload_list()
                 return None

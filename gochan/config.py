@@ -7,7 +7,6 @@ from asciimatics.screen import Screen
 
 from gochan.key import Key, parse_key
 
-
 BROWSER_PATH = None
 THEME = {
     "background": (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK),
@@ -36,6 +35,23 @@ THREAD_PALLET = {
     "name": (Screen.COLOUR_GREEN, Screen.A_BOLD, Screen.COLOUR_BLACK),
 }
 KEY_BINDINGS = {
+    "board": {
+        "select_up": Key.UP,
+        "select_down": Key.DOWN,
+        "page_up": Key.PAGE_UP,
+        "page_down": Key.PAGE_DOWN,
+        "select_top": Key.Ctrl.HOME,
+        "select_bottom": Key.Ctrl.END,
+        "select": Key.ENTER,
+        "sort_1": Key.Q,
+        "dsort_1": Key.Shift.Q,
+        "sort_2": Key.W,
+        "dsort_2": Key.Shift.W,
+        "sort_3": Key.E,
+        "dsort_3": Key.Shift.E,
+        "sort_4": Key.R,
+        "dsort_4": Key.Shift.R
+    },
     "thread": {
         "open_link": Key.O,
         "scroll_up": Key.UP,
@@ -60,6 +76,38 @@ keybindins_file = Path(Path.home() / ".config/gochan/keybindings.json")
 
 if keybindins_file.is_file():
     keybindings = json.loads(keybindins_file.read_text())
+
+    if "board" in keybindings:
+        if "select_up" in keybindings["board"]:
+            KEY_BINDINGS["board"]["select_up"] = parse_key(keybindings["board"]["select_up"])
+        if "select_down" in keybindings["board"]:
+            KEY_BINDINGS["board"]["select_down"] = parse_key(keybindings["board"]["select_down"])
+        if "page_up" in keybindings["board"]:
+            KEY_BINDINGS["board"]["page_up"] = parse_key(keybindings["board"]["page_up"])
+        if "page_down" in keybindings["board"]:
+            KEY_BINDINGS["board"]["page_down"] = parse_key(keybindings["board"]["page_down"])
+        if "select_top" in keybindings["board"]:
+            KEY_BINDINGS["board"]["select_top"] = parse_key(keybindings["board"]["select_top"])
+        if "select_bottom" in keybindings["board"]:
+            KEY_BINDINGS["board"]["select_bottom"] = parse_key(keybindings["board"]["select_bottom"])
+        if "select" in keybindings["board"]:
+            KEY_BINDINGS["board"]["select"] = parse_key(keybindings["board"]["select"])
+        if "sort_1" in keybindings["board"]:
+            KEY_BINDINGS["board"]["sort_1"] = parse_key(keybindings["board"]["sort_1"])
+        if "dsort_1" in keybindings["board"]:
+            KEY_BINDINGS["board"]["dsort_1"] = parse_key(keybindings["board"]["dsort_1"])
+        if "sort_2" in keybindings["board"]:
+            KEY_BINDINGS["board"]["sort_2"] = parse_key(keybindings["board"]["sort_2"])
+        if "dsort_2" in keybindings["board"]:
+            KEY_BINDINGS["board"]["dsort_2"] = parse_key(keybindings["board"]["dsort_2"])
+        if "sort_3" in keybindings["board"]:
+            KEY_BINDINGS["board"]["sort_3"] = parse_key(keybindings["board"]["sort_3"])
+        if "dsort_3" in keybindings["board"]:
+            KEY_BINDINGS["board"]["dsort_3"] = parse_key(keybindings["board"]["dsort_3"])
+        if "sort_4" in keybindings["board"]:
+            KEY_BINDINGS["board"]["sort_4"] = parse_key(keybindings["board"]["sort_4"])
+        if "dsort_4" in keybindings["board"]:
+            KEY_BINDINGS["board"]["dsort_4"] = parse_key(keybindings["board"]["dsort_4"])
 
     if "thread" in keybindings:
         if "open_link" in keybindings["thread"]:
