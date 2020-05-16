@@ -45,6 +45,12 @@ THREAD_PALLET = {
 KEY_BINDINGS = {
     "thread": {
         "open_link": ord("o"),
+        "scroll_up": Screen.KEY_UP,
+        "scroll_down": Screen.KEY_DOWN,
+        "page_up": Screen.KEY_PAGE_UP,
+        "page_down": Screen.KEY_PAGE_DOWN,
+        "go_to_top": Screen.KEY_HOME,
+        "go_to_bottom": Screen.KEY_END
     }
 }
 

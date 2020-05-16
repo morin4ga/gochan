@@ -32,6 +32,7 @@ class ThreadView(Frame):
         self._rtext = RichText(
             Widget.FILL_FRAME,
             (" ", *THREAD_PALLET["normal"]),
+            KEY_BINDINGS["thread"],
             name="text_box",
         )
 
