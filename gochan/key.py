@@ -128,6 +128,8 @@ class Ctrl:
 
 
 class Key:
+    ENTER = 10
+
     # Standard extended key codes.
     ESCAPE = -1
     F1 = -2
