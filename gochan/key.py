@@ -1,4 +1,31 @@
 from asciimatics.screen import Screen
+from asciimatics.event import KeyboardEvent
+from asciimatics.widgets import Frame, Layout, Text
+
+
+class KeyLogger(Frame):
+    def __init__(self, screen: Screen):
+        super().__init__(screen,
+                         screen.height,
+                         screen.width,
+                         hover_focus=True,
+                         can_scroll=False,
+                         has_border=True
+                         )
+
+        self._text = Text()
+
+        layout = Layout([100], fill_frame=True)
+        self.add_layout(layout)
+        layout.add_widget(self._text)
+
+        self.fix()
+
+    def process_event(self, event):
+        if isinstance(event, KeyboardEvent):
+            self._text.value = str(event.key_code)
+
+        return None
 
 
 class Shift:
@@ -57,7 +84,6 @@ class CtrlShift:
     X = Screen.ctrl('X')
     Y = Screen.ctrl('Y')
     Z = Screen.ctrl('Z')
-
 
 
 class Ctrl:
