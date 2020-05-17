@@ -7,8 +7,8 @@ from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget
 from gochan.browser import open_link
 from gochan.config import BROWSER_PATH, KEY_BINDINGS, THREAD_PALLET
 from gochan.data import Thread
+from gochan.effects import CommandLine
 from gochan.state import app_state
-from gochan.views.command_line import CommandLine
 from gochan.widgets import Buffer, RichText
 
 
