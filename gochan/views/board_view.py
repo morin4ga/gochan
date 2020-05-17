@@ -8,6 +8,7 @@ from gochan.config import KEY_BINDINGS
 from gochan.data import Board, BoardHeader, ThreadHeader
 from gochan.state import app_state
 from gochan.widgets import MultiColumnListBoxK
+from gochan.effects import CommandLine
 
 
 class BoardView(Frame):
@@ -26,6 +27,10 @@ class BoardView(Frame):
         self._model: Board = None
 
         self._keybindings = KEY_BINDINGS["board"]
+
+        self._sort_key = lambda x: x.number
+
+        self._cli = None
 
         self._thread_list = MultiColumnListBoxK(
             Widget.FILL_FRAME,
@@ -93,36 +98,61 @@ class BoardView(Frame):
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
             if event.key_code == self._keybindings["sort_1"]:
-                self._model.threads.sort(key=lambda x: x.number)
-                self._reload_list()
-                return None
+                if self._cli is None:
+                    self._sort_key = lambda x: x.number
+                    self._model.threads.sort(key=self._sort_key)
+                    self._reload_list()
+                    return None
             elif event.key_code == self._keybindings["dsort_1"]:
-                self._model.threads.sort(key=lambda x: x.number, reverse=True)
-                self._reload_list()
-                return None
+                if self._cli is None:
+                    self._sort_key = lambda x: x.number
+                    self._model.threads.sort(key=self._sort_key, reverse=True)
+                    self._reload_list()
+                    return None
             elif event.key_code == self._keybindings["sort_2"]:
-                self._model.threads.sort(key=lambda x: x.title)
-                self._reload_list()
-                return None
+                if self._cli is None:
+                    self._sort_key = lambda x: x.title
+                    self._model.threads.sort(key=self._sort_key)
+                    self._reload_list()
+                    return None
             elif event.key_code == self._keybindings["dsort_2"]:
-                self._model.threads.sort(key=lambda x: x.title, reverse=True)
-                self._reload_list()
-                return None
+                if self._cli is None:
+                    self._sort_key = lambda x: x.title
+                    self._model.threads.sort(key=self._sort_key, reverse=True)
+                    self._reload_list()
+                    return None
             elif event.key_code == self._keybindings["sort_3"]:
-                self._model.threads.sort(key=lambda x: x.count)
-                self._reload_list()
-                return None
+                if self._cli is None:
+                    self._sort_key = lambda x: x.count
+                    self._model.threads.sort(key=self._sort_key)
+                    self._reload_list()
+                    return None
             elif event.key_code == self._keybindings["dsort_3"]:
-                self._model.threads.sort(key=lambda x: x.count, reverse=True)
-                self._reload_list()
-                return None
+                if self._cli is None:
+                    self._sort_key = lambda x: x.count
+                    self._model.threads.sort(key=self._sort_key, reverse=True)
+                    self._reload_list()
+                    return None
             elif event.key_code == self._keybindings["sort_4"]:
-                self._model.threads.sort(key=lambda x: x.speed)
-                self._reload_list()
-                return None
+                if self._cli is None:
+                    self._sort_key = lambda x: x.speed
+                    self._model.threads.sort(key=self._sort_key)
+                    self._reload_list()
+                    return None
             elif event.key_code == self._keybindings["dsort_4"]:
-                self._model.threads.sort(key=lambda x: x.speed, reverse=True)
-                self._reload_list()
-                return None
+                if self._cli is None:
+                    self._sort_key = lambda x: x.speed
+                    self._model.threads.sort(key=self._sort_key, reverse=True)
+                    self._reload_list()
+                    return None
+            elif event.key_code == ord("f"):
+                if self._cli is None:
+                    self._cli = CommandLine(self._screen, "find:", self._find)
+                    self._scene.add_effect(self._cli)
 
         return super().process_event(event)
+
+    def _find(self, word: str):
+        self._model.threads.sort(key=lambda x: (word not in x.title, self._sort_key(x)))
+        self._reload_list()
+        self._cli = None
