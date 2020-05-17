@@ -27,13 +27,13 @@ class CommandLine(Frame):
 
         self.fix()
 
-    def destroy(self):
+    def disappear(self):
         self._scene.remove_effect(self)
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
             if event.key_code == ord('\n'):
-                self.destroy()
+                self.disappear()
                 self._on_close(self._text.value)
                 return None
 
