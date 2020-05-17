@@ -36,7 +36,7 @@ class Shift:
     B = ord('B')
     C = ord('C')
     D = ord('D')
-    E = ord('D')
+    E = ord('E')
     F = ord('F')
     G = ord('G')
     H = ord('H')
