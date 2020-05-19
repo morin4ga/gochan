@@ -74,6 +74,9 @@ class RichText(Widget):
 
         return event
 
+    def reset_offset(self):
+        self._scrl_offset = 0
+
     def scroll_down(self):
         max_offset = len(self._value) - self._h
 

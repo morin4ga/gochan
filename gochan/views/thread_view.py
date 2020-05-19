@@ -59,6 +59,7 @@ class ThreadView(Frame):
     def model(self, model: Thread):
         self._model = model
         self._update_buffer()
+        self._rtext.reset_offset()
 
     def _update_buffer(self):
         if self._model is not None:
