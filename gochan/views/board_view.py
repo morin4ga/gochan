@@ -6,7 +6,7 @@ from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, MultiCo
 
 from gochan.config import KEY_BINDINGS
 from gochan.data import Board, BoardHeader, ThreadHeader
-from gochan.state import app_state
+from gochan.controller import Controller
 from gochan.widgets import MultiColumnListBoxK
 from gochan.effects import CommandLine
 
@@ -59,33 +59,21 @@ class BoardView(Frame):
         self._on_pick()
 
     def _on_back(self):
-        app_state.to_bbsmenu()
+        Controller.bbsmenu.show()
 
     def _on_pick(self):
         pass
 
     # _on_load is already used by Frame. So use _on_load_ here
-    def _on_load_(self):
-        if self._model == app_state.board:
-            return
-
-        self._reload_list()
-
-    def _reload_list(self, new_value=None):
-        self._model = app_state.board
-        if self._model is not None:
-            self._thread_list.options = [([str(x.number), "|" + x.title, " |" + str(x.count), " |" + str(x.speed)], i)
-                                         for i, x in enumerate(self._model.threads)]
-        else:
-            self._thread_list.options = []
-
+    def _on_load_(self, new_value=None):
         self._thread_list.value = new_value
 
     def _on_select(self):
         self.save()
         index = self.data['thread_list']
         hdr = self._model.threads[index]
-        app_state.open_thread(hdr)
+        Controller.thread.set_data(hdr)
+        Controller.thread.show()
 
     @property
     def model(self):
@@ -94,6 +82,14 @@ class BoardView(Frame):
     @model.setter
     def model(self, model: Board):
         self._model = model
+        self._update_options()
+
+    def _update_options(self):
+        if self._model is not None:
+            self._thread_list.options = [([str(x.number), "|" + x.title, " |" + str(x.count), " |" + str(x.speed)], i)
+                                         for i, x in enumerate(self._model.threads)]
+        else:
+            self._thread_list.options = []
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
@@ -101,49 +97,49 @@ class BoardView(Frame):
                 if self._cli is None:
                     self._sort_key = lambda x: x.number
                     self._model.threads.sort(key=self._sort_key)
-                    self._reload_list()
+                    self._update_options()
                     return None
             elif event.key_code == self._keybindings["dsort_1"]:
                 if self._cli is None:
                     self._sort_key = lambda x: x.number
                     self._model.threads.sort(key=self._sort_key, reverse=True)
-                    self._reload_list()
+                    self._update_options()
                     return None
             elif event.key_code == self._keybindings["sort_2"]:
                 if self._cli is None:
                     self._sort_key = lambda x: x.title
                     self._model.threads.sort(key=self._sort_key)
-                    self._reload_list()
+                    self._update_options()
                     return None
             elif event.key_code == self._keybindings["dsort_2"]:
                 if self._cli is None:
                     self._sort_key = lambda x: x.title
                     self._model.threads.sort(key=self._sort_key, reverse=True)
-                    self._reload_list()
+                    self._update_options()
                     return None
             elif event.key_code == self._keybindings["sort_3"]:
                 if self._cli is None:
                     self._sort_key = lambda x: x.count
                     self._model.threads.sort(key=self._sort_key)
-                    self._reload_list()
+                    self._update_options()
                     return None
             elif event.key_code == self._keybindings["dsort_3"]:
                 if self._cli is None:
                     self._sort_key = lambda x: x.count
                     self._model.threads.sort(key=self._sort_key, reverse=True)
-                    self._reload_list()
+                    self._update_options()
                     return None
             elif event.key_code == self._keybindings["sort_4"]:
                 if self._cli is None:
                     self._sort_key = lambda x: x.speed
                     self._model.threads.sort(key=self._sort_key)
-                    self._reload_list()
+                    self._update_options()
                     return None
             elif event.key_code == self._keybindings["dsort_4"]:
                 if self._cli is None:
                     self._sort_key = lambda x: x.speed
                     self._model.threads.sort(key=self._sort_key, reverse=True)
-                    self._reload_list()
+                    self._update_options()
                     return None
             elif event.key_code == ord("f"):
                 if self._cli is None:
@@ -154,5 +150,5 @@ class BoardView(Frame):
 
     def _find(self, word: str):
         self._model.threads.sort(key=lambda x: (word not in x.title, self._sort_key(x)))
-        self._reload_list()
+        self._update_options()
         self._cli = None

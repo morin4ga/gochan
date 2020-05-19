@@ -5,8 +5,8 @@ from asciimatics.widgets import Frame, Layout, Widget
 
 from gochan.config import KEY_BINDINGS
 from gochan.data import Bbsmenu, BoardHeader
-from gochan.state import app_state
 from gochan.widgets import ListBoxK
+from gochan.controller import Controller
 
 
 class BbsmenuView(Frame):
@@ -14,7 +14,7 @@ class BbsmenuView(Frame):
         super().__init__(screen,
                          screen.height,
                          screen.width,
-                         on_load=self._reload_list,
+                         on_load=self._on_load_,
                          hover_focus=True,
                          can_scroll=False,
                          has_border=False,
@@ -54,17 +54,20 @@ class BbsmenuView(Frame):
 
         self.fix()
 
-    def _reload_list(self, new_value=None):
-        if self._model == app_state.bbsmenu:
-            return
+    @property
+    def model(self):
+        return self._model
 
-        self._model = app_state.bbsmenu
+    @model.setter
+    def model(self, model: Bbsmenu):
+        self._model = model
 
         if self._model is not None:
             self._cat_list.options = self._model.get_items()
         else:
             self._cat_list.options = []
 
+    def _on_load_(self, new_value=None):
         self._cat_list.value = new_value
         self._on_pick_c()
 
@@ -90,4 +93,5 @@ class BbsmenuView(Frame):
         index1 = self.data['cat_list']
         index2 = self.data['board_list']
         board_hdr = self._model.categories[index1].boards[index2]
-        app_state.open_board(board_hdr)
+        Controller.board.set_data(board_hdr)
+        Controller.board.show()

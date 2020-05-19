@@ -8,20 +8,28 @@ from asciimatics.widgets import THEMES, Button, Divider, Frame, Layout, ListBox,
 
 from gochan.config import BROWSER_PATH, THEME
 from gochan.data import Bbsmenu, BoardHeader, ThreadHeader
+from gochan.key import KeyLogger
 from gochan.views import BbsmenuView, BoardView, ResponseForm, ThreadView
+from gochan.controller import Controller
 
 
 def demo(screen: Screen, scene: Scene):
     bbsmenu_view = BbsmenuView(screen)
     board_view = BoardView(screen)
     thread_view = ThreadView(screen)
-    res_form = ResponseForm(screen)
+    resform = ResponseForm(screen)
+    keylog = KeyLogger(screen)
+
+    Controller.register_views((bbsmenu_view, "Bbsmenu"), (board_view, "Board"), (thread_view, "Thread"),
+                              (resform, "ResponseForm"))
+    Controller.bbsmenu.update_data()
 
     scenes = [
+        # Scene([keylog], -1, name="Keylog"),
         Scene([bbsmenu_view], -1, name="Bbsmenu"),
         Scene([board_view], -1, name="Board"),
         Scene([thread_view], -1, name="Thread"),
-        Scene([res_form], -1, name="ResponseForm")
+        Scene([resform], -1, name="ResponseForm")
     ]
 
     screen.play(scenes, stop_on_resize=True, start_scene=scene, allow_int=True)

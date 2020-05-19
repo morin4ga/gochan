@@ -5,7 +5,7 @@ from asciimatics.widgets import Button, Divider, Frame, Layout, PopUpDialog, Tex
 
 from gochan.client import client
 from gochan.data import Thread
-from gochan.state import app_state
+from gochan.controller import Controller
 
 
 class ResponseForm(Frame):
@@ -59,15 +59,19 @@ class ResponseForm(Frame):
 
         self.fix()
 
-    def _load(self):
-        if self._target == app_state.res_form:
-            return
+    @property
+    def target(self):
+        return self._target
 
-        self._target = app_state.res_form
+    @target.setter
+    def target(self, target: Thread):
+        self._target = target
+
+    def _load(self):
         self._clear_all_inputs()
 
     def _back(self):
-        raise NextScene("Board")
+        Controller.thread.show()
 
     def _submit(self):
         if self._target is not None:
@@ -86,7 +90,7 @@ class ResponseForm(Frame):
 
     def _on_posted(self, _):
         self._clear_all_inputs()
-        app_state.to_thread()
+        Controller.thread.show()
 
     def _clear_all_inputs(self):
         self._name_box.value = ""

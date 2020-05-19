@@ -8,7 +8,7 @@ from gochan.browser import open_link
 from gochan.config import BROWSER_PATH, KEY_BINDINGS, THREAD_PALLET
 from gochan.data import Thread
 from gochan.effects import CommandLine
-from gochan.state import app_state
+from gochan.controller import Controller
 from gochan.widgets import Buffer, RichText
 
 
@@ -17,7 +17,7 @@ class ThreadView(Frame):
         super().__init__(screen,
                          screen.height,
                          screen.width,
-                         on_load=self._reload,
+                         on_load=self._on_load_,
                          hover_focus=True,
                          can_scroll=False,
                          has_border=False
@@ -51,23 +51,30 @@ class ThreadView(Frame):
 
         self.fix()
 
-    def _reload(self):
-        if self._model == app_state.thread:
-            return
+    @property
+    def model(self):
+        return self._model
 
-        self._model = app_state.thread
-        self._rtext.reset()
+    @model.setter
+    def model(self, model: Thread):
+        self._model = model
+        self._update_buffer()
 
+    def _update_buffer(self):
         if self._model is not None:
             self._rtext.value = _convert_to_buf(self._model)
         else:
             self._rtext.value = []
 
+    def _on_load_(self):
+        pass
+
     def _back(self):
-        app_state.to_board()
+        Controller.board.show()
 
     def _write(self):
-        app_state.open_res_form(self._model)
+        Controller.resform.set_target(self._model)
+        Controller.resform.show()
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
