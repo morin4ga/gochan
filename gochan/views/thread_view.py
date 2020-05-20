@@ -1,10 +1,11 @@
+import re
 from typing import Callable
 
 from asciimatics.event import KeyboardEvent
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget
 
-from gochan.browser import open_link
+from gochan.browser import open_link, open_links
 from gochan.config import BROWSER_PATH, KEY_BINDINGS, THREAD_PALLET
 from gochan.data import Thread
 from gochan.effects import CommandLine
@@ -94,6 +95,16 @@ class ThreadView(Frame):
             if len(self._model.links) > idx:
                 link = self._model.links[idx]
                 open_link(link)
+        else:
+            m = re.match(r'(\d+)-(\d+)', cmd)
+            if m is not None:
+                start_idx = int(m.group(1))
+                end_idx = int(m.group(2))
+
+                if start_idx < end_idx \
+                        and start_idx >= 0 \
+                        and end_idx < len(self._model.links):
+                    open_links(self._model.links[start_idx:(end_idx + 1)])
 
         self._inputing_cmd = False
 
