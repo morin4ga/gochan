@@ -7,7 +7,7 @@ from gochan.client import client
 from gochan.data import BoardHeader, Thread, ThreadHeader
 
 if TYPE_CHECKING:
-    from gochan.views import BbsmenuView, BoardView, ThreadView, ResponseForm
+    from gochan.views import BbsmenuView, BoardView, ThreadView, ResponseForm, ImageView
 
 
 T = TypeVar('T')
@@ -60,6 +60,11 @@ class ResponseFormController(ViewController):
         self._view.target = target
 
 
+class ImageViewController(ViewController):
+    def set_image(self, file_name: str):
+        self._view.image = file_name
+
+
 class Controller:
     bbsmenu: BbsmenuViewController = None
     board: BoardViewController = None
@@ -68,8 +73,10 @@ class Controller:
 
     @classmethod
     def register_views(cls, bbsmenu: Tuple["BoardView", str], board: Tuple["BoardView", str],
-                       thread: Tuple["ThreadView", str], resform: Tuple["ResponseForm", str]):
+                       thread: Tuple["ThreadView", str], resform: Tuple["ResponseForm", str],
+                       image: Tuple["ImageView", str]):
         cls.bbsmenu = BbsmenuViewController(bbsmenu[0], bbsmenu[1])
         cls.board = BoardViewController(board[0], board[1])
         cls.thread = ThreadViewController(thread[0], thread[1])
         cls.resform = ResponseFormController(resform[0], resform[1])
+        cls.image = ImageViewController(image[0], image[1])
