@@ -4,9 +4,9 @@ from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, Layout, Widget
 
 from gochan.config import KEY_BINDINGS
+from gochan.controller import Controller
 from gochan.data import Bbsmenu, BoardHeader
 from gochan.widgets import ListBoxK
-from gochan.controller import Controller
 
 
 class BbsmenuView(Frame):

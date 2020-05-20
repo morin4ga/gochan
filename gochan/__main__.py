@@ -7,10 +7,10 @@ from asciimatics.screen import Screen
 from asciimatics.widgets import THEMES, Button, Divider, Frame, Layout, ListBox, Text, TextBox, Widget
 
 from gochan.config import BROWSER_PATH, THEME
+from gochan.controller import Controller
 from gochan.data import Bbsmenu, BoardHeader, ThreadHeader
 from gochan.key import KeyLogger
 from gochan.views import BbsmenuView, BoardView, ResponseForm, ThreadView
-from gochan.controller import Controller
 
 
 def demo(screen: Screen, scene: Scene):

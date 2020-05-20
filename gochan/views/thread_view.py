@@ -7,9 +7,9 @@ from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget
 
 from gochan.browser import open_link, open_links
 from gochan.config import BROWSER_PATH, KEY_BINDINGS, THREAD_PALLET
+from gochan.controller import Controller
 from gochan.data import Thread
 from gochan.effects import CommandLine
-from gochan.controller import Controller
 from gochan.widgets import Buffer, RichText
 
 

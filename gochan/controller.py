@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, TypeVar, Generic, Tuple
+from typing import TYPE_CHECKING, Generic, Tuple, TypeVar
 
 from asciimatics.exceptions import NextScene
 
 from gochan.client import client
-from gochan.data import Thread, ThreadHeader, BoardHeader
+from gochan.data import BoardHeader, Thread, ThreadHeader
 
 if TYPE_CHECKING:
     from gochan.views import BbsmenuView, BoardView, ThreadView, ResponseForm

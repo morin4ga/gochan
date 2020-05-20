@@ -4,8 +4,8 @@ from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, PopUpDialog, Text, TextBox, Widget
 
 from gochan.client import client
-from gochan.data import Thread
 from gochan.controller import Controller
+from gochan.data import Thread
 
 
 class ResponseForm(Frame):
