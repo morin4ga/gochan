@@ -1,6 +1,6 @@
 from asciimatics.effects import Print
 from asciimatics.event import KeyboardEvent
-from asciimatics.renderers import ImageFile
+from asciimatics.renderers import ColourImageFile
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame
 
@@ -29,7 +29,7 @@ class ImageView(Frame):
     @image.setter
     def image(self, file_name: str):
         self._file_name = file_name
-        self._image = Print(self.screen, ImageFile(file_name), -1)
+        self._image = Print(self.screen, ColourImageFile(self._screen, file_name, height=self._screen.height), -1)
         self._scene.add_effect(self._image)
 
     def process_event(self, event):

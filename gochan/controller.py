@@ -1,10 +1,16 @@
+import re
+import tempfile
+import urllib
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Generic, Tuple, TypeVar
 
 from asciimatics.exceptions import NextScene
 
+from gochan.browser import download_image
 from gochan.client import client
+from gochan.config import USE_CACHE
 from gochan.data import BoardHeader, Thread, ThreadHeader
+from gochan.storage import storage
 
 if TYPE_CHECKING:
     from gochan.views import BbsmenuView, BoardView, ThreadView, ResponseForm, ImageView
@@ -61,8 +67,23 @@ class ResponseFormController(ViewController):
 
 
 class ImageViewController(ViewController):
-    def set_image(self, file_name: str):
-        self._view.image = file_name
+    def set_image(self, url: str):
+        if USE_CACHE:
+            file_name = re.sub(r'https?://|/', "", url)
+
+            cache = storage.get_cache(file_name)
+            if cache is not None:
+                self._view.image = cache
+            else:
+                data = download_image(url)
+                path = storage.store_cache(file_name, data)
+                self._view.image = path
+        else:
+            data = download_image(url)
+            f = tempfile.NamedTemporaryFile()
+            f.write(data)
+            self._view.image = f.name
+            f.close()
 
 
 class Controller:

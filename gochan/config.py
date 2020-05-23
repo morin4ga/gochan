@@ -7,6 +7,10 @@ from asciimatics.screen import Screen
 
 from gochan.key import Key, parse_key
 
+USE_CACHE = True
+CACHE_PATH = "~/.gochan/cache"
+MAX_CACHE = 5
+
 BROWSER_PATH = None
 THEME = {
     "background": (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK),

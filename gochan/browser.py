@@ -1,3 +1,4 @@
+import urllib
 import webbrowser
 from subprocess import Popen
 from typing import List
@@ -18,3 +19,12 @@ def open_links(urls: List[str]):
             webbrowser.open(url)
     else:
         Popen([BROWSER_PATH, *urls])
+
+
+def download_image(url: str):
+    try:
+        with urllib.request.urlopen(url) as response:
+            data = response.read()
+            return data
+    except urllib.error.URLError:
+        None

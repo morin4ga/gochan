@@ -26,7 +26,8 @@ class ThreadView(Frame):
 
         self._model: Thread = None
 
-        self._inputing_cmd: bool = False
+        self._open_link_cli = None
+        self._show_image_cli = None
 
         self.set_theme("user_theme")
 
@@ -81,15 +82,19 @@ class ThreadView(Frame):
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
             if event.key_code == KEY_BINDINGS["thread"]["open_link"]:
-                if not self._inputing_cmd:
-                    self._cli = CommandLine(self._screen, "open:", self._open_link)
-                    self._scene.add_effect(self._cli)
+                if self._open_link_cli is None and self._show_image_cli is None:
+                    self._open_link_cli = CommandLine(self._screen, "open:", self._open_link)
+                    self._scene.add_effect(self._open_link_cli)
                 return None
+            elif event.key_code == ord("a"):
+                if self._open_link_cli is None and self._show_image_cli is None:
+                    self._show_image_cli = CommandLine(self._screen, "show:", self._show_image)
+                    self._scene.add_effect(self._show_image_cli)
 
         return super().process_event(event)
 
     def _open_link(self, cmd: str):
-        if str.isdecimal(cmd):
+        if cmd.isdecimal():
             idx = int(cmd)
 
             if len(self._model.links) > idx:
@@ -106,7 +111,20 @@ class ThreadView(Frame):
                         and end_idx < len(self._model.links):
                     open_links(self._model.links[start_idx:(end_idx + 1)])
 
-        self._inputing_cmd = False
+        self._open_link_cli = None
+
+    def _show_image(self, cmd: str):
+        self._show_image_cli = None
+
+        if cmd.isdecimal():
+            idx = int(cmd)
+
+            if len(self._model.links) > idx:
+                link = self._model.links[idx]
+
+                if re.match(r'.*\.(jpg|png|jpeg|gif)', link) is not None:
+                    Controller.image.set_image(link)
+                    Controller.image.show()
 
 
 def _convert_to_buf(thread: Thread) -> Buffer:
