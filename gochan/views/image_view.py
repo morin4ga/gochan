@@ -41,6 +41,6 @@ class ImageView(Frame):
                     self._image = None
                     self._file_name = None
 
-                raise NextScene(controller.thread._scene_name)
+                raise NextScene(controller.thread.scene_name)
 
         return super().process_event(event)
