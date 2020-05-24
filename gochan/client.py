@@ -174,7 +174,7 @@ class Client:
         params = {"bbs": board, "key": key, "time": "1588219909",
                   "FROM": name, "mail": mail, "MESSAGE": msg, "submit": "書き込み"}
 
-        data = urlencode(params, encoding="shift-jis").encode()
+        data = urlencode(params, encoding="shift-jis", errors="xmlcharrefreplace").encode()
         hdrs = {"Referer": ref, "User-Agent": "Mozilla/5.0", "Cookie": "yuki=akari"}
 
         req = Request(url, headers=hdrs)
