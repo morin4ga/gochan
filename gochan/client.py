@@ -152,6 +152,22 @@ class Client:
 
         return t
 
+    def update_thread(self, thread: Thread):
+        url = f"https://{thread.server}.5ch.net/test/read.cgi/{thread.board}/{thread.key}/{len(thread.responses)+1}-"
+        hdr = {"User-Agent": "Mozilla/5.0"}
+
+        req = Request(url, headers=hdr)
+
+        response = urlopen(req)
+
+        html = response.read().decode("shift-jis", "ignore")
+
+        response.close()
+
+        t = _parse_html(html)
+        thread.responses.extend(t.responses[1:])
+        thread.is_pastlog = t.is_pastlog
+
     def post_response(self, server: str, board: str, key: str, name: str, mail: str, msg: str) -> str:
         url = f"https://{server}.5ch.net/test/bbs.cgi"
         ref = f"https://{server}.5ch.net/test/read.cgi/{board}/{key}"
@@ -225,8 +241,9 @@ def _parse_html(html: str) -> Thread:
 
     total_links = 0
 
-    re_res = re.compile(r'<div class="post".*?"name"><b>(?:<a href="mailto:(.*?)">)?(.*?)(?:</a>)?</b></span>'
-                        r'.*?"date">(.*?)<.*?"uid">(.*?)<.*?"escaped"> (.*?) </span></div></div><br>')
+    re_res = re.compile(
+        r'<div class="post" id="(\d+)".*?"name"><b>(?:<a href="mailto:(.*?)">)?(.*?)(?:</a>)?</b></span>'
+        r'.*?"date">(.*?)<.*?"uid">(.*?)<.*?"escaped"> (.*?) </span></div></div><br>')
 
     re_link = re.compile(r'<a href="http.*?>(.*?)</a>|<a class="image".*?>(.*?)</a>')
 
@@ -234,12 +251,13 @@ def _parse_html(html: str) -> Thread:
 
     re_b = re.compile(r'</?b>')
 
-    for i, res in enumerate(re_res.finditer(html), 1):
-        mail = res.group(1)
-        name = re_b.sub("", res.group(2))
-        date = res.group(3)
-        id = res.group(4)
-        msg = res.group(5)
+    for res in re_res.finditer(html):
+        number = res.group(1)
+        mail = res.group(2)
+        name = re_b.sub("", res.group(3))
+        date = res.group(4)
+        id = res.group(5)
+        msg = res.group(6)
         msg = re.sub(" ?<br> ", "\n", msg)
         # Remove be icon
         msg = re.sub(r'<img.*\n', "", msg)
@@ -260,7 +278,7 @@ def _parse_html(html: str) -> Thread:
         msg = unescape(msg)
 
         thread.responses.append(
-            Response(i, name, mail, date, id, msg)
+            Response(number, name, mail, date, id, msg)
         )
 
     return thread

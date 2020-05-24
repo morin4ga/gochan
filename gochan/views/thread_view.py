@@ -40,6 +40,7 @@ class ThreadView(Frame):
         )
 
         self._back_button = Button("Back", on_click=self._back)
+        self._update_button = Button("Update", on_click=self._update_model)
         self._write_button = Button("Write", on_click=self._write)
 
         layout1 = Layout([100], fill_frame=True)
@@ -50,7 +51,8 @@ class ThreadView(Frame):
         layout2 = Layout([33, 33, 34])
         self.add_layout(layout2)
         layout2.add_widget(self._back_button, 0)
-        layout2.add_widget(self._write_button, 1)
+        layout2.add_widget(self._update_button, 1)
+        layout2.add_widget(self._write_button, 2)
 
         self.fix()
 
@@ -75,6 +77,10 @@ class ThreadView(Frame):
 
     def _back(self):
         raise NextScene(controller.board.scene_name)
+
+    def _update_model(self):
+        controller.thread.update_data()
+        self._update_buffer()
 
     def _write(self):
         controller.resform.set_target(self._model)

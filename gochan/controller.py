@@ -51,11 +51,10 @@ class ThreadViewController(ViewController["ThreadView"]):
         self._view.model = m
 
     def update_data(self):
-        old = self._view.model
+        model = self._view.model
 
-        if old is not None:
-            m = client.get_thread(old.server, old.board, old.key)
-            self._view.model = m
+        if model is not None:
+            client.update_thread(model)
 
 
 class ResponseFormController(ViewController["ResponseForm"]):
