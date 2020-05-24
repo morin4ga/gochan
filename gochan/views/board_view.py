@@ -1,11 +1,12 @@
 from typing import Callable, Dict, List, Tuple
 
 from asciimatics.event import KeyboardEvent
+from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, MultiColumnListBox, Widget
 
 from gochan.config import KEY_BINDINGS
-from gochan.controller import Controller
+from gochan.controller import controller
 from gochan.data import Board, BoardHeader, ThreadHeader
 from gochan.effects import CommandLine
 from gochan.widgets import MultiColumnListBoxK
@@ -59,7 +60,7 @@ class BoardView(Frame):
         self._on_pick()
 
     def _on_back(self):
-        Controller.bbsmenu.show()
+        raise NextScene(controller.bbsmenu.scene_name)
 
     def _on_pick(self):
         pass
@@ -72,8 +73,8 @@ class BoardView(Frame):
         self.save()
         index = self.data['thread_list']
         hdr = self._model.threads[index]
-        Controller.thread.set_data(hdr)
-        Controller.thread.show()
+        controller.thread.set_data(hdr)
+        raise NextScene(controller.thread.scene_name)
 
     @property
     def model(self):

@@ -23,10 +23,7 @@ class ViewController(Generic[T]):
     def __init__(self, view, name):
         super().__init__()
         self._view: T = view
-        self._scene_name: str = name
-
-    def show(self):
-        raise NextScene(self._scene_name)
+        self.scene_name: str = name
 
 
 class BbsmenuViewController(ViewController["BbsmenuView"]):
@@ -87,17 +84,22 @@ class ImageViewController(ViewController["ImageView"]):
 
 
 class Controller:
-    bbsmenu: BbsmenuViewController = None
-    board: BoardViewController = None
-    thread: ThreadViewController = None
-    resform: ResponseFormController = None
+    def __init__(self):
+        super().__init__()
+        self.bbsmenu: BbsmenuViewController = None
+        self.board: BoardViewController = None
+        self.thread: ThreadViewController = None
+        self.resform: ResponseFormController = None
+        self.image: ImageViewController = None
 
-    @classmethod
-    def register_views(cls, bbsmenu: Tuple["BoardView", str], board: Tuple["BoardView", str],
+    def register_views(self, bbsmenu: Tuple["BoardView", str], board: Tuple["BoardView", str],
                        thread: Tuple["ThreadView", str], resform: Tuple["ResponseForm", str],
                        image: Tuple["ImageView", str]):
-        cls.bbsmenu = BbsmenuViewController(bbsmenu[0], bbsmenu[1])
-        cls.board = BoardViewController(board[0], board[1])
-        cls.thread = ThreadViewController(thread[0], thread[1])
-        cls.resform = ResponseFormController(resform[0], resform[1])
-        cls.image = ImageViewController(image[0], image[1])
+        self.bbsmenu = BbsmenuViewController(bbsmenu[0], bbsmenu[1])
+        self.board = BoardViewController(board[0], board[1])
+        self.thread = ThreadViewController(thread[0], thread[1])
+        self.resform = ResponseFormController(resform[0], resform[1])
+        self.image = ImageViewController(image[0], image[1])
+
+
+controller = Controller()

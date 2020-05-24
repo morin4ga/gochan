@@ -2,12 +2,13 @@ import re
 from typing import Callable
 
 from asciimatics.event import KeyboardEvent
+from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget
 
 from gochan.browser import open_link, open_links
 from gochan.config import BROWSER_PATH, KEY_BINDINGS, THREAD_PALLET
-from gochan.controller import Controller
+from gochan.controller import controller
 from gochan.data import Thread
 from gochan.effects import CommandLine
 from gochan.widgets import Buffer, RichText
@@ -73,11 +74,11 @@ class ThreadView(Frame):
         pass
 
     def _back(self):
-        Controller.board.show()
+        raise NextScene(controller.board.scene_name)
 
     def _write(self):
-        Controller.resform.set_target(self._model)
-        Controller.resform.show()
+        controller.resform.set_target(self._model)
+        raise NextScene(controller.resform.scene_name)
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
@@ -123,8 +124,8 @@ class ThreadView(Frame):
                 link = self._model.links[idx]
 
                 if re.match(r'.*\.(jpg|png|jpeg|gif)', link) is not None:
-                    Controller.image.set_image(link)
-                    Controller.image.show()
+                    controller.image.set_image(link)
+                    raise NextScene(controller.image.scene_name)
 
 
 def _convert_to_buf(thread: Thread) -> Buffer:

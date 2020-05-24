@@ -1,10 +1,11 @@
 from asciimatics.effects import Print
 from asciimatics.event import KeyboardEvent
+from asciimatics.exceptions import NextScene
 from asciimatics.renderers import ColourImageFile
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame
 
-from gochan.controller import Controller
+from gochan.controller import controller
 
 
 class ImageView(Frame):
@@ -40,6 +41,6 @@ class ImageView(Frame):
                     self._image = None
                     self._file_name = None
 
-                Controller.thread.show()
+                raise NextScene(controller.thread._scene_name)
 
         return super().process_event(event)

@@ -1,10 +1,11 @@
 from typing import Callable
 
+from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, Layout, Widget
 
 from gochan.config import KEY_BINDINGS
-from gochan.controller import Controller
+from gochan.controller import controller
 from gochan.data import Bbsmenu, BoardHeader
 from gochan.widgets import ListBoxK
 
@@ -93,5 +94,5 @@ class BbsmenuView(Frame):
         index1 = self.data['cat_list']
         index2 = self.data['board_list']
         board_hdr = self._model.categories[index1].boards[index2]
-        Controller.board.set_data(board_hdr)
-        Controller.board.show()
+        controller.board.set_data(board_hdr)
+        raise NextScene(controller.board.scene_name)

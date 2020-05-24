@@ -4,7 +4,7 @@ from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, PopUpDialog, Text, TextBox, Widget
 
 from gochan.client import client
-from gochan.controller import Controller
+from gochan.controller import controller
 from gochan.data import Thread
 
 
@@ -71,7 +71,7 @@ class ResponseForm(Frame):
         self._clear_all_inputs()
 
     def _back(self):
-        Controller.thread.show()
+        raise NextScene(controller.thread.scene_name)
 
     def _submit(self):
         if self._target is not None:
@@ -90,7 +90,7 @@ class ResponseForm(Frame):
 
     def _on_posted(self, _):
         self._clear_all_inputs()
-        Controller.thread.show()
+        raise NextScene(controller.thread.scene_name)
 
     def _clear_all_inputs(self):
         self._name_box.value = ""
