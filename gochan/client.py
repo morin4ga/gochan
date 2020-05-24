@@ -242,8 +242,9 @@ def _parse_html(html: str) -> Thread:
     total_links = 0
 
     re_res = re.compile(
-        r'<div class="post" id="(\d+)".*?"name"><b>(?:<a href="mailto:(.*?)">)?(.*?)(?:</a>)?</b></span>'
-        r'.*?"date">(.*?)<.*?"uid">(.*?)<.*?"escaped"> (.*?) </span></div></div><br>')
+        r'<div class="post" id="(\d+)".*?"name"><b>(?:<a href="mailto:(.*?)">)?(.*?)(?:</a>)?</b></span>.*?"date">(.*?)'
+        r'<.*?"uid">(.*?)<.*?>(?:<.*?>)+? (.*?) (?:<.*?>)+?</div></div><br>'
+    )
 
     re_link = re.compile(r'<a href="http.*?>(.*?)</a>|<a class="image".*?>(.*?)</a>')
 
