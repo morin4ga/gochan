@@ -19,23 +19,23 @@ if TYPE_CHECKING:
 T = TypeVar('T')
 
 
-class ViewController():
+class ViewController(Generic[T]):
     def __init__(self, view, name):
         super().__init__()
-        self._view = view
-        self._scene_name = name
+        self._view: T = view
+        self._scene_name: str = name
 
     def show(self):
         raise NextScene(self._scene_name)
 
 
-class BbsmenuViewController(ViewController):
+class BbsmenuViewController(ViewController["BbsmenuView"]):
     def update_data(self):
         m = client.get_bbsmenu()
         self._view.model = m
 
 
-class BoardViewController(ViewController):
+class BoardViewController(ViewController["BoardView"]):
     def set_data(self, hdr: BoardHeader):
         m = client.get_board(hdr.server, hdr.board)
         self._view.model = m
@@ -48,7 +48,7 @@ class BoardViewController(ViewController):
             self._view.model = m
 
 
-class ThreadViewController(ViewController):
+class ThreadViewController(ViewController["ThreadView"]):
     def set_data(self, hdr: ThreadHeader):
         m = client.get_thread(hdr.server, hdr.board, hdr.key)
         self._view.model = m
@@ -61,12 +61,12 @@ class ThreadViewController(ViewController):
             self._view.model = m
 
 
-class ResponseFormController(ViewController):
+class ResponseFormController(ViewController["ResponseForm"]):
     def set_target(self, target: Thread):
         self._view.target = target
 
 
-class ImageViewController(ViewController):
+class ImageViewController(ViewController["ImageView"]):
     def set_image(self, url: str):
         if USE_CACHE:
             file_name = re.sub(r'https?://|/', "", url)
