@@ -28,8 +28,11 @@ class ThreadView(Frame):
 
         self._model: Thread = None
 
+        self._anchors = []
+
         self._open_link_cli = None
         self._show_image_cli = None
+        self._goto_cli = None
 
         self.set_theme("user_theme")
 
@@ -67,12 +70,6 @@ class ThreadView(Frame):
         self._update_buffer()
         self._rtext.reset_offset()
 
-    def _update_buffer(self):
-        if self._model is not None:
-            self._rtext.value = _convert_to_buf(self._model, self._rtext.width)
-        else:
-            self._rtext.value = []
-
     def _on_load_(self):
         pass
 
@@ -90,16 +87,27 @@ class ThreadView(Frame):
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
             if event.key_code == KEY_BINDINGS["thread"]["open_link"]:
-                if self._open_link_cli is None and self._show_image_cli is None:
+                if not self._is_cli_opened():
                     self._open_link_cli = CommandLine(self._screen, "open:", self._open_link)
                     self._scene.add_effect(self._open_link_cli)
                 return None
             elif event.key_code == ord("a"):
-                if self._open_link_cli is None and self._show_image_cli is None:
+                if not self._is_cli_opened():
                     self._show_image_cli = CommandLine(self._screen, "show:", self._show_image)
                     self._scene.add_effect(self._show_image_cli)
+                return None
+            elif event.key_code == ord("g"):
+                if not self._is_cli_opened():
+                    self._goto_cli = CommandLine(self._screen, "go to:", self._go_to)
+                    self._scene.add_effect(self._goto_cli)
+                return None
 
         return super().process_event(event)
+
+    def _is_cli_opened(self):
+        return self._open_link_cli is not None\
+            or self._show_image_cli is not None\
+            or self._goto_cli is not None
 
     def _open_link(self, cmd: str):
         if cmd.isdecimal():
@@ -134,37 +142,52 @@ class ThreadView(Frame):
                     controller.image.set_image(link)
                     raise NextScene(controller.image.scene_name)
 
+    def _go_to(self, cmd: str):
+        self._goto_cli = None
 
-def _convert_to_buf(thread: Thread, width: int) -> Buffer:
-    buf = Buffer(width)
+        if cmd.isdecimal():
+            idx = int(cmd) - 1
 
-    for r in thread.responses:
-        for c in str(r.number):
-            buf.push_cell((c, *THREAD_PALLET["normal"]))
+            if idx > 0 and idx < len(self._anchors):
+                self._rtext.go_to(self._anchors[idx])
 
-        buf.push_cell((" ", *THREAD_PALLET["normal"]))
+    def _update_buffer(self) -> Buffer:
+        if self._model is None:
+            return
 
-        for c in r.name:
-            buf.push_cell((c, *THREAD_PALLET["name"]))
+        self._anchors = []
 
-        buf.push_cell((" ", *THREAD_PALLET["normal"]))
+        buf = Buffer(self._rtext.width)
 
-        for c in r.date:
-            buf.push_cell((c, *THREAD_PALLET["normal"]))
+        for r in self._model.responses:
+            self._anchors.append(len(buf))
 
-        buf.push_cell((" ", *THREAD_PALLET["normal"]))
-
-        for c in r.id:
-            buf.push_cell((c, *THREAD_PALLET["normal"]))
-
-        buf.break_line(2)
-
-        for l in r.message.split("\n"):
-            for c in l:
+            for c in str(r.number):
                 buf.push_cell((c, *THREAD_PALLET["normal"]))
+
+            buf.push_cell((" ", *THREAD_PALLET["normal"]))
+
+            for c in r.name:
+                buf.push_cell((c, *THREAD_PALLET["name"]))
+
+            buf.push_cell((" ", *THREAD_PALLET["normal"]))
+
+            for c in r.date:
+                buf.push_cell((c, *THREAD_PALLET["normal"]))
+
+            buf.push_cell((" ", *THREAD_PALLET["normal"]))
+
+            for c in r.id:
+                buf.push_cell((c, *THREAD_PALLET["normal"]))
+
+            buf.break_line(2)
+
+            for l in r.message.split("\n"):
+                for c in l:
+                    buf.push_cell((c, *THREAD_PALLET["normal"]))
+
+                buf.break_line(1)
 
             buf.break_line(1)
 
-        buf.break_line(1)
-
-    return buf
+        self._rtext.value = buf
