@@ -55,6 +55,7 @@ class ThreadViewController(ViewController["ThreadView"]):
 
         if model is not None:
             client.update_thread(model)
+            self._view.update_buffer()
 
 
 class ResponseFormController(ViewController["ResponseForm"]):

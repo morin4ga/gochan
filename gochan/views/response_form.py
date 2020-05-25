@@ -90,6 +90,7 @@ class ResponseForm(Frame):
 
     def _on_posted(self, _):
         self._clear_all_inputs()
+        controller.thread.update_data()
         raise NextScene(controller.thread.scene_name)
 
     def _clear_all_inputs(self):

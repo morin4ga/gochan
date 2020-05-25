@@ -67,7 +67,7 @@ class ThreadView(Frame):
     @model.setter
     def model(self, model: Thread):
         self._model = model
-        self._update_buffer()
+        self.update_buffer()
         self._rtext.reset_offset()
 
     def _on_load_(self):
@@ -78,7 +78,6 @@ class ThreadView(Frame):
 
     def _on_update_btn_pushed(self):
         controller.thread.update_data()
-        self._update_buffer()
         self.switch_focus(self._layouts[0], 0, 0)
 
     def _on_write_btn_pushed(self):
@@ -152,7 +151,7 @@ class ThreadView(Frame):
             if idx > 0 and idx < len(self._anchors):
                 self._rtext.go_to(self._anchors[idx])
 
-    def _update_buffer(self) -> Buffer:
+    def update_buffer(self) -> Buffer:
         if self._model is None:
             return
 
