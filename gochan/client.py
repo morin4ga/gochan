@@ -242,8 +242,9 @@ def _parse_html(html: str) -> Thread:
     total_links = 0
 
     re_res = re.compile(
-        r'<div class="post" id="(\d+)".*?"name"><b>(?:<a href="mailto:(.*?)">)?(.*?)(?:<\/a>)?'
-        r'<\/b><\/span>.*?"date">(.*?)<.*?"uid">(.*?)<.*?(?:<span.*?>)+? (.*?) (?:<\/span>)+?<\/div><\/div><br>'
+        r'<div class="post" id="(?P<num>\d+)".*?"name"><b>(<a href="mailto:(?P<mail>.*?)">)?(?P<name>.*?)(</a>)?'
+        r'</b></span>.*?"date">(?P<date>.*?)<.*?"uid">(?P<id>.*?)<.*?(<span.*?>)+? (?P<msg>.*?) (</span>)+?</div>'
+        r'</div><br>'
     )
 
     re_link = re.compile(r'<a href="http.*?>(.*?)</a>|<a class="image".*?>(.*?)</a>')
@@ -253,12 +254,12 @@ def _parse_html(html: str) -> Thread:
     re_b = re.compile(r'</?b>')
 
     for res in re_res.finditer(html):
-        number = res.group(1)
-        mail = res.group(2)
-        name = re_b.sub("", res.group(3))
-        date = res.group(4)
-        id = res.group(5)
-        msg = res.group(6)
+        number = res.group("num")
+        mail = res.group("mail")
+        name = re_b.sub("", res.group("name"))
+        date = res.group("date")
+        id = res.group("id")
+        msg = res.group("msg")
         msg = re.sub(" ?<br> ", "\n", msg)
         # Remove be icon
         msg = re.sub(r'<img.*\n', "", msg)
