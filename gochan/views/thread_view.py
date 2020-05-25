@@ -79,6 +79,7 @@ class ThreadView(Frame):
     def _update_model(self):
         controller.thread.update_data()
         self._update_buffer()
+        self.switch_focus(self._layouts[0], 0, 0)
 
     def _write(self):
         controller.resform.set_target(self._model)
