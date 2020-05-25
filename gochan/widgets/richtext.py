@@ -7,7 +7,50 @@ from wcwidth import wcswidth, wcwidth
 
 # [(ch, fg, att, bg)]
 Cell = Tuple[str, int, int, int]
-Buffer = List[List[Cell]]
+
+
+class Buffer:
+    def __init__(self, width: int):
+        super().__init__()
+        self.max_width = width
+        self._list: List[List[Cell]] = [[]]
+        self._line = 0
+        self._width = 0
+
+    def push_cell(self, cell: Cell):
+        w = wcwidth(cell[0])
+
+        if w > self.max_width:
+            return
+
+        if self._width + w > self.max_width:
+            self._list.append([])
+            self._line += 1
+            self._width = 0
+
+        self._list[self._line].append(cell)
+        self._width += w
+
+    def break_line(self, times: int):
+        for _ in range(times):
+            self._list.append([])
+            self._line += 1
+            self._width = 0
+
+    def __delitem__(self, key):
+        self._list.__delitem__(key)
+
+    def __getitem__(self, key):
+        return self._list.__getitem__(key)
+
+    def __setitem__(self, key, value):
+        self.__setitem__(key, value)
+
+    def __iter__(self):
+        return self._list.__iter__()
+
+    def __len__(self):
+        return self._list.__len__()
 
 
 class RichText(Widget):
@@ -39,7 +82,7 @@ class RichText(Widget):
             for c in l:
                 w = wcwidth(c[0])
 
-                if x + w > max_x:
+                if x + w - 1 > max_x:
                     break
 
                 self._frame.canvas.print_at(c[0], x, y, c[1], c[2], c[3])

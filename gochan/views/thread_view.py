@@ -12,6 +12,7 @@ from gochan.controller import controller
 from gochan.data import Thread
 from gochan.effects import CommandLine
 from gochan.widgets import Buffer, RichText
+from wcwidth import wcwidth
 
 
 class ThreadView(Frame):
@@ -68,7 +69,7 @@ class ThreadView(Frame):
 
     def _update_buffer(self):
         if self._model is not None:
-            self._rtext.value = _convert_to_buf(self._model)
+            self._rtext.value = _convert_to_buf(self._model, self._rtext.width)
         else:
             self._rtext.value = []
 
@@ -134,41 +135,36 @@ class ThreadView(Frame):
                     raise NextScene(controller.image.scene_name)
 
 
-def _convert_to_buf(thread: Thread) -> Buffer:
-    buf = []
+def _convert_to_buf(thread: Thread, width: int) -> Buffer:
+    buf = Buffer(width)
 
-    for i, r in enumerate(thread.responses):
-        meta = []
-
+    for r in thread.responses:
         for c in str(r.number):
-            meta.append((c, *THREAD_PALLET["normal"]))
+            buf.push_cell((c, *THREAD_PALLET["normal"]))
 
-        meta.append((" ", *THREAD_PALLET["normal"]))
+        buf.push_cell((" ", *THREAD_PALLET["normal"]))
 
         for c in r.name:
-            meta.append((c, *THREAD_PALLET["name"]))
+            buf.push_cell((c, *THREAD_PALLET["name"]))
 
-        meta.append((" ", *THREAD_PALLET["normal"]))
+        buf.push_cell((" ", *THREAD_PALLET["normal"]))
 
         for c in r.date:
-            meta.append((c, *THREAD_PALLET["normal"]))
+            buf.push_cell((c, *THREAD_PALLET["normal"]))
 
-        meta.append((" ", *THREAD_PALLET["normal"]))
+        buf.push_cell((" ", *THREAD_PALLET["normal"]))
 
         for c in r.id:
-            meta.append((c, *THREAD_PALLET["normal"]))
+            buf.push_cell((c, *THREAD_PALLET["normal"]))
 
-        buf.append(meta)
-        buf.append([])
+        buf.break_line(2)
 
         for l in r.message.split("\n"):
-            line = []
-
             for c in l:
-                line.append((c, *THREAD_PALLET["normal"]))
+                buf.push_cell((c, *THREAD_PALLET["normal"]))
 
-            buf.append(line)
+            buf.break_line(1)
 
-        buf.append([])
+        buf.break_line(1)
 
     return buf
