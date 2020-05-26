@@ -254,7 +254,7 @@ def _parse_html(html: str) -> Thread:
     re_b = re.compile(r'</?b>')
 
     for res in re_res.finditer(html):
-        number = res.group("num")
+        number = int(res.group("num"))
         mail = res.group("mail")
         name = re_b.sub("", res.group("name"))
         date = res.group("date")
