@@ -8,7 +8,6 @@ from asciimatics.widgets import THEMES, Button, Divider, Frame, Layout, ListBox,
 
 from gochan.config import BROWSER_PATH, THEME
 from gochan.controller import controller
-from gochan.data import Bbsmenu, BoardHeader, ThreadHeader
 from gochan.key import KeyLogger
 from gochan.views import BbsmenuView, BoardView, ImageView, ResponseForm, ThreadView
 

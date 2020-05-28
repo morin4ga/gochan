@@ -6,7 +6,7 @@ from asciimatics.widgets import Frame, Layout, Widget
 
 from gochan.config import KEY_BINDINGS
 from gochan.controller import controller
-from gochan.data import Bbsmenu, BoardHeader
+from gochan.models import Bbsmenu, BoardHeader
 from gochan.widgets import ListBoxK
 
 

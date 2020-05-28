@@ -7,7 +7,7 @@ from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, MultiCo
 
 from gochan.config import KEY_BINDINGS
 from gochan.controller import controller
-from gochan.data import Board, BoardHeader, ThreadHeader
+from gochan.models import Board, BoardHeader, ThreadHeader
 from gochan.effects import CommandLine
 from gochan.widgets import MultiColumnListBoxK
 

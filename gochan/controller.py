@@ -9,7 +9,7 @@ from asciimatics.exceptions import NextScene
 from gochan.browser import download_image
 from gochan.client import client
 from gochan.config import USE_CACHE
-from gochan.data import BoardHeader, Thread, ThreadHeader
+from gochan.models import BoardHeader, Thread, ThreadHeader, Bbsmenu, Board
 from gochan.storage import storage
 
 if TYPE_CHECKING:
@@ -54,7 +54,8 @@ class ThreadViewController(ViewController["ThreadView"]):
         model = self._view.model
 
         if model is not None:
-            client.update_thread(model)
+            rs = client.get_responses_after(model.server, model.board, model.key, len(model.responses))
+            model.responses.extend(rs)
             self._view.update_buffer()
 
 
