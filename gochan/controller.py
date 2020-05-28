@@ -10,6 +10,7 @@ from gochan.browser import download_image
 from gochan.client import client
 from gochan.config import USE_CACHE
 from gochan.models import BoardHeader, Thread, ThreadHeader, Bbsmenu, Board
+from gochan.view_models import ThreadVM
 from gochan.storage import storage
 
 if TYPE_CHECKING:
@@ -48,7 +49,7 @@ class BoardViewController(ViewController["BoardView"]):
 class ThreadViewController(ViewController["ThreadView"]):
     def set_data(self, hdr: ThreadHeader):
         m = client.get_thread(hdr.server, hdr.board, hdr.key)
-        self._view.model = m
+        self._view.model = ThreadVM(m)
 
     def update_data(self):
         model = self._view.model
