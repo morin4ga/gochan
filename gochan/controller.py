@@ -55,7 +55,7 @@ class ThreadViewController(ViewController["ThreadView"]):
 
         if model is not None:
             rs = client.get_responses_after(model.server, model.board, model.key, len(model.responses))
-            model.responses.extend(rs)
+            model.add_responses(rs)
             self._view.update_buffer()
 
 

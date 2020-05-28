@@ -24,3 +24,6 @@ class Thread:
         self.responses: List[Response] = responses
         self.is_pastlog: bool = is_pastlog
         self._links = []
+
+    def add_responses(self, responses: List[Response]):
+        self.responses.extend(responses)
