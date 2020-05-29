@@ -13,11 +13,14 @@ class Buffer:
     def __init__(self, width: int):
         super().__init__()
         self.max_width = width
-        self._list: List[List[Cell]] = [[]]
+        self._list: List[List[Cell]] = []
         self._line = 0
         self._width = 0
 
     def push_cell(self, cell: Cell):
+        if len(self._list) == 0:
+            self._list.append([])
+
         w = wcwidth(cell[0])
 
         if w > self.max_width:
@@ -36,6 +39,9 @@ class Buffer:
             self._list.append([])
             self._line += 1
             self._width = 0
+
+    def extend(self, buf: "Buffer"):
+        self._list.extend(buf)
 
     def __delitem__(self, key):
         self._list.__delitem__(key)
@@ -151,14 +157,21 @@ class RichText(Widget):
         self._scrl_offset = len(self._value) - self._h
 
     def go_to(self, line):
+        """
+        Parameters
+        ----------
+        line : int
+            Zero-based line number
+        """
+
         max_offset = len(self._value) - self._h
 
-        if line == 0:
+        if line <= 0:
             self._scrl_offset = 0
-        elif line - 1 > max_offset:
+        elif line > max_offset:
             self._scrl_offset = max_offset
         else:
-            self._scrl_offset = line - 1
+            self._scrl_offset = line
 
     def required_height(self, offset, width):
         return self._required_height

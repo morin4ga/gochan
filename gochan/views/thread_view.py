@@ -1,5 +1,5 @@
 import re
-from typing import Callable
+from typing import Callable, List
 
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
@@ -28,7 +28,7 @@ class ThreadView(Frame):
 
         self._model: ThreadVM = None
 
-        self._anchors = []
+        self._anchors: List[int] = None
 
         self._open_link_cli = None
         self._show_image_cli = None
@@ -67,7 +67,9 @@ class ThreadView(Frame):
     @model.setter
     def model(self, model: ThreadVM):
         self._model = model
-        self.update_buffer()
+        (buf, anchors) = model.to_buffer(self._rtext.width, THREAD_PALLET)
+        self._anchors = anchors
+        self._rtext.value = buf
         self._rtext.reset_offset()
 
     def _on_load_(self):
@@ -148,46 +150,5 @@ class ThreadView(Frame):
         if cmd.isdecimal():
             idx = int(cmd) - 1
 
-            if idx > 0 and idx < len(self._anchors):
+            if idx >= 0 and idx < len(self._anchors):
                 self._rtext.go_to(self._anchors[idx])
-
-    def update_buffer(self) -> Buffer:
-        if self._model is None:
-            return
-
-        self._anchors = []
-
-        buf = Buffer(self._rtext.width)
-
-        for r in self._model.responses:
-            self._anchors.append(len(buf))
-
-            for c in str(r.number):
-                buf.push_cell((c, *THREAD_PALLET["normal"]))
-
-            buf.push_cell((" ", *THREAD_PALLET["normal"]))
-
-            for c in r.name:
-                buf.push_cell((c, *THREAD_PALLET["name"]))
-
-            buf.push_cell((" ", *THREAD_PALLET["normal"]))
-
-            for c in r.date:
-                buf.push_cell((c, *THREAD_PALLET["normal"]))
-
-            buf.push_cell((" ", *THREAD_PALLET["normal"]))
-
-            for c in r.id:
-                buf.push_cell((c, *THREAD_PALLET["normal"]))
-
-            buf.break_line(2)
-
-            for l in r.message.split("\n"):
-                for c in l:
-                    buf.push_cell((c, *THREAD_PALLET["normal"]))
-
-                buf.break_line(1)
-
-            buf.break_line(1)
-
-        self._rtext.value = buf

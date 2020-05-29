@@ -1,8 +1,9 @@
 import re
 
-from typing import List
+from typing import List, Dict, Tuple
 
 from gochan.models import Thread, Response
+from gochan.widgets import Buffer
 
 link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
 
@@ -44,6 +45,39 @@ class ResponseVM:
     @property
     def id(self):
         return self._model.id
+
+    def to_buffer(self, width: int, pallet: Dict[str, int]) -> Buffer:
+        buf = Buffer(width)
+
+        for c in str(self.number):
+            buf.push_cell((c, *pallet["normal"]))
+
+        buf.push_cell((" ", *pallet["normal"]))
+
+        for c in self.name:
+            buf.push_cell((c, *pallet["name"]))
+
+        buf.push_cell((" ", *pallet["normal"]))
+
+        for c in self.date:
+            buf.push_cell((c, *pallet["normal"]))
+
+        buf.push_cell((" ", *pallet["normal"]))
+
+        for c in self.id:
+            buf.push_cell((c, *pallet["normal"]))
+
+        buf.break_line(2)
+
+        for l in self.message.split("\n"):
+            for c in l:
+                buf.push_cell((c, *pallet["normal"]))
+
+            buf.break_line(1)
+
+        # buf.break_line(1)
+
+        return buf
 
 
 class ThreadVM:
@@ -88,3 +122,13 @@ class ThreadVM:
 
             self.responses.append(vm)
             self.links.extend(vm.links)
+
+    def to_buffer(self, width: int, pallet: Dict[str, int]) -> Tuple["Buffer", List[int]]:
+        buf = Buffer(width)
+        anchors = []
+
+        for r in self.responses:
+            anchors.append(len(buf))
+            buf.extend(r.to_buffer(width, pallet))
+
+        return (buf, anchors)
