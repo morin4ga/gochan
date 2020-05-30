@@ -6,6 +6,7 @@ from asciimatics.event import KeyboardEvent
 from asciimatics.screen import Screen
 
 from gochan.key import Key, parse_key
+from gochan.widgets import Brush
 
 USE_CACHE = True
 CACHE_PATH = "~/.gochan/cache"
@@ -34,9 +35,9 @@ THEME = {
     "focus_field": (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK),
     "selected_focus_field": (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_CYAN),
 }
-THREAD_PALLET = {
-    "normal": (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK),
-    "name": (Screen.COLOUR_GREEN, Screen.A_BOLD, Screen.COLOUR_BLACK),
+THREAD_BRUSHES = {
+    "normal": Brush(Screen.COLOUR_WHITE, Screen.COLOUR_BLACK, Screen.A_BOLD),
+    "name": Brush(Screen.COLOUR_GREEN, Screen.COLOUR_BLACK, Screen.A_BOLD),
 }
 KEY_BINDINGS = {
     "bbsmenu": {

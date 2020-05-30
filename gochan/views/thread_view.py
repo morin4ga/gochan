@@ -7,11 +7,11 @@ from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget
 
 from gochan.browser import open_link, open_links
-from gochan.config import BROWSER_PATH, KEY_BINDINGS, THREAD_PALLET
+from gochan.config import BROWSER_PATH, KEY_BINDINGS, THREAD_BRUSHES
 from gochan.controller import controller
 from gochan.view_models import ThreadVM
 from gochan.effects import CommandLine
-from gochan.widgets import Buffer, RichText
+from gochan.widgets import Brush, Buffer, Cell, RichText
 from wcwidth import wcwidth
 
 
@@ -38,7 +38,7 @@ class ThreadView(Frame):
 
         self._rtext = RichText(
             Widget.FILL_FRAME,
-            (" ", *THREAD_PALLET["normal"]),
+            Cell(" ", THREAD_BRUSHES["normal"]),
             KEY_BINDINGS["thread"],
             name="text_box",
         )
@@ -67,7 +67,7 @@ class ThreadView(Frame):
     @model.setter
     def model(self, model: ThreadVM):
         self._model = model
-        (buf, anchors) = model.to_buffer(self._rtext.width, THREAD_PALLET)
+        (buf, anchors) = model.to_buffer(self._rtext.width, THREAD_BRUSHES)
         self._anchors = anchors
         self._rtext.value = buf
         self._rtext.reset_offset()

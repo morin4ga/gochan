@@ -5,8 +5,20 @@ from asciimatics.screen import Screen
 from asciimatics.widgets import Widget
 from wcwidth import wcswidth, wcwidth
 
-# [(ch, fg, att, bg)]
-Cell = Tuple[str, int, int, int]
+
+class Brush:
+    def __init__(self, fg: int, bg: int, att: int):
+        super().__init__()
+        self.fg = fg
+        self.bg = bg
+        self.att = att
+
+
+class Cell:
+    def __init__(self, ch: str, brush: Brush):
+        super().__init__()
+        self.ch = ch
+        self.brush = brush
 
 
 class Buffer:
@@ -14,30 +26,34 @@ class Buffer:
         super().__init__()
         self.max_width = width
         self._list: List[List[Cell]] = []
-        self._line = 0
         self._width = 0
 
-    def push_cell(self, cell: Cell):
+    def push(self, s: str, brush: Brush):
+        for c in s:
+            self._push_cell(Cell(c, brush))
+
+    def _push_cell(self, cell: Cell):
         if len(self._list) == 0:
             self._list.append([])
 
-        w = wcwidth(cell[0])
+        w = wcwidth(cell.ch)
 
         if w > self.max_width:
             return
 
         if self._width + w > self.max_width:
             self._list.append([])
-            self._line += 1
             self._width = 0
 
-        self._list[self._line].append(cell)
+        self._list[len(self._list) - 1].append(cell)
         self._width += w
 
     def break_line(self, times: int):
+        if len(self._list) == 0:
+            self._list.append([])
+
         for _ in range(times):
             self._list.append([])
-            self._line += 1
             self._width = 0
 
     def extend(self, buf: "Buffer"):
@@ -71,10 +87,10 @@ class RichText(Widget):
     def update(self, frame_no):
         for i in range(self._h):
             self._frame.canvas.print_at(
-                self._fc[0] * self.width,
+                self._fc.ch * self.width,
                 self._x,
                 self._y + i,
-                self._fc[1], self._fc[2], self._fc[3])
+                self._fc.brush.fg, self._fc.brush.att, self._fc.brush.bg)
 
         max_x = self._w + self._x - 1
         max_y = self._h + self._y - 1
@@ -86,12 +102,12 @@ class RichText(Widget):
                 break
 
             for c in l:
-                w = wcwidth(c[0])
+                w = wcwidth(c.ch)
 
                 if x + w - 1 > max_x:
                     break
 
-                self._frame.canvas.print_at(c[0], x, y, c[1], c[2], c[3])
+                self._frame.canvas.print_at(c.ch, x, y, c.brush.fg, c.brush.att, c.brush.bg)
                 x += w
 
             x = self._x
