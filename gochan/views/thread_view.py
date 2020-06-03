@@ -67,7 +67,13 @@ class ThreadView(Frame):
     @model.setter
     def model(self, model: ThreadVM):
         self._model = model
-        (buf, anchors) = model.to_buffer(self._rtext.width, THREAD_BRUSHES)
+        self.update_buffer()
+
+    def update_buffer(self):
+        if self._model is None:
+            return
+
+        (buf, anchors) = self.model.to_buffer(self._rtext.width, THREAD_BRUSHES)
         self._anchors = anchors
         self._rtext.value = buf
         self._rtext.reset_offset()
