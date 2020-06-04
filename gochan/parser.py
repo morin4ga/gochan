@@ -145,7 +145,7 @@ class ThreadParserH:
     def is_pastlog(self) -> bool:
         return re.search('<div class="stoplight stopred stopdone', self._html) is None
 
-    def responses(self, link_idx=0) -> Tuple[List[Response], List[str]]:
+    def responses(self) -> List[Response]:
         re_res = re.compile(
             r'<div class="post" id="(?P<num>\d+)".*?"name"><b>(<a href="mailto:(?P<mail>.*?)">)?(?P<name>.*?)(</a>)?'
             r'</b></span>.*?"date">(?P<date>.*?)<.*?"uid">(?P<id>.*?)<.*?(<span.*?>)+? (?P<msg>.*?) (</span>)+?</div>'
