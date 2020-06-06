@@ -18,6 +18,32 @@ class BoardVM:
     def threads(self) -> Optional[List[ThreadHeader]]:
         return self._board.threads if self._board is not None else None
 
+    def sort_thread(self, key: str, reverse=False):
+        if self._board is None:
+            return
+
+        if key == "number":
+            self._board.threads.sort(key=lambda x: x.number, reverse=reverse)
+        elif key == "title":
+            self._board.threads.sort(key=lambda x: x.title, reverse=reverse)
+        elif key == "count":
+            self._board.threads.sort(key=lambda x: x.count, reverse=reverse)
+        elif key == "speed":
+            self._board.threads.sort(key=lambda x: x.speed, reverse=reverse)
+
+        self.on_property_changed("threads")
+
+    def select_thread(self, idx: int):
+        if self._board is not None\
+                and idx < len(self._board.threads)\
+                and idx >= 0:
+            self._app_context.set_thread(self._board.threads[idx])
+
+    def find_thread(self, keyword: str):
+        if self._board is not None:
+            self._board.threads.sort(key=lambda x: (keyword not in x.title))
+            self.on_property_changed("threads")
+
     def update(self):
         if self._board is not None:
             self._board.update()
