@@ -8,7 +8,6 @@ from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget
 
 from gochan.browser import open_link, open_links
 from gochan.config import BROWSER_PATH, KEY_BINDINGS, THREAD_BRUSHES
-from gochan.controller import controller
 from gochan.view_models import ThreadVM
 from gochan.effects import CommandLine
 from gochan.widgets import Brush, Buffer, Cell, RichText
@@ -72,7 +71,7 @@ class ThreadView(Frame):
                          has_border=False
                          )
 
-        self._model: ThreadVM = None
+        self._data_context: ThreadVM = None
 
         self._anchors: List[int] = None
 
@@ -106,35 +105,36 @@ class ThreadView(Frame):
 
         self.fix()
 
-    @property
-    def model(self):
-        return self._model
+    def bind(self, context: ThreadVM):
+        self._data_context = context
+        self._data_context.on_property_changed.add(self._data_context_changed)
 
-    @model.setter
-    def model(self, model: ThreadVM):
-        self._model = model
         self.update_buffer()
 
     def update_buffer(self):
-        if self._model is None:
+        if self._data_context is None:
             return
 
         (self._rtext.value, self._anchors) = _gen_buffer(self._rtext.width, THREAD_BRUSHES)
         self._rtext.reset_offset()
 
+    def _data_context_changed(self, property_name: str):
+        if property_name == "responses":
+            self.update_buffer()
+
     def _on_load_(self):
         pass
 
     def _on_back_btn_pushed(self):
-        raise NextScene(controller.board.scene_name)
+        raise NextScene("Board")
 
     def _on_update_btn_pushed(self):
-        controller.thread.update_data()
+        self._data_context.update()
         self.switch_focus(self._layouts[0], 0, 0)
 
     def _on_write_btn_pushed(self):
-        controller.resform.set_target(self._model)
-        raise NextScene(controller.resform.scene_name)
+        # TODO: Set target and raise NextScene
+        pass
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
@@ -191,8 +191,8 @@ class ThreadView(Frame):
                 link = self._model.links[idx]
 
                 if re.match(r'.*\.(jpg|png|jpeg|gif)', link) is not None:
-                    controller.image.set_image(link)
-                    raise NextScene(controller.image.scene_name)
+                    # TODO: Set image and raise NextScene
+                    pass
 
     def _go_to(self, cmd: str):
         self._goto_cli = None
