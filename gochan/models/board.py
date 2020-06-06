@@ -19,22 +19,22 @@ class ThreadHeader:
 
 
 class Board:
-    def __init__(self, server: str, board: str, threads: List[ThreadHeader]):
+    def __init__(self, server: str, board: str):
         super().__init__()
 
         self.server = server
         self.board = board
-        self.threads: List[ThreadHeader] = threads
+        self.threads: List[ThreadHeader] = None
         self.on_property_changed = EventHandler()
 
     def update(self):
         s = get_board(self.server, self.board)
         parser = BoardParser(s)
-        self.threads = parser.threads()
-        self.on_property_changed("threads")
 
-    @staticmethod
-    def get_board(server: str, board: str):
-        s = get_board(server, board)
-        parser = BoardParser(s, server, board)
-        return parser.board()
+        self.threads = []
+
+        for i, t in enumerate(parser.threads()):
+            self.threads.append(ThreadHeader(self.server, self.board, t["key"],
+                                             i, t["title"], t["count"], t["speed"]))
+
+        self.on_property_changed("threads")

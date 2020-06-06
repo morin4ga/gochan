@@ -31,10 +31,10 @@ class Category:
 
 
 class Bbsmenu:
-    def __init__(self, categories: List[Category]):
+    def __init__(self):
         super().__init__()
 
-        self.categories = categories
+        self.categories = None
         self.on_property_changed = EventHandler()
 
     def get_items(self) -> List[Tuple[str, int]]:
@@ -46,13 +46,15 @@ class Bbsmenu:
         return items
 
     def update(self):
-        d = get_bbsmenu()
-        parser = BbsmenuParser(d)
-        self.categories = parser.categories()
-        self.on_property_changed("categories")
+        html = get_bbsmenu()
+        parser = BbsmenuParser(html)
+        self.categories = []
 
-    @staticmethod
-    def get_bbsmenu():
-        d = get_bbsmenu()
-        parser = BbsmenuParser(d)
-        return parser.bbsmenu()
+        for c in parser.categories():
+            boards = []
+            for b in c["boards"]:
+                boards.append(BoardHeader(b["server"], b["board"], b["name"]))
+
+            self.categories.append(Category(c["name"], boards))
+
+        self.on_property_changed("categories")
