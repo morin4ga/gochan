@@ -1,5 +1,5 @@
 import re
-from typing import Callable, List
+from typing import Callable, List, Dict, Tuple
 
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
@@ -13,6 +13,52 @@ from gochan.view_models import ThreadVM
 from gochan.effects import CommandLine
 from gochan.widgets import Brush, Buffer, Cell, RichText
 from wcwidth import wcwidth
+
+
+def _gen_buffer(thread: ThreadVM, width: int, brushes: Dict[str, int]) -> Tuple[Buffer, List[Tuple[int, int]]]:
+    """
+        Parameters
+        ----------
+        width : int
+        brush : {'normal', 'name'}
+
+        Returns
+        -------
+        Buffer
+        anchors : [(int, int)]
+            List of tuple that represents the location of response by start/end line number
+    """
+    buf = Buffer(width)
+    anchors = []
+    link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
+    link_idx = 0
+
+    for r in thread.responses:
+        anchors.append(len(buf))
+
+        buf.push(str(r.number) + " ", brushes["normal"])
+
+        buf.push(r.name, brushes["name"])
+
+        buf.push(" " + r.date + " " + r.id, brushes["normal"])
+
+        buf.break_line(2)
+
+    # Add index suffix so that user can select url easily
+    def _mark_link(match):
+        nonlocal link_idx
+        url = match.group(1)
+        repl = url + "(" + str(link_idx) + ")"
+        link_idx += 1
+        return repl
+
+    marked_msg = link_reg.sub(r.message, _mark_link)
+
+    for l in marked_msg.split("\n"):
+        buf.push(l, brushes["normal"])
+        buf.break_line(1)
+
+    return (buf, anchors)
 
 
 class ThreadView(Frame):
@@ -73,9 +119,7 @@ class ThreadView(Frame):
         if self._model is None:
             return
 
-        (buf, anchors) = self.model.to_buffer(self._rtext.width, THREAD_BRUSHES)
-        self._anchors = anchors
-        self._rtext.value = buf
+        (self._rtext.value, self._anchors) = _gen_buffer(self._rtext.width, THREAD_BRUSHES)
         self._rtext.reset_offset()
 
     def _on_load_(self):
