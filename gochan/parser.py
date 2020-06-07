@@ -4,8 +4,6 @@ import time
 from typing import List, Tuple, Dict, Union
 from html import unescape
 
-from gochan.models import Response, Category, Bbsmenu, BoardHeader, ThreadHeader, Board, Thread
-
 
 class CategoryParser():
     def __init__(self, html: str):
