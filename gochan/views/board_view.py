@@ -6,7 +6,6 @@ from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, MultiColumnListBox, Widget
 
 from gochan.config import KEY_BINDINGS
-from gochan.controller import controller
 from gochan.view_models import BoardVM
 from gochan.effects import CommandLine
 from gochan.widgets import MultiColumnListBoxK
@@ -68,7 +67,7 @@ class BoardView(Frame):
             self._update_options()
 
     def _on_back(self):
-        raise NextScene(controller.bbsmenu.scene_name)
+        raise NextScene("Bbsmenu")
 
     def _on_pick(self):
         pass
