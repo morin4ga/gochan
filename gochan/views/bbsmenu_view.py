@@ -64,8 +64,8 @@ class BbsmenuView(Frame):
 
     def _context_changed(self, property_name: str):
         if property_name == "categories":
-            self._update_cat_option()
-        elif property_name == "boards":
+            self._update_cat_options()
+        elif property_name == "selected_category":
             self._update_board_options()
 
     def _update_cat_options(self):

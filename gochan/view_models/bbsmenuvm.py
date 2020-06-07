@@ -12,6 +12,8 @@ class BbsmenuVM:
         self.selected_category: Optional[Category] = None
         self.on_property_changed = EventHandler()
 
+        self._app_context.on_property_changed.add(self._app_context_changed)
+
     @property
     def categories(self) -> Optional[List[Category]]:
         return self._bbsmenu.categories if self._bbsmenu is not None else None
@@ -20,7 +22,7 @@ class BbsmenuVM:
         if self._bbsmenu is not None and idx < len(self._bbsmenu.categories)\
                 and idx >= 0:
             self.selected_category = self._bbsmenu.categories[idx]
-            self.on_property_changed("boards")
+            self.on_property_changed("selected_category")
 
     def select_board(self, idx: int):
         if self.selected_category is not None and idx < len(self.selected_category.boards) and idx >= 0:

@@ -17,16 +17,16 @@ from wcwidth import wcwidth
 
 def _gen_buffer(responses: List[Response], width: int, brushes: Dict[str, int]) -> Tuple[Buffer, List[Tuple[int, int]]]:
     """
-        Parameters
-        ----------
-        width : int
-        brush : {'normal', 'name'}
+    Parameters
+    ----------
+    width : int
+    brush : {'normal', 'name'}
 
-        Returns
-        -------
-        Buffer
-        anchors : [(int, int)]
-            List of tuple that represents the location of response by start/end line number
+    Returns
+    -------
+    Buffer
+    anchors : [(int, int)]
+    List of tuple that represents the location of response by start/end line number
     """
     buf = Buffer(width)
     anchors = []
@@ -44,18 +44,20 @@ def _gen_buffer(responses: List[Response], width: int, brushes: Dict[str, int]) 
 
         buf.break_line(2)
 
-    # Add index suffix so that user can select url easily
-    def _mark_link(match):
-        nonlocal link_idx
-        url = match.group(1)
-        repl = url + "(" + str(link_idx) + ")"
-        link_idx += 1
-        return repl
+        # Add index suffix so that user can select url easily
+        def _mark_link(match):
+            nonlocal link_idx
+            url = match.group(1)
+            repl = url + "(" + str(link_idx) + ")"
+            link_idx += 1
+            return repl
 
-    marked_msg = link_reg.sub(r.message, _mark_link)
+        marked_msg = link_reg.sub(_mark_link, r.message)
 
-    for l in marked_msg.split("\n"):
-        buf.push(l, brushes["normal"])
+        for l in marked_msg.split("\n"):
+            buf.push(l, brushes["normal"])
+            buf.break_line(1)
+
         buf.break_line(1)
 
     return (buf, anchors)

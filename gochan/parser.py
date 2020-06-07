@@ -81,11 +81,9 @@ class BbsmenuParser:
 
 
 class BoardParser:
-    def __init__(self, subject: str, server: str, board: str):
+    def __init__(self, subject: str):
         super().__init__()
         self._subject = subject
-        self._server = server
-        self._board = board
 
     @property
     def text(self):

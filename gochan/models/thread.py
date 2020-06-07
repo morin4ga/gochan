@@ -46,7 +46,7 @@ class Thread:
 
             self.responses = []
             self._add_response(parser.responses())
-            self.on_collection_changed("responses", "add", self.responses[0:])
+            self.on_collection_changed(("responses", "add", self.responses[0:]))
         else:
             html = get_responses_after(len(self.responses))
             parser = ThreadParserH(html)
@@ -56,14 +56,14 @@ class Thread:
             if new > 1:
                 start = len(self.responses)
                 self._add_response(parser.responses()[1:])
-                self.on_collection_changed("responses", "add", self.responses[start:])
+                self.on_collection_changed(("responses", "add", self.responses[start:]))
 
     def post(self, name: str, mail: str, message: str):
         post_response(self.server, self.board, self.key, name, mail, message)
 
     def _add_response(self, rs: List[Dict[str, Union[int, str]]]):
         for r in rs:
-            self.responses.append(r["num"], r["name"], r["mail"], r["date"], r["id"], r["msg"])
+            self.responses.append(Response(r["num"], r["name"], r["mail"], r["date"], r["id"], r["msg"]))
 
             for link in re.finditer(r'(https?://.*?)(?=$|\n| )', r["msg"]):
                 self.links.append(link)

@@ -1,6 +1,6 @@
 import re
 
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Tuple, Optional, Any
 
 from gochan.models import Thread, Response, AppContext
 from gochan.widgets import Buffer, Brush
@@ -73,6 +73,8 @@ class ThreadVM:
         if property_name == "responses":
             self.on_property_changed("response")
 
-    def _thread_collection_changed(self, kind: str, arg):
-        if kind == "add":
+    def _thread_collection_changed(self, args: Tuple[str, str, Any]):
+        (property_name, kind, arg) = args
+
+        if property_name == "responses":
             self.on_property_changed("response")
