@@ -21,14 +21,6 @@ class Category:
         self.name: str = name
         self.boards: List[BoardHeader] = boards
 
-    def get_items(self) -> List[Tuple[str, int]]:
-        items = []
-
-        for i, board in enumerate(self.boards):
-            items.append((board.name, i))
-
-        return items
-
 
 class Bbsmenu:
     def __init__(self):
@@ -36,14 +28,6 @@ class Bbsmenu:
 
         self.categories = None
         self.on_property_changed = EventHandler()
-
-    def get_items(self) -> List[Tuple[str, int]]:
-        items = []
-
-        for i, cat in enumerate(self.categories):
-            items.append((cat.name, i))
-
-        return items
 
     def update(self):
         html = get_bbsmenu()
