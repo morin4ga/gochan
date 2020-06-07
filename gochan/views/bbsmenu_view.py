@@ -10,7 +10,7 @@ from gochan.widgets import ListBoxK
 
 
 class BbsmenuView(Frame):
-    def __init__(self, screen: Screen):
+    def __init__(self, screen: Screen, data_context: BbsmenuVM):
         super().__init__(screen,
                          screen.height,
                          screen.width,
@@ -23,7 +23,8 @@ class BbsmenuView(Frame):
 
         self.set_theme("user_theme")
 
-        self._data_context: Optional[BbsmenuVM] = None
+        self._data_context: BbsmenuVM = data_context
+        self._data_context.on_property_changed.add(self._data_context_changed)
 
         self._keybindings = KEY_BINDINGS["bbsmenu"]
 
@@ -54,22 +55,14 @@ class BbsmenuView(Frame):
 
         self.fix()
 
-    def bind(self, context: BbsmenuVM):
-        if self._data_context is not None:
-            self._data_context.on_property_changed.remove(self._context_changed)
-
-        self._data_context = context
-        self._data_context.on_property_changed.add(self._context_changed)
-        self._update_cat_options()
-
-    def _context_changed(self, property_name: str):
+    def _data_context_changed(self, property_name: str):
         if property_name == "categories":
             self._update_cat_options()
         elif property_name == "selected_category":
             self._update_board_options()
 
     def _update_cat_options(self):
-        if self._data_context is not None and self._data_context.categories is not None:
+        if self._data_context.categories is not None:
             options = []
             for i, c in enumerate(self._data_context.categories):
                 options.append((c.name, i))
@@ -77,7 +70,7 @@ class BbsmenuView(Frame):
             self._cat_list.options = options
 
     def _update_board_options(self):
-        if self._data_context is not None and self._data_context.selected_category is not None:
+        if self._data_context.selected_category is not None:
             opitons = []
             for i, b in enumerate(self._data_context.selected_category.boards):
                 opitons.append((b.name, i))
@@ -104,6 +97,6 @@ class BbsmenuView(Frame):
         self.save()
         index = self.data['board_list']
 
-        if index is not None and self._data_context is not None:
+        if index is not None:
             self._data_context.select_board(index)
             raise NextScene("Board")

@@ -12,7 +12,7 @@ from gochan.widgets import MultiColumnListBoxK
 
 
 class BoardView(Frame):
-    def __init__(self, screen: Screen):
+    def __init__(self, screen: Screen, data_context: BoardVM):
         super().__init__(screen,
                          screen.height,
                          screen.width,
@@ -24,7 +24,8 @@ class BoardView(Frame):
 
         self.set_theme("user_theme")
 
-        self._data_context: BoardVM = None
+        self._data_context: BoardVM = data_context
+        self._data_context.on_property_changed.add(self._data_context_changed)
 
         self._keybindings = KEY_BINDINGS["board"]
 
@@ -55,12 +56,6 @@ class BoardView(Frame):
 
         self.fix()
         self._on_pick()
-
-    def bind(self, context: BoardVM):
-        self._data_context = context
-        self._data_context.on_property_changed.add(self._data_context_changed)
-
-        self._update_options()
 
     def _data_context_changed(self, property_name: str):
         if property_name == "threads":

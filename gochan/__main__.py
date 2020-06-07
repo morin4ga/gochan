@@ -14,19 +14,14 @@ from gochan.view_models import BbsmenuVM, BoardVM, ThreadVM, ImageVM, ResponseFo
 
 
 def demo(screen: Screen, scene: Scene):
-    bbsmenu_view = BbsmenuView(screen)
-    board_view = BoardView(screen)
-    thread_view = ThreadView(screen)
-    resform = ResponseForm(screen)
-    image_view = ImageView(screen)
-    keylog = KeyLogger(screen)
-
     app_context = AppContext()
-    bbsmenu_view.bind(BbsmenuVM(app_context))
-    board_view.bind(BoardVM(app_context))
-    thread_view.bind(ThreadVM(app_context))
-    image_view.bind(ImageVM(app_context))
-    resform.bind(ResponseFormVM(app_context))
+
+    bbsmenu_view = BbsmenuView(screen, BbsmenuVM(app_context))
+    board_view = BoardView(screen, BoardVM(app_context))
+    thread_view = ThreadView(screen, ThreadVM(app_context))
+    resform = ResponseForm(screen, ResponseFormVM(app_context))
+    image_view = ImageView(screen, ImageVM(app_context))
+    keylog = KeyLogger(screen)
 
     app_context.set_bbsmenu()
 

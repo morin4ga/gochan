@@ -64,7 +64,7 @@ def _gen_buffer(responses: List[Response], width: int, brushes: Dict[str, int]) 
 
 
 class ThreadView(Frame):
-    def __init__(self, screen: Screen):
+    def __init__(self, screen: Screen, data_context: ThreadVM):
         super().__init__(screen,
                          screen.height,
                          screen.width,
@@ -74,7 +74,8 @@ class ThreadView(Frame):
                          has_border=False
                          )
 
-        self._data_context: ThreadVM = None
+        self._data_context: ThreadVM = data_context
+        self._data_context.on_property_changed.add(self._data_context_changed)
 
         self._anchors: List[int] = None
 
@@ -108,14 +109,8 @@ class ThreadView(Frame):
 
         self.fix()
 
-    def bind(self, context: ThreadVM):
-        self._data_context = context
-        self._data_context.on_property_changed.add(self._data_context_changed)
-
-        self.update_buffer()
-
     def update_buffer(self):
-        if self._data_context is None or self._data_context.responses is None:
+        if self._data_context.responses is None:
             return
 
         (self._rtext.value, self._anchors) = _gen_buffer(self._data_context.responses, self._rtext.width,
@@ -169,8 +164,8 @@ class ThreadView(Frame):
         if cmd.isdecimal():
             idx = int(cmd)
 
-            if len(self._model.links) > idx:
-                link = self._model.links[idx]
+            if self._data_context.links is not None and len(self._data_context.links) > idx:
+                link = self._data_context.links[idx]
                 open_link(link)
         else:
             m = re.match(r'(\d+)-(\d+)', cmd)
@@ -178,10 +173,11 @@ class ThreadView(Frame):
                 start_idx = int(m.group(1))
                 end_idx = int(m.group(2))
 
-                if start_idx < end_idx \
+                if self._data_context.links is not None \
+                        and start_idx < end_idx \
                         and start_idx >= 0 \
-                        and end_idx < len(self._model.links):
-                    open_links(self._model.links[start_idx:(end_idx + 1)])
+                        and end_idx < len(self._data_context.links):
+                    open_links(self._data_context.links[start_idx:(end_idx + 1)])
 
         self._open_link_cli = None
 
@@ -191,8 +187,8 @@ class ThreadView(Frame):
         if cmd.isdecimal():
             idx = int(cmd)
 
-            if len(self._model.links) > idx:
-                link = self._model.links[idx]
+            if self._data_context.links is not None and len(self._data_context.links) > idx:
+                link = self._data_context.links[idx]
 
                 if re.match(r'.*\.(jpg|png|jpeg|gif)', link) is not None:
                     # TODO: Set image and raise NextScene

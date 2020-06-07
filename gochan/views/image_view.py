@@ -12,7 +12,7 @@ from gochan.view_models import ImageVM
 
 
 class ImageView(Frame):
-    def __init__(self, screen: Screen):
+    def __init__(self, screen: Screen, data_context: ImageVM):
         super().__init__(screen,
                          screen.height,
                          screen.width,
@@ -23,16 +23,10 @@ class ImageView(Frame):
 
         self.set_theme("user_theme")
 
-        self._data_context: Optional[ImageVM] = None
+        self._data_context: ImageVM = data_context
+        self._data_context.on_property_changed.add(self._context_changed)
 
         self._image_effect = None
-
-    def bind(self, context: ImageVM):
-        if self._data_context is not None:
-            self._data_context.on_property_changed.remove(self._context_changed)
-
-        self._data_context = context
-        self._data_context.on_property_changed.add(self._context_changed)
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
@@ -47,7 +41,7 @@ class ImageView(Frame):
 
     def _context_changed(self, property_name: str):
         if property_name == "image":
-            if self._data_context is not None and self._data_context.image is not None:
+            if self._data_context.image is not None:
                 self._image_effect = Print(self.screen, ColourImageFile(
                     self._screen, self._data_context.image, height=self._screen.height), -1)
                 self._scene.add_effect(self._image_effect)
