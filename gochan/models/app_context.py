@@ -1,7 +1,7 @@
 import re
 import tempfile
 
-from typing import TYPE_CHEKING, Callable, List, TypeVar, Generic, Optional
+from typing import Callable, List, TypeVar, Generic, Optional
 
 from gochan.event_handler import EventHandler
 from gochan.models.bbsmenu import Bbsmenu
@@ -32,15 +32,18 @@ class AppContext:
         self.on_property_changed("image")
 
     def set_bbsmenu(self):
-        self.bbsmenu = Bbsmenu.get_bbsmenu()
+        self.bbsmenu = Bbsmenu()
+        self.bbsmenu.update()
         self.on_property_changed("bbsmenu")
 
     def set_board(self, server: str, board: str):
-        self.board = Board.get_board(server, board)
+        self.board = Board(server, board)
+        self.board.update()
         self.on_property_changed("board")
 
     def set_thread(self, server: str, board: str, key: str):
-        self.thread = Thread.get_thread(server, board, key)
+        self.thread = Thread(server, board, key)
+        self.thread.update()
         self.on_property_changed("thread")
 
     def set_image(self, url: str):

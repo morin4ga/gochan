@@ -38,7 +38,7 @@ class ThreadVM:
         return self._thread.is_pastlog if self._thread is not None else None
 
     @property
-    def response(self) -> Optional[List[Response]]:
+    def responses(self) -> Optional[List[Response]]:
         return self._thread.responses if self._thread is not None else None
 
     @property

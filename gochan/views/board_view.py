@@ -58,7 +58,7 @@ class BoardView(Frame):
 
     def bind(self, context: BoardVM):
         self._data_context = context
-        self._data_context.on_property_changed.add()
+        self._data_context.on_property_changed.add(self._data_context_changed)
 
         self._update_options()
 

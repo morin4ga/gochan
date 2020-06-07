@@ -8,13 +8,14 @@ from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget
 
 from gochan.browser import open_link, open_links
 from gochan.config import BROWSER_PATH, KEY_BINDINGS, THREAD_BRUSHES
+from gochan.models import Response
 from gochan.view_models import ThreadVM
 from gochan.effects import CommandLine
 from gochan.widgets import Brush, Buffer, Cell, RichText
 from wcwidth import wcwidth
 
 
-def _gen_buffer(thread: ThreadVM, width: int, brushes: Dict[str, int]) -> Tuple[Buffer, List[Tuple[int, int]]]:
+def _gen_buffer(responses: List[Response], width: int, brushes: Dict[str, int]) -> Tuple[Buffer, List[Tuple[int, int]]]:
     """
         Parameters
         ----------
@@ -32,7 +33,7 @@ def _gen_buffer(thread: ThreadVM, width: int, brushes: Dict[str, int]) -> Tuple[
     link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
     link_idx = 0
 
-    for r in thread.responses:
+    for r in responses:
         anchors.append(len(buf))
 
         buf.push(str(r.number) + " ", brushes["normal"])
@@ -112,10 +113,11 @@ class ThreadView(Frame):
         self.update_buffer()
 
     def update_buffer(self):
-        if self._data_context is None:
+        if self._data_context is None or self._data_context.responses is None:
             return
 
-        (self._rtext.value, self._anchors) = _gen_buffer(self._rtext.width, THREAD_BRUSHES)
+        (self._rtext.value, self._anchors) = _gen_buffer(self._data_context.responses, self._rtext.width,
+                                                         THREAD_BRUSHES)
         self._rtext.reset_offset()
 
     def _data_context_changed(self, property_name: str):

@@ -9,7 +9,7 @@ class ResponseFormVM:
     def __init__(self, context: AppContext):
         super().__init__()
         self._app_context = context
-        self._app_context.on_property_changed.add()
+        self._app_context.on_property_changed.add(self._app_context_changed)
 
         self.on_property_changed = EventHandler()
 

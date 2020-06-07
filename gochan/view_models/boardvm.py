@@ -11,7 +11,7 @@ class BoardVM:
         self._app_context = app_context
         self._board = app_context.board
 
-        self._app_context.on_property_changed = self._app_context_changed
+        self._app_context.on_property_changed.add(self._app_context_changed)
         self.on_property_changed = EventHandler()
 
     @property

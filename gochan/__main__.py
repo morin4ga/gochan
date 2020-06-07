@@ -9,6 +9,8 @@ from asciimatics.widgets import THEMES, Button, Divider, Frame, Layout, ListBox,
 from gochan.config import BROWSER_PATH, THEME
 from gochan.key import KeyLogger
 from gochan.views import BbsmenuView, BoardView, ImageView, ResponseForm, ThreadView
+from gochan.models import AppContext
+from gochan.view_models import BbsmenuVM, BoardVM, ThreadVM, ImageVM, ResponseFormVM
 
 
 def demo(screen: Screen, scene: Scene):
@@ -18,6 +20,15 @@ def demo(screen: Screen, scene: Scene):
     resform = ResponseForm(screen)
     image_view = ImageView(screen)
     keylog = KeyLogger(screen)
+
+    app_context = AppContext()
+    bbsmenu_view.bind(BbsmenuVM(app_context))
+    board_view.bind(BoardVM(app_context))
+    thread_view.bind(ThreadVM(app_context))
+    image_view.bind(ImageVM(app_context))
+    resform.bind(ResponseFormVM(app_context))
+
+    app_context.set_bbsmenu()
 
     scenes = [
         # Scene([keylog], -1, name="Keylog"),

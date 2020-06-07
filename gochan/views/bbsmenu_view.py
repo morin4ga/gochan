@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Optional
 
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
@@ -23,7 +23,7 @@ class BbsmenuView(Frame):
 
         self.set_theme("user_theme")
 
-        self._data_context: BbsmenuVM = None
+        self._data_context: Optional[BbsmenuVM] = None
 
         self._keybindings = KEY_BINDINGS["bbsmenu"]
 
@@ -60,6 +60,7 @@ class BbsmenuView(Frame):
 
         self._data_context = context
         self._data_context.on_property_changed.add(self._context_changed)
+        self._update_cat_options()
 
     def _context_changed(self, property_name: str):
         if property_name == "categories":
