@@ -60,6 +60,7 @@ class ThreadVM:
 
             self._thread = self._app_context.thread
             self._thread.on_property_changed.add(self._thread_changed)
+            self._thread.on_collection_changed.add(self._thread_collection_changed)
 
             self.on_property_changed("server")
             self.on_property_changed("board")
