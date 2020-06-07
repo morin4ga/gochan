@@ -52,6 +52,9 @@ class ThreadVM:
     def set_thread(self, server: str, board: str, key: str):
         self._app_context.set_thread(server, board, key)
 
+    def set_image(self, url: str):
+        self._app_context.set_image(url)
+
     def _app_context_changed(self, property_name: str):
         if property_name == "thread":
             if self._thread is not None:

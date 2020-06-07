@@ -66,4 +66,4 @@ class Thread:
             self.responses.append(Response(r["num"], r["name"], r["mail"], r["date"], r["id"], r["msg"]))
 
             for link in re.finditer(r'(https?://.*?)(?=$|\n| )', r["msg"]):
-                self.links.append(link)
+                self.links.append(link.group(1))

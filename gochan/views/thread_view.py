@@ -191,8 +191,8 @@ class ThreadView(Frame):
                 link = self._data_context.links[idx]
 
                 if re.match(r'.*\.(jpg|png|jpeg|gif)', link) is not None:
-                    # TODO: Set image and raise NextScene
-                    pass
+                    self._data_context.set_image(link)
+                    raise NextScene("Image")
 
     def _go_to(self, cmd: str):
         self._goto_cli = None

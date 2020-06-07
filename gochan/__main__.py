@@ -31,7 +31,7 @@ def demo(screen: Screen, scene: Scene):
         Scene([board_view], -1, name="Board"),
         Scene([thread_view], -1, name="Thread"),
         Scene([resform], -1, name="ResponseForm"),
-        Scene([image_view], -1, name="ImageView")
+        Scene([image_view], -1, name="Image")
     ]
 
     screen.play(scenes, stop_on_resize=True, start_scene=scene, allow_int=True)
