@@ -76,6 +76,7 @@ class ThreadView(Frame):
 
         self._data_context: ThreadVM = data_context
         self._data_context.on_property_changed.add(self._data_context_changed)
+        self._data_context.on_collection_changed.add(self._collection_changed)
 
         self._anchors: List[int] = None
 
@@ -109,17 +110,18 @@ class ThreadView(Frame):
 
         self.fix()
 
-    def update_buffer(self):
-        if self._data_context.responses is None:
-            return
-
-        (self._rtext.value, self._anchors) = _gen_buffer(self._data_context.responses, self._rtext.width,
-                                                         THREAD_BRUSHES)
-        self._rtext.reset_offset()
-
     def _data_context_changed(self, property_name: str):
         if property_name == "responses":
-            self.update_buffer()
+            self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._rtext.width,
+                                                           THREAD_BRUSHES)
+            self._rtext.reset_offset()
+
+    def _collection_changed(self, args):
+        property_name, kind, arg = args
+
+        if property_name == "responses":
+            self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._rtext.width,
+                                                           THREAD_BRUSHES)
 
     def _on_load_(self):
         pass

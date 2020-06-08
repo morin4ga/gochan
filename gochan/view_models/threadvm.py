@@ -14,6 +14,7 @@ class ThreadVM:
         self._app_context = app_context
         self._thread = app_context.thread
         self.on_property_changed = EventHandler()
+        self.on_collection_changed = EventHandler()
 
         app_context.on_property_changed.add(self._app_context_changed)
 
@@ -81,4 +82,4 @@ class ThreadVM:
         (property_name, kind, arg) = args
 
         if property_name == "responses":
-            self.on_property_changed("responses")
+            self.on_collection_changed(args)
