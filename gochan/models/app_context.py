@@ -1,7 +1,8 @@
 import re
 import tempfile
 
-from typing import Callable, List, TypeVar, Generic, Optional
+from typing import Callable, List, TypeVar, Generic, Optional, Tuple
+from urllib.request import HTTPError
 
 from gochan.event_handler import EventHandler
 from gochan.models.bbsmenu import Bbsmenu
@@ -9,7 +10,7 @@ from gochan.models.board import Board
 from gochan.models.thread import Thread
 from gochan.config import USE_CACHE
 from gochan.storage import storage
-from gochan.browser import download_image
+from gochan.client import download_image
 
 
 class AppContext:
@@ -19,6 +20,7 @@ class AppContext:
         self.board: Board = None
         self.thread: Thread = None
         self._image: Optional[str] = None
+        self._image_error: Optional[HTTPError] = None
 
         self.on_property_changed = EventHandler()
 
@@ -30,6 +32,15 @@ class AppContext:
     def image(self, path: str):
         self._image = path
         self.on_property_changed("image")
+
+    @property
+    def image_error(self) -> Optional[HTTPError]:
+        return self._image_error
+
+    @image_error.setter
+    def image_error(self, value):
+        self._image_error = value
+        self.on_property_changed("image_error")
 
     def set_bbsmenu(self):
         self.bbsmenu = Bbsmenu()
@@ -54,12 +65,20 @@ class AppContext:
             if cache is not None:
                 self.image = cache
             else:
-                data = download_image(url)
-                path = storage.store_cache(file_name, data)
-                self.image = path
+                result = download_image(url)
+
+                if isinstance(result, HTTPError):
+                    self.image_error = result
+                else:
+                    path = storage.store_cache(file_name, result)
+                    self.image = path
         else:
-            data = download_image(url)
-            f = tempfile.NamedTemporaryFile()
-            f.write(data)
-            self.image = f.name
-            f.close()
+            result = download_image(url)
+
+            if isinstance(result, HTTPError):
+                self.image_error = result
+            else:
+                f = tempfile.NamedTemporaryFile()
+                f.write(result)
+                self.image = f.name
+                f.close()

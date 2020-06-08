@@ -1,7 +1,7 @@
-from typing import List
+from typing import List, Union
 
 from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+from urllib.request import Request, urlopen, URLError, HTTPError
 
 
 def get_bbsmenu() -> str:
@@ -60,3 +60,12 @@ def _get_content(url: str, proxy: str = None) -> str:
     response.close()
 
     return content
+
+
+def download_image(url: str) -> Union[bytes, HTTPError, URLError]:
+    try:
+        with urlopen(url) as response:
+            data = response.read()
+            return data
+    except HTTPError as e:
+        return e

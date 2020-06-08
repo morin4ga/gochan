@@ -5,7 +5,7 @@ from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
 from asciimatics.renderers import ColourImageFile
 from asciimatics.screen import Screen
-from asciimatics.widgets import Frame
+from asciimatics.widgets import Frame, PopUpDialog
 
 from gochan.models import AppContext
 from gochan.view_models import ImageVM
@@ -45,3 +45,9 @@ class ImageView(Frame):
                 self._image_effect = Print(self.screen, ColourImageFile(
                     self._screen, self._data_context.image, height=self._screen.height), -1)
                 self._scene.add_effect(self._image_effect)
+        elif property_name == "error" and self._data_context.error is not None:
+            self._scene.add_effect(PopUpDialog(self._screen, self._data_context.error, [
+                                   "Close"], on_close=self._back, theme="user_theme"))
+
+    def _back(self, _):
+        raise NextScene("Thread")
