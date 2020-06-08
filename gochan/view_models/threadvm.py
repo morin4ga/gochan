@@ -75,10 +75,10 @@ class ThreadVM:
 
     def _thread_changed(self, property_name: str):
         if property_name == "responses":
-            self.on_property_changed("response")
+            self.on_property_changed("responses")
 
     def _thread_collection_changed(self, args: Tuple[str, str, Any]):
         (property_name, kind, arg) = args
 
         if property_name == "responses":
-            self.on_property_changed("response")
+            self.on_property_changed("responses")
