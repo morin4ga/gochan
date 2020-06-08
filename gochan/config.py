@@ -9,7 +9,7 @@ from gochan.key import Key, parse_key
 from gochan.widgets import Brush
 
 USE_CACHE = True
-CACHE_PATH = "~/.gochan/cache"
+CACHE_PATH = "~/.config/gochan/cache/image"
 MAX_CACHE = 5
 
 BROWSER_PATH = None
