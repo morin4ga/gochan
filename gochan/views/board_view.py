@@ -131,6 +131,5 @@ class BoardView(Frame):
 
     def _find(self, word: str):
         if self._data_context.threads is not None:
-            self._data_context.threads.sort(key=lambda x: (word not in x.title, self._sort_key(x)))
-            self._update_options()
+            self._data_context.sort_thread_by_word(word)
             self._cli = None
