@@ -17,7 +17,6 @@ class BoardView(Frame):
                          screen.height,
                          screen.width,
                          has_border=False,
-                         on_load=self._on_load_,
                          hover_focus=True,
                          can_scroll=False,
                          )
@@ -66,10 +65,6 @@ class BoardView(Frame):
 
     def _on_pick(self):
         pass
-
-    # _on_load is already used by Frame. So use _on_load_ here
-    def _on_load_(self, new_value=None):
-        self._thread_list.value = new_value
 
     def _on_select(self):
         if self._data_context.threads is None:
