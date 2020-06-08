@@ -1,17 +1,16 @@
-from typing import Callable
+from typing import Callable, Optional
 
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, Layout, Widget
 
 from gochan.config import KEY_BINDINGS
-from gochan.controller import controller
-from gochan.models import Bbsmenu, BoardHeader
+from gochan.view_models import BbsmenuVM
 from gochan.widgets import ListBoxK
 
 
 class BbsmenuView(Frame):
-    def __init__(self, screen: Screen):
+    def __init__(self, screen: Screen, data_context: BbsmenuVM):
         super().__init__(screen,
                          screen.height,
                          screen.width,
@@ -24,7 +23,8 @@ class BbsmenuView(Frame):
 
         self.set_theme("user_theme")
 
-        self._model = None
+        self._data_context: BbsmenuVM = data_context
+        self._data_context.on_property_changed.add(self._data_context_changed)
 
         self._keybindings = KEY_BINDINGS["bbsmenu"]
 
@@ -55,18 +55,27 @@ class BbsmenuView(Frame):
 
         self.fix()
 
-    @property
-    def model(self):
-        return self._model
+    def _data_context_changed(self, property_name: str):
+        if property_name == "categories":
+            self._update_cat_options()
+        elif property_name == "selected_category":
+            self._update_board_options()
 
-    @model.setter
-    def model(self, model: Bbsmenu):
-        self._model = model
+    def _update_cat_options(self):
+        if self._data_context.categories is not None:
+            options = []
+            for i, c in enumerate(self._data_context.categories):
+                options.append((c.name, i))
 
-        if self._model is not None:
-            self._cat_list.options = self._model.get_items()
-        else:
-            self._cat_list.options = []
+            self._cat_list.options = options
+
+    def _update_board_options(self):
+        if self._data_context.selected_category is not None:
+            opitons = []
+            for i, b in enumerate(self._data_context.selected_category.boards):
+                opitons.append((b.name, i))
+
+            self._board_list.options = opitons
 
     def _on_load_(self, new_value=None):
         self._cat_list.value = new_value
@@ -74,16 +83,11 @@ class BbsmenuView(Frame):
 
     def _on_pick_c(self):
         self.save()
-
-        if "cat_list" in self.data:
-            index = self.data['cat_list']
-            if index is not None:
-                self._board_list.options = self._model.categories[index].get_items()
+        index = self.data['cat_list']
+        if index is not None:
+            self._data_context.select_category(index)
 
     def _on_select_c(self):
-        self.save()
-        index = self.data['cat_list']
-        self._board_list.options = self._model.categories[index].get_items()
         self.switch_focus(self._layouts[0], 1, 0)
 
     def _on_pick_b(self):
@@ -91,8 +95,8 @@ class BbsmenuView(Frame):
 
     def _on_select_b(self):
         self.save()
-        index1 = self.data['cat_list']
-        index2 = self.data['board_list']
-        board_hdr = self._model.categories[index1].boards[index2]
-        controller.board.set_data(board_hdr)
-        raise NextScene(controller.board.scene_name)
+        index = self.data['board_list']
+
+        if index is not None:
+            self._data_context.select_board(index)
+            raise NextScene("Board")

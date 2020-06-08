@@ -1,15 +1,16 @@
+from typing import Optional
+
 from asciimatics.exceptions import NextScene
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, PopUpDialog, Text, TextBox, Widget
 
-from gochan.client import client
-from gochan.controller import controller
 from gochan.models import Thread
+from gochan.view_models import ResponseFormVM
 
 
 class ResponseForm(Frame):
-    def __init__(self, screen: Screen):
+    def __init__(self, screen: Screen, data_context: ResponseFormVM):
         super().__init__(screen,
                          screen.height,
                          screen.width,
@@ -19,7 +20,8 @@ class ResponseForm(Frame):
                          on_load=self._load,
                          )
 
-        self._target: Thread = None
+        self._data_context: ResponseFormVM = data_context
+        self._data_context.on_property_changed.add(self._data_context_changed)
 
         self.set_theme("user_theme")
 
@@ -59,39 +61,32 @@ class ResponseForm(Frame):
 
         self.fix()
 
-    @property
-    def target(self):
-        return self._target
-
-    @target.setter
-    def target(self, target: Thread):
-        self._target = target
+    def _data_context_changed(self, property_name: str):
+        pass
 
     def _load(self):
         self._clear_all_inputs()
 
     def _back(self):
-        raise NextScene(controller.thread.scene_name)
+        raise NextScene("Thread")
 
     def _submit(self):
-        if self._target is not None:
-            self.save()
-            name = self._name_box.value
-            mail = self._mail_box.value
-            msg = self._msg_box.value
+        self.save()
+        name = self._name_box.value
+        mail = self._mail_box.value
+        msg = self._msg_box.value
 
-            if len(msg) > 0:
-                result = client.post_response(
-                    self._target.server, self._target.board, self._target.key, name, mail, msg)
-                self._scene.add_effect(PopUpDialog(self._screen, result, ["Close"], theme="user_theme",
-                                                   on_close=self._on_posted))
-            else:
-                self._scene.add_effect(PopUpDialog(self._screen, "メッセージが空です", ["Close"], theme="user_theme"))
+        if len(msg) > 0:
+            result = self._data_context.post(name, mail, msg)
+            self._scene.add_effect(PopUpDialog(self._screen, result, ["Close"], theme="user_theme",
+                                               on_close=self._on_posted))
+        else:
+            self._scene.add_effect(PopUpDialog(self._screen, "メッセージが空です", ["Close"], theme="user_theme"))
 
     def _on_posted(self, _):
         self._clear_all_inputs()
-        controller.thread.update_data()
-        raise NextScene(controller.thread.scene_name)
+        self._data_context.update_thread()
+        raise NextScene("Thread")
 
     def _clear_all_inputs(self):
         self._name_box.value = ""

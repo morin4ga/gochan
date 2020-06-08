@@ -1,5 +1,5 @@
 import re
-from typing import Callable, List
+from typing import Callable, List, Dict, Tuple
 
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
@@ -8,15 +8,63 @@ from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget
 
 from gochan.browser import open_link, open_links
 from gochan.config import BROWSER_PATH, KEY_BINDINGS, THREAD_BRUSHES
-from gochan.controller import controller
+from gochan.models import Response
 from gochan.view_models import ThreadVM
 from gochan.effects import CommandLine
 from gochan.widgets import Brush, Buffer, Cell, RichText
 from wcwidth import wcwidth
 
 
+def _gen_buffer(responses: List[Response], width: int, brushes: Dict[str, int]) -> Tuple[Buffer, List[Tuple[int, int]]]:
+    """
+    Parameters
+    ----------
+    width : int
+    brush : {'normal', 'name'}
+
+    Returns
+    -------
+    Buffer
+    anchors : [(int, int)]
+    List of tuple that represents the location of response by start/end line number
+    """
+    buf = Buffer(width)
+    anchors = []
+    link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
+    link_idx = 0
+
+    for r in responses:
+        anchors.append(len(buf))
+
+        buf.push(str(r.number) + " ", brushes["normal"])
+
+        buf.push(r.name, brushes["name"])
+
+        buf.push(" " + r.date + " " + r.id, brushes["normal"])
+
+        buf.break_line(2)
+
+        # Add index suffix so that user can select url easily
+        def _mark_link(match):
+            nonlocal link_idx
+            url = match.group(1)
+            repl = url + "(" + str(link_idx) + ")"
+            link_idx += 1
+            return repl
+
+        marked_msg = link_reg.sub(_mark_link, r.message)
+
+        for l in marked_msg.split("\n"):
+            buf.push(l, brushes["normal"])
+            buf.break_line(1)
+
+        buf.break_line(1)
+
+    return (buf, anchors)
+
+
 class ThreadView(Frame):
-    def __init__(self, screen: Screen):
+    def __init__(self, screen: Screen, data_context: ThreadVM):
         super().__init__(screen,
                          screen.height,
                          screen.width,
@@ -26,7 +74,8 @@ class ThreadView(Frame):
                          has_border=False
                          )
 
-        self._model: ThreadVM = None
+        self._data_context: ThreadVM = data_context
+        self._data_context.on_property_changed.add(self._data_context_changed)
 
         self._anchors: List[int] = None
 
@@ -60,31 +109,30 @@ class ThreadView(Frame):
 
         self.fix()
 
-    @property
-    def model(self):
-        return self._model
+    def update_buffer(self):
+        if self._data_context.responses is None:
+            return
 
-    @model.setter
-    def model(self, model: ThreadVM):
-        self._model = model
-        (buf, anchors) = model.to_buffer(self._rtext.width, THREAD_BRUSHES)
-        self._anchors = anchors
-        self._rtext.value = buf
+        (self._rtext.value, self._anchors) = _gen_buffer(self._data_context.responses, self._rtext.width,
+                                                         THREAD_BRUSHES)
         self._rtext.reset_offset()
+
+    def _data_context_changed(self, property_name: str):
+        if property_name == "responses":
+            self.update_buffer()
 
     def _on_load_(self):
         pass
 
     def _on_back_btn_pushed(self):
-        raise NextScene(controller.board.scene_name)
+        raise NextScene("Board")
 
     def _on_update_btn_pushed(self):
-        controller.thread.update_data()
+        self._data_context.update()
         self.switch_focus(self._layouts[0], 0, 0)
 
     def _on_write_btn_pushed(self):
-        controller.resform.set_target(self._model)
-        raise NextScene(controller.resform.scene_name)
+        raise NextScene("ResponseForm")
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
@@ -115,8 +163,8 @@ class ThreadView(Frame):
         if cmd.isdecimal():
             idx = int(cmd)
 
-            if len(self._model.links) > idx:
-                link = self._model.links[idx]
+            if self._data_context.links is not None and len(self._data_context.links) > idx:
+                link = self._data_context.links[idx]
                 open_link(link)
         else:
             m = re.match(r'(\d+)-(\d+)', cmd)
@@ -124,10 +172,11 @@ class ThreadView(Frame):
                 start_idx = int(m.group(1))
                 end_idx = int(m.group(2))
 
-                if start_idx < end_idx \
+                if self._data_context.links is not None \
+                        and start_idx < end_idx \
                         and start_idx >= 0 \
-                        and end_idx < len(self._model.links):
-                    open_links(self._model.links[start_idx:(end_idx + 1)])
+                        and end_idx < len(self._data_context.links):
+                    open_links(self._data_context.links[start_idx:(end_idx + 1)])
 
         self._open_link_cli = None
 
@@ -137,12 +186,12 @@ class ThreadView(Frame):
         if cmd.isdecimal():
             idx = int(cmd)
 
-            if len(self._model.links) > idx:
-                link = self._model.links[idx]
+            if self._data_context.links is not None and len(self._data_context.links) > idx:
+                link = self._data_context.links[idx]
 
                 if re.match(r'.*\.(jpg|png|jpeg|gif)', link) is not None:
-                    controller.image.set_image(link)
-                    raise NextScene(controller.image.scene_name)
+                    self._data_context.set_image(link)
+                    raise NextScene("Image")
 
     def _go_to(self, cmd: str):
         self._goto_cli = None

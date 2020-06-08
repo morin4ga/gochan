@@ -7,22 +7,23 @@ from asciimatics.screen import Screen
 from asciimatics.widgets import THEMES, Button, Divider, Frame, Layout, ListBox, Text, TextBox, Widget
 
 from gochan.config import BROWSER_PATH, THEME
-from gochan.controller import controller
 from gochan.key import KeyLogger
 from gochan.views import BbsmenuView, BoardView, ImageView, ResponseForm, ThreadView
+from gochan.models import AppContext
+from gochan.view_models import BbsmenuVM, BoardVM, ThreadVM, ImageVM, ResponseFormVM
 
 
 def demo(screen: Screen, scene: Scene):
-    bbsmenu_view = BbsmenuView(screen)
-    board_view = BoardView(screen)
-    thread_view = ThreadView(screen)
-    resform = ResponseForm(screen)
-    image_view = ImageView(screen)
+    app_context = AppContext()
+
+    bbsmenu_view = BbsmenuView(screen, BbsmenuVM(app_context))
+    board_view = BoardView(screen, BoardVM(app_context))
+    thread_view = ThreadView(screen, ThreadVM(app_context))
+    resform = ResponseForm(screen, ResponseFormVM(app_context))
+    image_view = ImageView(screen, ImageVM(app_context))
     keylog = KeyLogger(screen)
 
-    controller.register_views((bbsmenu_view, "Bbsmenu"), (board_view, "Board"), (thread_view, "Thread"),
-                              (resform, "ResponseForm"), (image_view, "ImageView"))
-    controller.bbsmenu.update_data()
+    app_context.set_bbsmenu()
 
     scenes = [
         # Scene([keylog], -1, name="Keylog"),
@@ -30,7 +31,7 @@ def demo(screen: Screen, scene: Scene):
         Scene([board_view], -1, name="Board"),
         Scene([thread_view], -1, name="Thread"),
         Scene([resform], -1, name="ResponseForm"),
-        Scene([image_view], -1, name="ImageView")
+        Scene([image_view], -1, name="Image")
     ]
 
     screen.play(scenes, stop_on_resize=True, start_scene=scene, allow_int=True)

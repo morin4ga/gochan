@@ -8,10 +8,10 @@ from asciimatics.screen import Screen
 from gochan.key import Key, parse_key
 from gochan.widgets import Brush
 
-USE_CACHE = True
-CACHE_PATH = "~/.gochan/cache"
-MAX_CACHE = 5
+CACHE_PATH = "~/.config/gochan/cache/image"
 
+USE_CACHE = True
+MAX_CACHE = 5
 BROWSER_PATH = None
 THEME = {
     "background": (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK),
@@ -77,6 +77,7 @@ KEY_BINDINGS = {
     }
 }
 
+
 conf_file = Path(Path.home() / ".config/gochan/conf.json")
 
 if conf_file.is_file():
@@ -84,6 +85,10 @@ if conf_file.is_file():
 
     if "browser_path" in conf:
         BROWSER_PATH = conf["browser_path"]
+    if "use_cache" in conf:
+        USE_CACHE = conf["use_cache"]
+    if "max_cache" in conf:
+        MAX_CACHE = conf["max_cache"]
 
 
 keybindins_file = Path(Path.home() / ".config/gochan/keybindings.json")

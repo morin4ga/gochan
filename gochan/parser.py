@@ -4,8 +4,6 @@ import time
 from typing import List, Tuple, Dict, Union
 from html import unescape
 
-from gochan.models import Response, Category, Bbsmenu, BoardHeader, ThreadHeader, Board, Thread
-
 
 class CategoryParser():
     def __init__(self, html: str):
@@ -16,9 +14,6 @@ class CategoryParser():
     @property
     def text(self):
         return self._html
-
-    def category(self) -> Category:
-        return Category(self.name(), self.boards())
 
     def name(self) -> str:
         if len(self._lines) == 0:
@@ -31,7 +26,13 @@ class CategoryParser():
 
         return m.group(1).strip()
 
-    def boards(self) -> List[BoardHeader]:
+    def boards(self) -> List[Dict[str, str]]:
+        """
+        Returns
+        -------
+        {'name', 'server', 'board'}
+        """
+
         board_reg = re.compile(r"<A HREF=http://(.*?).5ch.net/(.*?)/>(.*?)</A>")
 
         boards = []
@@ -45,7 +46,7 @@ class CategoryParser():
             board = m.group(2).strip()
             name = m.group(3).strip()
 
-            boards.append(BoardHeader(server, board, name))
+            boards.append({"name": name, "server": server, "board": board})
 
         return boards
 
@@ -59,10 +60,13 @@ class BbsmenuParser:
     def text(self):
         return self._html
 
-    def bbsmenu(self):
-        return Bbsmenu(self.categories())
+    def categories(self) -> List[Dict[str, Union[str, Dict[str, str]]]]:
+        """
+        Returns
+        -------
+        [{'name': str, 'boards': {'server', 'board', 'name'}}]
+        """
 
-    def categories(self) -> List[Category]:
         cats = self._html.split("<br><br>")
 
         categories = []
@@ -71,26 +75,26 @@ class BbsmenuParser:
             name = cat_parser.name()
 
             if name is not None and name != "他のサイト":
-                categories.append(Category(name, cat_parser.boards()))
+                categories.append({"name": name, "boards": cat_parser.boards()})
 
         return categories
 
 
 class BoardParser:
-    def __init__(self, subject: str, server: str, board: str):
+    def __init__(self, subject: str):
         super().__init__()
         self._subject = subject
-        self._server = server
-        self._board = board
 
     @property
     def text(self):
         return self._subject
 
-    def board(self):
-        return Board(self._server, self._board, self.threads())
-
-    def threads(self, ) -> List[ThreadHeader]:
+    def threads(self) -> List[Dict[str, Union[str, int]]]:
+        """
+        Returns
+        -------
+        [{'key', 'title', 'count', 'speed'}]
+        """
         txt = unescape(self._subject)
 
         threads = []
@@ -113,26 +117,20 @@ class BoardParser:
                     speed = int(res_per_s * 60 * 60 * 24)
 
                 threads.append(
-                    ThreadHeader(self._server, self._board, key, i, title, count, speed)
+                    {"key": key, "title": title, "count": count, "speed": speed}
                 )
 
         return threads
 
 
 class ThreadParserH:
-    def __init__(self, html: str, server: str, board: str, key: str):
+    def __init__(self, html: str):
         super().__init__()
         self._html = html
-        self._server = server
-        self._board = board
-        self._key = key
 
     @property
     def text(self):
         return self._html
-
-    def thread(self):
-        return Thread(self._server, self._board, self._key, self.title(), self.responses(), self.is_pastlog())
 
     def title(self) -> str:
         m = re.search("<title>(.*?)\n</title>", self._html)
@@ -145,7 +143,12 @@ class ThreadParserH:
     def is_pastlog(self) -> bool:
         return re.search('<div class="stoplight stopred stopdone', self._html) is None
 
-    def responses(self, link_idx=0) -> Tuple[List[Response], List[str]]:
+    def responses(self) -> List[Dict[str, Union[str, int]]]:
+        """
+        Returns
+        -------
+        [{num, mail, name, date, id, mgs}]
+        """
         re_res = re.compile(
             r'<div class="post" id="(?P<num>\d+)".*?"name"><b>(<a href="mailto:(?P<mail>.*?)">)?(?P<name>.*?)(</a>)?'
             r'</b></span>.*?"date">(?P<date>.*?)<.*?"uid">(?P<id>.*?)<.*?(<span.*?>)+? (?P<msg>.*?) (</span>)+?</div>'
@@ -172,28 +175,22 @@ class ThreadParserH:
             msg = tag.sub("", msg)
             msg = unescape(msg)
 
-            responses.append(
-                Response(number, name, mail, date, id, msg)
-            )
+            responses.append({
+                "num": number, "name": name, "mail": mail, "date": date, "id": id, "msg": msg
+            })
 
         return responses
 
 
 class ThreadParserD:
-    def __init__(self, dat: str, server: str, board: str, key: str):
+    def __init__(self, dat: str):
         super().__init__()
         self._dat = dat
         self._lines = dat.split("\n")
-        self._server = server
-        self._board = board
-        self._key = key
 
     @property
     def text(self):
         return self._dat
-
-    def thread(self) -> Thread:
-        return Thread(self._server, self._board, self._key, self.title(), self.responses(), self.is_pastlog())
 
     def title(self) -> str:
         return re.search(r".*<>(.*?)$", self._lines[0]).group(1)
@@ -208,7 +205,13 @@ class ThreadParserD:
 
         return False
 
-    def responses(self) -> List[Response]:
+    def responses(self) -> List[Dict[str, Union[str, int]]]:
+        """
+        Returns
+        -------
+        [{num, mail, name, date, id, mgs}]
+        """
+
         re_res = re.compile(r"(.*?)<>(.*?)<>(.*? .*?) (.*?)<> (.*?) <>.*")
         re_b = re.compile(r"</?b>")
         # re_img = re.compile(r'<a class="image".*?>(.*?)</a>')
@@ -234,8 +237,8 @@ class ThreadParserD:
             msg = tag.sub("", msg)
             msg = unescape(msg)
 
-            responses.append(
-                Response(i, name, mail, date, id, msg)
-            )
+            responses.append({
+                "num": i, "name": name, "mail": mail, "date": date, "id": id, "msg": msg
+            })
 
         return responses
