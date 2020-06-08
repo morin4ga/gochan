@@ -33,7 +33,7 @@ class Board:
 
         self.threads = []
 
-        for i, t in enumerate(parser.threads()):
+        for i, t in enumerate(parser.threads(), 1):
             self.threads.append(ThreadHeader(self.server, self.board, t["key"],
                                              i, t["title"], t["count"], t["speed"]))
 
