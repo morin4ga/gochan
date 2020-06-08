@@ -48,14 +48,14 @@ class Thread:
             self._add_response(parser.responses())
             self.on_collection_changed(("responses", "add", self.responses[0:]))
         else:
-            html = get_responses_after(len(self.responses))
+            html = get_responses_after(self.server, self.board, self.key, len(self.responses))
             parser = ThreadParserH(html)
 
             new = parser.responses()
 
-            if new > 1:
+            if len(new) > 1:
                 start = len(self.responses)
-                self._add_response(parser.responses()[1:])
+                self._add_response(new[1:])
                 self.on_collection_changed(("responses", "add", self.responses[start:]))
 
     def post(self, name: str, mail: str, message: str) -> str:
