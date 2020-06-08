@@ -33,7 +33,7 @@ class CategoryParser():
         {'name', 'server', 'board'}
         """
 
-        board_reg = re.compile(r"<A HREF=http://(.*?).5ch.net/(.*?)/>(.*?)</A>")
+        board_reg = re.compile(r"<A HREF=https://(.*?).5ch.net/(.*?)/>(.*?)</A>")
 
         boards = []
         for line in self._lines[1:]:
