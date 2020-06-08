@@ -25,7 +25,7 @@ class Buffer:
     def __init__(self, width: int):
         super().__init__()
         self.max_width = width
-        self._list: List[List[Cell]] = []
+        self._list: List[List[Cell]] = [[]]
         self._width = 0
 
     def push(self, s: str, brush: Brush):
@@ -33,9 +33,6 @@ class Buffer:
             self._push_cell(Cell(c, brush))
 
     def _push_cell(self, cell: Cell):
-        if len(self._list) == 0:
-            self._list.append([])
-
         w = wcwidth(cell.ch)
 
         if w > self.max_width:
@@ -49,9 +46,6 @@ class Buffer:
         self._width += w
 
     def break_line(self, times: int):
-        if len(self._list) == 0:
-            self._list.append([])
-
         for _ in range(times):
             self._list.append([])
             self._width = 0
@@ -172,22 +166,9 @@ class RichText(Widget):
     def go_to_bottom(self):
         self._scrl_offset = len(self._value) - self._h
 
-    def go_to(self, line):
-        """
-        Parameters
-        ----------
-        line : int
-            Zero-based line number
-        """
-
+    def go_to(self, line: int):
         max_offset = len(self._value) - self._h
-
-        if line <= 0:
-            self._scrl_offset = 0
-        elif line > max_offset:
-            self._scrl_offset = max_offset
-        else:
-            self._scrl_offset = line
+        self._scrl_offset = max(0, min(line - 1, max_offset))
 
     def required_height(self, offset, width):
         return self._required_height
