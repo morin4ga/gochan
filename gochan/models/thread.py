@@ -58,8 +58,8 @@ class Thread:
                 self._add_response(parser.responses()[1:])
                 self.on_collection_changed(("responses", "add", self.responses[start:]))
 
-    def post(self, name: str, mail: str, message: str):
-        post_response(self.server, self.board, self.key, name, mail, message)
+    def post(self, name: str, mail: str, message: str) -> str:
+        return post_response(self.server, self.board, self.key, name, mail, message)
 
     def _add_response(self, rs: List[Dict[str, Union[int, str]]]):
         for r in rs:

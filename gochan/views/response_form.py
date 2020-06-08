@@ -77,8 +77,7 @@ class ResponseForm(Frame):
         msg = self._msg_box.value
 
         if len(msg) > 0:
-            result = self._data_context.post(
-                self._target.server, self._target.board, self._target.key, name, mail, msg)
+            result = self._data_context.post(name, mail, msg)
             self._scene.add_effect(PopUpDialog(self._screen, result, ["Close"], theme="user_theme",
                                                on_close=self._on_posted))
         else:

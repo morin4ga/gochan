@@ -132,8 +132,7 @@ class ThreadView(Frame):
         self.switch_focus(self._layouts[0], 0, 0)
 
     def _on_write_btn_pushed(self):
-        # TODO: Set target and raise NextScene
-        pass
+        raise NextScene("ResponseForm")
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
