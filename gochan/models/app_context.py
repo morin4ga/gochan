@@ -61,17 +61,16 @@ class AppContext:
         if USE_CACHE:
             file_name = re.sub(r'https?://|/', "", url)
 
-            cache = storage.get_cache(file_name)
-            if cache is not None:
-                self.image = cache
+            if storage.contains(file_name):
+                self.image = storage.path + "/" + file_name
             else:
                 result = download_image(url)
 
                 if isinstance(result, HTTPError):
                     self.image_error = result
                 else:
-                    path = storage.store_cache(file_name, result)
-                    self.image = path
+                    storage.store(file_name, result)
+                    self.image = storage.path + "/" + file_name
         else:
             result = download_image(url)
 
