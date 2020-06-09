@@ -4,13 +4,13 @@ import urllib
 from pathlib import Path, PosixPath
 from typing import Optional
 
-from gochan.config import CACHE_PATH, MAX_CACHE
+from gochan.config import CACHE_PATH, MAX_IMAGE_CACHE, MAX_THREAD_CACHE
 
 
 class Storage:
-    def __init__(self, path: str, max_cache: int):
+    def __init__(self, path: Path, max_cache: int):
         super().__init__()
-        self._path: Path = Path(path).expanduser()
+        self._path: Path = path
         self._max_cache = max_cache
 
     @property
@@ -39,4 +39,5 @@ class Storage:
         dst.write_bytes(data)
 
 
-storage = Storage(CACHE_PATH, MAX_CACHE)
+image_cache = Storage(CACHE_PATH.joinpath("image"), MAX_IMAGE_CACHE)
+thread_cache = Storage(CACHE_PATH.joinpath("thread"), MAX_THREAD_CACHE)

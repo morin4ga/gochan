@@ -8,10 +8,14 @@ from asciimatics.screen import Screen
 from gochan.key import Key, parse_key
 from gochan.widgets import Brush
 
-CACHE_PATH = "~/.config/gochan/cache/image"
+CACHE_PATH = Path("~/.config/gochan/cache").expanduser()
 
-USE_CACHE = True
-MAX_CACHE = 5
+USE_IMAGE_CACHE = True
+MAX_IMAGE_CACHE = 5
+
+USE_THREAD_CACHE = True
+MAX_THREAD_CACHE = 5
+
 BROWSER_PATH = None
 THEME = {
     "background": (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK),
