@@ -15,12 +15,13 @@ from gochan.widgets import Brush, Buffer, Cell, RichText
 from wcwidth import wcwidth
 
 
-def _gen_buffer(responses: List[Response], width: int, brushes: Dict[str, int]) -> Tuple[Buffer, List[Tuple[int, int]]]:
+def _gen_buffer(responses: List[Response], bookmark: int, width: int, brushes: Dict[str, int])\
+        -> Tuple[Buffer, List[Tuple[int, int]]]:
     """
     Parameters
     ----------
     width : int
-    brush : {'normal', 'name'}
+    brush : {'normal', 'name', 'bookmark'}
 
     Returns
     -------
@@ -34,7 +35,7 @@ def _gen_buffer(responses: List[Response], width: int, brushes: Dict[str, int]) 
     link_idx = 0
 
     for r in responses:
-        anchors.append(len(buf))
+        start = len(buf)
 
         buf.push(str(r.number) + " ", brushes["normal"])
 
@@ -58,7 +59,16 @@ def _gen_buffer(responses: List[Response], width: int, brushes: Dict[str, int]) 
             buf.push(l, brushes["normal"])
             buf.break_line(1)
 
+        end = len(buf)
+
+        anchors.append((start, end))
+
         buf.break_line(1)
+
+        # don't render bookmark if bookmark points last response
+        if r.number == bookmark and len(responses) != bookmark:
+            buf.push("─" * width, brushes["bookmark"])
+            buf.break_line(2)
 
     return (buf, anchors)
 
@@ -112,21 +122,34 @@ class ThreadView(Frame):
 
     def _data_context_changed(self, property_name: str):
         if property_name == "responses":
-            self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._rtext.width,
-                                                           THREAD_BRUSHES)
-            self._rtext.reset_offset()
+            self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._data_context.bookmark,
+                                                           self._rtext.width, THREAD_BRUSHES)
+
+            bookmark = self._data_context.bookmark
+
+            if bookmark != 0:
+                # if there are unread responses, then scroll to them
+                if len(self._anchors) > bookmark:
+                    line = self._anchors[bookmark][0]
+                    self._rtext.go_to(line)
+                else:
+                    self._rtext.go_to(self._anchors[bookmark - 1][0])
+
+            else:
+                self._rtext.reset_offset()
 
     def _collection_changed(self, args):
         property_name, kind, arg = args
 
         if property_name == "responses":
-            self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._rtext.width,
-                                                           THREAD_BRUSHES)
+            self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._data_context.bookmark,
+                                                           self._rtext.width, THREAD_BRUSHES)
 
     def _on_load_(self):
         pass
 
     def _on_back_btn_pushed(self):
+        self._update_bookmark()
         raise NextScene("Board")
 
     def _on_update_btn_pushed(self):
@@ -134,6 +157,7 @@ class ThreadView(Frame):
         self.switch_focus(self._layouts[0], 0, 0)
 
     def _on_write_btn_pushed(self):
+        self._update_bookmark()
         raise NextScene("ResponseForm")
 
     def process_event(self, event):
@@ -193,6 +217,7 @@ class ThreadView(Frame):
 
                 if re.match(r'.*\.(jpg|png|jpeg|gif)', link) is not None:
                     self._data_context.set_image(link)
+                    self._update_bookmark()
                     raise NextScene("Image")
 
     def _go_to(self, cmd: str):
@@ -202,4 +227,14 @@ class ThreadView(Frame):
             idx = int(cmd) - 1
 
             if idx >= 0 and idx < len(self._anchors):
-                self._rtext.go_to(self._anchors[idx])
+                self._rtext.go_to(self._anchors[idx][0])
+
+    def _update_bookmark(self):
+        if self._data_context.bookmark is None:
+            return
+
+        displayed_end_line = self._rtext.scroll_offset + self._rtext._h
+
+        for number, (_, end) in enumerate(self._anchors, 1):
+            if displayed_end_line >= end and self._data_context.bookmark < number:
+                self._data_context.bookmark = number

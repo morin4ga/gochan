@@ -42,6 +42,7 @@ THEME = {
 THREAD_BRUSHES = {
     "normal": Brush(Screen.COLOUR_WHITE, Screen.COLOUR_BLACK, Screen.A_BOLD),
     "name": Brush(Screen.COLOUR_GREEN, Screen.COLOUR_BLACK, Screen.A_BOLD),
+    "bookmark": Brush(Screen.COLOUR_BLUE, Screen.COLOUR_BLACK, Screen.A_BOLD)
 }
 KEY_BINDINGS = {
     "global": {
