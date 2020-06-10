@@ -28,6 +28,7 @@ class Storage:
             self._path.mkdir(mode=0o777, parents=True)
 
         dst = self._path.joinpath(file_name)
+        dst.write_bytes(data)
 
         # remove overflowed file
         items = list(self._path.iterdir())
@@ -35,8 +36,6 @@ class Storage:
 
         for i in range((len(items) + 1) - self._max_cache):
             items[i].unlink()
-
-        dst.write_bytes(data)
 
 
 image_cache = Storage(CACHE_PATH.joinpath("image"), MAX_IMAGE_CACHE)
