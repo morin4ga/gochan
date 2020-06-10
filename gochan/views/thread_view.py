@@ -15,7 +15,8 @@ from gochan.widgets import Brush, Buffer, Cell, RichText
 from wcwidth import wcwidth
 
 
-def _gen_buffer(responses: List[Response], bookmark: int, width: int, brushes: Dict[str, int]) -> Tuple[Buffer, List[Tuple[int, int]]]:
+def _gen_buffer(responses: List[Response], bookmark: int, width: int, brushes: Dict[str, int])\
+        -> Tuple[Buffer, List[Tuple[int, int]]]:
     """
     Parameters
     ----------
@@ -34,7 +35,7 @@ def _gen_buffer(responses: List[Response], bookmark: int, width: int, brushes: D
     link_idx = 0
 
     for r in responses:
-        anchors.append(len(buf))
+        start = len(buf)
 
         buf.push(str(r.number) + " ", brushes["normal"])
 
@@ -57,6 +58,10 @@ def _gen_buffer(responses: List[Response], bookmark: int, width: int, brushes: D
         for l in marked_msg.split("\n"):
             buf.push(l, brushes["normal"])
             buf.break_line(1)
+
+        end = len(buf)
+
+        anchors.append((start, end))
 
         buf.break_line(1)
 
@@ -206,4 +211,4 @@ class ThreadView(Frame):
             idx = int(cmd) - 1
 
             if idx >= 0 and idx < len(self._anchors):
-                self._rtext.go_to(self._anchors[idx])
+                self._rtext.go_to(self._anchors[idx][0])
