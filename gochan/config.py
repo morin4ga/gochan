@@ -8,10 +8,14 @@ from asciimatics.screen import Screen
 from gochan.key import Key, parse_key
 from gochan.widgets import Brush
 
-CACHE_PATH = "~/.config/gochan/cache/image"
+CACHE_PATH = Path("~/.config/gochan/cache").expanduser()
 
-USE_CACHE = True
-MAX_CACHE = 5
+USE_IMAGE_CACHE = True
+MAX_IMAGE_CACHE = 5
+
+USE_THREAD_CACHE = True
+MAX_THREAD_CACHE = 5
+
 BROWSER_PATH = None
 THEME = {
     "background": (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK),
@@ -40,6 +44,9 @@ THREAD_BRUSHES = {
     "name": Brush(Screen.COLOUR_GREEN, Screen.COLOUR_BLACK, Screen.A_BOLD),
 }
 KEY_BINDINGS = {
+    "global": {
+        "exit": Key.Ctrl.C
+    },
     "bbsmenu": {
         "select_up": Key.UP,
         "select_down": Key.DOWN,
@@ -95,6 +102,10 @@ keybindins_file = Path(Path.home() / ".config/gochan/keybindings.json")
 
 if keybindins_file.is_file():
     keybindings = json.loads(keybindins_file.read_text())
+
+    if "global" in keybindings:
+        if "exit" in keybindings["global"]:
+            KEY_BINDINGS["global"]["exit"] = parse_key(keybindings["global"]["exit"])
 
     if "bbsmenu" in keybindings:
         if "select_up" in keybindings["bbsmenu"]:

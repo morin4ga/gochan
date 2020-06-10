@@ -1,5 +1,6 @@
 import re
 import tempfile
+import pickle
 
 from typing import Callable, List, TypeVar, Generic, Optional, Tuple
 from urllib.request import HTTPError
@@ -8,8 +9,8 @@ from gochan.event_handler import EventHandler
 from gochan.models.bbsmenu import Bbsmenu
 from gochan.models.board import Board
 from gochan.models.thread import Thread
-from gochan.config import USE_CACHE
-from gochan.storage import storage
+from gochan.config import USE_IMAGE_CACHE, USE_THREAD_CACHE
+from gochan.storage import image_cache, thread_cache
 from gochan.client import download_image
 
 
@@ -53,24 +54,40 @@ class AppContext:
         self.on_property_changed("board")
 
     def set_thread(self, server: str, board: str, key: str):
+        if USE_THREAD_CACHE:
+            self.save_thread()
+
+            if thread_cache.contains(board + "-" + key):
+                data = thread_cache.get(board + "-" + key)
+                d = pickle.loads(data)
+                self.thread = Thread.restore(d)
+                self.thread.update()
+                self.on_property_changed("thread")
+                return
+
         self.thread = Thread(server, board, key)
         self.thread.update()
         self.on_property_changed("thread")
 
+    def save_thread(self):
+        if self.thread is not None:
+            data = pickle.dumps(self.thread.to_dict())
+            thread_cache.store(self.thread.board + "-" + self.thread.key, data)
+
     def set_image(self, url: str):
-        if USE_CACHE:
+        if USE_IMAGE_CACHE:
             file_name = re.sub(r'https?://|/', "", url)
 
-            if storage.contains(file_name):
-                self.image = storage.path + "/" + file_name
+            if image_cache.contains(file_name):
+                self.image = image_cache.path + "/" + file_name
             else:
                 result = download_image(url)
 
                 if isinstance(result, HTTPError):
                     self.image_error = result
                 else:
-                    storage.store(file_name, result)
-                    self.image = storage.path + "/" + file_name
+                    image_cache.store(file_name, result)
+                    self.image = image_cache.path + "/" + file_name
         else:
             result = download_image(url)
 
