@@ -136,6 +136,7 @@ class ThreadView(Frame):
         pass
 
     def _on_back_btn_pushed(self):
+        self._update_bookmark()
         raise NextScene("Board")
 
     def _on_update_btn_pushed(self):
@@ -143,6 +144,7 @@ class ThreadView(Frame):
         self.switch_focus(self._layouts[0], 0, 0)
 
     def _on_write_btn_pushed(self):
+        self._update_bookmark()
         raise NextScene("ResponseForm")
 
     def process_event(self, event):
@@ -202,6 +204,7 @@ class ThreadView(Frame):
 
                 if re.match(r'.*\.(jpg|png|jpeg|gif)', link) is not None:
                     self._data_context.set_image(link)
+                    self._update_bookmark()
                     raise NextScene("Image")
 
     def _go_to(self, cmd: str):
@@ -212,3 +215,13 @@ class ThreadView(Frame):
 
             if idx >= 0 and idx < len(self._anchors):
                 self._rtext.go_to(self._anchors[idx][0])
+
+    def _update_bookmark(self):
+        if self._data_context.bookmark is None:
+            return
+
+        displayed_end_line = self._rtext.scroll_offset + self._rtext._h
+
+        for number, (_, end) in enumerate(self._anchors, 1):
+            if displayed_end_line >= end and self._data_context.bookmark < number:
+                self._data_context.bookmark = number
