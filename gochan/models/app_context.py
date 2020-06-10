@@ -55,9 +55,7 @@ class AppContext:
 
     def set_thread(self, server: str, board: str, key: str):
         if USE_THREAD_CACHE:
-            if self.thread is not None:
-                data = pickle.dumps(self.thread.to_dict())
-                thread_cache.store(self.thread.board + "-" + self.thread.key, data)
+            self.save_thread()
 
             if thread_cache.contains(board + "-" + key):
                 data = thread_cache.get(board + "-" + key)
@@ -70,6 +68,11 @@ class AppContext:
         self.thread = Thread(server, board, key)
         self.thread.update()
         self.on_property_changed("thread")
+
+    def save_thread(self):
+        if self.thread is not None:
+            data = pickle.dumps(self.thread.to_dict())
+            thread_cache.store(self.thread.board + "-" + self.thread.key, data)
 
     def set_image(self, url: str):
         if USE_IMAGE_CACHE:

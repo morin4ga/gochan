@@ -21,6 +21,7 @@ def global_shortcuts(event):
             raise StopApplication("stop")
 
 
+def demo(screen: Screen, scene: Scene, app_context: AppContext):
     bbsmenu_view = BbsmenuView(screen, BbsmenuVM(app_context))
     board_view = BoardView(screen, BoardVM(app_context))
     thread_view = ThreadView(screen, ThreadVM(app_context))
@@ -46,10 +47,13 @@ def main():
     # Enable user theme
     THEMES["user_theme"] = THEME
 
+    app_context = AppContext()
+
     last_scene = None
     while True:
         try:
-            Screen.wrapper(demo, catch_interrupt=True, arguments=[last_scene])
+            Screen.wrapper(demo, catch_interrupt=True, arguments=[last_scene, app_context])
+            app_context.save_thread()
             sys.exit(0)
         except ResizeScreenError as e:
             last_scene = e.scene
