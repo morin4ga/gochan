@@ -46,6 +46,10 @@ class ThreadVM:
     def links(self) -> Optional[List[str]]:
         return self._thread.links if self._thread is not None else None
 
+    @property
+    def bookmark(self) -> Optional[int]:
+        return self._thread.bookmark if self._thread is not None else None
+
     def update(self):
         if self._app_context.thread is not None:
             self._app_context.thread.update()

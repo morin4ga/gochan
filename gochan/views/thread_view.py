@@ -15,7 +15,7 @@ from gochan.widgets import Brush, Buffer, Cell, RichText
 from wcwidth import wcwidth
 
 
-def _gen_buffer(responses: List[Response], width: int, brushes: Dict[str, int]) -> Tuple[Buffer, List[Tuple[int, int]]]:
+def _gen_buffer(responses: List[Response], bookmark: int, width: int, brushes: Dict[str, int]) -> Tuple[Buffer, List[Tuple[int, int]]]:
     """
     Parameters
     ----------
@@ -59,6 +59,10 @@ def _gen_buffer(responses: List[Response], width: int, brushes: Dict[str, int]) 
             buf.break_line(1)
 
         buf.break_line(1)
+
+        if r.number == bookmark:
+            buf.push("─" * width, brushes["normal"])
+            buf.break_line(2)
 
     return (buf, anchors)
 
@@ -112,16 +116,16 @@ class ThreadView(Frame):
 
     def _data_context_changed(self, property_name: str):
         if property_name == "responses":
-            self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._rtext.width,
-                                                           THREAD_BRUSHES)
+            self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._data_context.bookmark,
+                                                           self._rtext.width, THREAD_BRUSHES)
             self._rtext.reset_offset()
 
     def _collection_changed(self, args):
         property_name, kind, arg = args
 
         if property_name == "responses":
-            self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._rtext.width,
-                                                           THREAD_BRUSHES)
+            self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._data_context.bookmark,
+                                                           self._rtext.width, THREAD_BRUSHES)
 
     def _on_load_(self):
         pass

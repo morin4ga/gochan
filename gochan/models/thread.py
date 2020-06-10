@@ -45,6 +45,7 @@ class Thread:
         self.responses: List[Response] = None
         self.is_pastlog: bool = False
         self.links = []
+        self.bookmark = 0
         self.on_property_changed = EventHandler()
         self.on_collection_changed = EventHandler()
 
@@ -54,6 +55,7 @@ class Thread:
         t.title = dict["title"]
         t.links = dict["links"]
         t.is_pastlog = dict["is_pastlog"]
+        t.bookmark = dict["bookmark"]
         t.responses = []
 
         for r in dict["responses"]:
@@ -97,6 +99,7 @@ class Thread:
         d["title"] = self.title
         d["is_pastlog"] = self.is_pastlog
         d["links"] = self.links
+        d["bookmark"] = self.bookmark
         d["responses"] = []
 
         for r in self.responses:
