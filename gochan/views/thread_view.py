@@ -123,7 +123,19 @@ class ThreadView(Frame):
         if property_name == "responses":
             self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._data_context.bookmark,
                                                            self._rtext.width, THREAD_BRUSHES)
-            self._rtext.reset_offset()
+
+            bookmark = self._data_context.bookmark
+
+            if bookmark != 0:
+                # if there are unread responses, then scroll to them
+                if len(self._anchors) > bookmark:
+                    line = self._anchors[bookmark][0]
+                    self._rtext.go_to(line)
+                else:
+                    self._rtext.go_to(self._anchors[bookmark - 1][0])
+
+            else:
+                self._rtext.reset_offset()
 
     def _collection_changed(self, args):
         property_name, kind, arg = args
