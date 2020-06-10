@@ -21,7 +21,7 @@ def _gen_buffer(responses: List[Response], bookmark: int, width: int, brushes: D
     Parameters
     ----------
     width : int
-    brush : {'normal', 'name'}
+    brush : {'normal', 'name', 'bookmark'}
 
     Returns
     -------
@@ -67,7 +67,7 @@ def _gen_buffer(responses: List[Response], bookmark: int, width: int, brushes: D
 
         # don't render bookmark if bookmark points last response
         if r.number == bookmark and len(responses) != bookmark:
-            buf.push("─" * width, brushes["normal"])
+            buf.push("─" * width, brushes["bookmark"])
             buf.break_line(2)
 
     return (buf, anchors)
