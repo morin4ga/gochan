@@ -78,6 +78,10 @@ class RichText(Widget):
         self._fc = flush_cell
         self._keybindings = keybindings
 
+    @property
+    def scroll_offset(self):
+        return self._scrl_offset
+
     def update(self, frame_no):
         for i in range(self._h):
             self._frame.canvas.print_at(
