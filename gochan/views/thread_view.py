@@ -65,7 +65,8 @@ def _gen_buffer(responses: List[Response], bookmark: int, width: int, brushes: D
 
         buf.break_line(1)
 
-        if r.number == bookmark:
+        # don't render bookmark if bookmark points last response
+        if r.number == bookmark and len(responses) != bookmark:
             buf.push("─" * width, brushes["normal"])
             buf.break_line(2)
 
