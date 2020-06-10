@@ -1,20 +1,25 @@
 import sys
 
 from asciimatics.event import KeyboardEvent
-from asciimatics.exceptions import ResizeScreenError
+from asciimatics.exceptions import ResizeScreenError, StopApplication
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.widgets import THEMES, Button, Divider, Frame, Layout, ListBox, Text, TextBox, Widget
 
-from gochan.config import BROWSER_PATH, THEME
+from gochan.config import BROWSER_PATH, THEME, KEY_BINDINGS
 from gochan.key import KeyLogger
 from gochan.views import BbsmenuView, BoardView, ImageView, ResponseForm, ThreadView
 from gochan.models import AppContext
 from gochan.view_models import BbsmenuVM, BoardVM, ThreadVM, ImageVM, ResponseFormVM
 
 
-def demo(screen: Screen, scene: Scene):
-    app_context = AppContext()
+def global_shortcuts(event):
+    if isinstance(event, KeyboardEvent):
+        c = event.key_code
+
+        if c == KEY_BINDINGS["global"]["exit"]:
+            raise StopApplication("stop")
+
 
     bbsmenu_view = BbsmenuView(screen, BbsmenuVM(app_context))
     board_view = BoardView(screen, BoardVM(app_context))
@@ -34,7 +39,7 @@ def demo(screen: Screen, scene: Scene):
         Scene([image_view], -1, name="Image")
     ]
 
-    screen.play(scenes, stop_on_resize=True, start_scene=scene, allow_int=True)
+    screen.play(scenes, stop_on_resize=True, start_scene=scene, unhandled_input=global_shortcuts, allow_int=True)
 
 
 def main():
@@ -44,7 +49,7 @@ def main():
     last_scene = None
     while True:
         try:
-            Screen.wrapper(demo, catch_interrupt=False, arguments=[last_scene])
+            Screen.wrapper(demo, catch_interrupt=True, arguments=[last_scene])
             sys.exit(0)
         except ResizeScreenError as e:
             last_scene = e.scene
