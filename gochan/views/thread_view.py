@@ -12,10 +12,11 @@ from gochan.models import Response
 from gochan.view_models import ThreadVM
 from gochan.effects import CommandLine
 from gochan.widgets import Brush, Buffer, Cell, RichText
+from gochan.models.ng import NGConfig
 from wcwidth import wcwidth
 
 
-def _gen_buffer(responses: List[Response], bookmark: int, width: int, brushes: Dict[str, int])\
+def _gen_buffer(responses: List[Response], bookmark: int, ng: NGConfig, width: int, brushes: Dict[str, int])\
         -> Tuple[Buffer, List[Tuple[int, int]]]:
     """
     Parameters
@@ -35,6 +36,20 @@ def _gen_buffer(responses: List[Response], bookmark: int, width: int, brushes: D
     link_idx = 0
 
     for r in responses:
+        mode = ng.is_ng_response(r)
+
+        if mode == 1:
+            start = len(buf)
+            buf.push(str(r.number) + " " + "あぼーん", brushes["normal"])
+            buf.break_line(1)
+            end = len(buf)
+            anchors.append((start, end))
+            buf.break_line(1)
+            continue
+        elif mode == 2:
+            anchors.append((len(buf), len(buf)))
+            continue
+
         start = len(buf)
 
         buf.push(str(r.number) + " ", brushes["normal"])
@@ -123,7 +138,7 @@ class ThreadView(Frame):
     def _data_context_changed(self, property_name: str):
         if property_name == "responses":
             self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._data_context.bookmark,
-                                                           self._rtext.width, THREAD_BRUSHES)
+                                                           self._data_context.ng, self._rtext.width, THREAD_BRUSHES)
 
             bookmark = self._data_context.bookmark
 
@@ -143,7 +158,7 @@ class ThreadView(Frame):
 
         if property_name == "responses":
             self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._data_context.bookmark,
-                                                           self._rtext.width, THREAD_BRUSHES)
+                                                           self._data_context.ng, self._rtext.width, THREAD_BRUSHES)
 
     def _on_load_(self):
         pass
