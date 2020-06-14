@@ -8,8 +8,10 @@ from gochan.models import Response
 
 
 class NGItem:
-    def __init__(self, value: str, use_reg: bool, hide: bool):
+    def __init__(self, scope: str, kind: str, value: str, use_reg: bool, hide: bool):
         super().__init__()
+        self.scope = scope
+        self.kind = kind
         self.value = value
         self.use_reg = use_reg
         self.hide = hide
@@ -23,15 +25,15 @@ class NGConfig:
         self.ids: List[NGItem] = ids
         self.words: List[NGItem] = words
 
-    def add_item(self, kind: str, value: str, use_reg: bool, hide: bool):
-        if kind == "title":
-            self.titles.append(NGItem(value, use_reg, hide))
-        elif kind == "name":
-            self.names.append(NGItem(value, use_reg, hide))
-        elif kind == "id":
-            self.ids.append(NGItem(value, use_reg, hide))
-        elif kind == "word":
-            self.words.append(NGItem(value, use_reg, hide))
+    def add_item(self, item: NGItem):
+        if item.kind == "title":
+            self.titles.append(item)
+        elif item.kind == "name":
+            self.names.append(item)
+        elif item.kind == "id":
+            self.ids.append(item)
+        elif item.kind == "word":
+            self.words.append(item)
 
     def is_ng_response(self, r: Response) -> int:
         """
@@ -95,11 +97,21 @@ class NG:
 
         return conf
 
+    def get_all_config(self):
+        conf = None
+        for k in self.configs:
+            if conf is None:
+                conf = self.configs[k]
+            else:
+                conf = conf + self.configs[k]
+
+        return conf
+
     def add_item(self, scope: str, kind: str, value: str, use_reg: bool, hide: bool):
         if scope not in self.configs:
             self.configs[scope] = NGConfig()
 
-        self.configs[scope].add_item(kind, value, use_reg, hide)
+        self.configs[scope].add_item(NGItem(scope, kind, value, use_reg, hide))
 
 
 ng = NG()
