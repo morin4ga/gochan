@@ -109,7 +109,7 @@ class NG:
 
     def add_item(self, scope: str, kind: str, value: str, use_reg: bool, hide: bool):
         if scope not in self.configs:
-            self.configs[scope] = NGConfig()
+            self.configs[scope] = NGConfig([], [], [], [])
 
         self.configs[scope].add_item(NGItem(scope, kind, value, use_reg, hide))
 
@@ -125,6 +125,6 @@ if NG_PATH.is_file():
         value = item["value"]
         use_reg = item["use_reg"]
 
-        hide = item["hide"] if "hide" in d else False
+        hide = item["hide"] if "hide" in item else False
 
         ng.add_item(scope, kind, value, use_reg, hide)
