@@ -9,6 +9,7 @@ from gochan.key import Key, parse_key
 from gochan.widgets import Brush
 
 CACHE_PATH = Path("~/.config/gochan/cache").expanduser()
+NG_PATH = Path(Path.home() / ".config/gochan/ng.json")
 
 USE_IMAGE_CACHE = True
 MAX_IMAGE_CACHE = 5

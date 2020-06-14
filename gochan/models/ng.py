@@ -1,7 +1,9 @@
 import re
+import json
 
 from typing import List, Dict
 
+from gochan.config import NG_PATH
 from gochan.models import Response
 
 
@@ -101,3 +103,16 @@ class NG:
 
 
 ng = NG()
+
+if NG_PATH.is_file():
+    d = json.loads(NG_PATH.read_text())
+
+    for item in d["items"]:
+        scope = item["scope"]
+        kind = item["kind"]
+        value = item["value"]
+        use_reg = item["use_reg"]
+
+        hide = item["hide"] if "hide" in d else False
+
+        ng.add_item(scope, kind, value, use_reg, hide)
