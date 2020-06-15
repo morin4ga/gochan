@@ -8,9 +8,9 @@ from asciimatics.widgets import THEMES, Button, Divider, Frame, Layout, ListBox,
 
 from gochan.config import BROWSER_PATH, THEME, KEY_BINDINGS
 from gochan.key import KeyLogger
-from gochan.views import BbsmenuView, BoardView, ImageView, ResponseForm, ThreadView
+from gochan.views import BbsmenuView, BoardView, ImageView, ResponseForm, ThreadView, NGView
 from gochan.models import AppContext
-from gochan.view_models import BbsmenuVM, BoardVM, ThreadVM, ImageVM, ResponseFormVM
+from gochan.view_models import BbsmenuVM, BoardVM, ThreadVM, ImageVM, ResponseFormVM, NGViewModel
 
 
 def global_shortcuts(event):
@@ -27,6 +27,7 @@ def demo(screen: Screen, scene: Scene, app_context: AppContext):
     thread_view = ThreadView(screen, ThreadVM(app_context))
     resform = ResponseForm(screen, ResponseFormVM(app_context))
     image_view = ImageView(screen, ImageVM(app_context))
+    ng_view = NGView(screen, NGViewModel(app_context))
     keylog = KeyLogger(screen)
 
     app_context.set_bbsmenu()
@@ -37,7 +38,8 @@ def demo(screen: Screen, scene: Scene, app_context: AppContext):
         Scene([board_view], -1, name="Board"),
         Scene([thread_view], -1, name="Thread"),
         Scene([resform], -1, name="ResponseForm"),
-        Scene([image_view], -1, name="Image")
+        Scene([image_view], -1, name="Image"),
+        Scene([ng_view], -1, name="NG"),
     ]
 
     screen.play(scenes, stop_on_resize=True, start_scene=scene, unhandled_input=global_shortcuts, allow_int=True)
