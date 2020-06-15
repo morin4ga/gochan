@@ -4,6 +4,7 @@ from typing import List
 
 from gochan.view_models import NGViewModel
 from gochan.models.ng import NGItem
+from gochan.effects import NGForm
 
 
 class NGView(Frame):
@@ -24,10 +25,13 @@ class NGView(Frame):
                                   [("Title", 0), ("Name", 1), ("Id", 2), ("Word", 3)],
                                   name="kind_list",
                                   on_change=self._on_pick_kind)
-        self._ng_list = ListBox(Widget.FILL_COLUMN, [], name="ng_list", add_scroll_bar=True, on_change=self._on_pick_ng)
+        self._ng_list = ListBox(Widget.FILL_COLUMN, [], name="ng_list", add_scroll_bar=True,
+                                on_change=self._on_pick_ng, on_select=self._on_select_ng)
         self._scope_label = Label("")
         self._use_reg_label = Label("")
         self._hide_label = Label("")
+
+        self._form = None
 
         layout = Layout([20, 1, 79], fill_frame=True)
         self.add_layout(layout)
@@ -82,6 +86,20 @@ class NGView(Frame):
             self._scope_label.text = "scope: " + self._data_context.config.words[idx2].scope
             self._use_reg_label.text = "use_reg: " + str(self._data_context.config.words[idx2].use_reg)
             self._hide_label.text = "hide: " + str(self._data_context.config.words[idx2].hide)
+
+    def _on_select_ng(self):
+        self.save()
+        idx1 = self.data.get("kind_list")
+        idx2 = self.data.get("ng_list")
+
+        if idx1 is None or idx2 is None:
+            return
+
+        self._form = NGForm(self.screen, self._form_closed)
+        self._scene.add_effect(self._form)
+
+    def _form_closed(self, scope, kind, use_reg, hide, value):
+        pass
 
 
 def _to_options(from_: List[NGItem]):
