@@ -3,7 +3,7 @@ import re
 from typing import List, Dict, Tuple, Optional, Any
 
 from gochan.models import Thread, Response, AppContext
-from gochan.models.ng import NGConfig
+from gochan.models.ng import NGList
 from gochan.widgets import Buffer, Brush
 from gochan.event_handler import EventHandler
 
@@ -57,11 +57,8 @@ class ThreadVM:
             self._thread.bookmark = value
 
     @property
-    def ng(self) -> Optional[NGConfig]:
-        if self._thread is None:
-            return None
-
-        return self._app_context.ng.get_config(self._thread.board, self._thread.key)
+    def ng(self) -> NGList:
+        return self._app_context.ng
 
     def update(self):
         if self._app_context.thread is not None:

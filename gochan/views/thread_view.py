@@ -12,80 +12,9 @@ from gochan.models import Response
 from gochan.view_models import ThreadVM
 from gochan.effects import CommandLine
 from gochan.widgets import Brush, Buffer, Cell, RichText
-from gochan.models.ng import NGConfig
 from wcwidth import wcwidth
 
-
-def _gen_buffer(responses: List[Response], bookmark: int, ng: NGConfig, width: int, brushes: Dict[str, int])\
-        -> Tuple[Buffer, List[Tuple[int, int]]]:
-    """
-    Parameters
-    ----------
-    width : int
-    brush : {'normal', 'name', 'bookmark'}
-
-    Returns
-    -------
-    Buffer
-    anchors : [(int, int)]
-    List of tuple that represents the location of response by start/end line number
-    """
-    buf = Buffer(width)
-    anchors = []
-    link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
-    link_idx = 0
-
-    for r in responses:
-        mode = ng.is_ng_response(r)
-
-        if mode == 1:
-            start = len(buf)
-            buf.push(str(r.number) + " " + "あぼーん", brushes["normal"])
-            buf.break_line(1)
-            end = len(buf)
-            anchors.append((start, end))
-            buf.break_line(1)
-            continue
-        elif mode == 2:
-            anchors.append((len(buf), len(buf)))
-            continue
-
-        start = len(buf)
-
-        buf.push(str(r.number) + " ", brushes["normal"])
-
-        buf.push(r.name, brushes["name"])
-
-        buf.push(" " + r.date + " " + r.id, brushes["normal"])
-
-        buf.break_line(2)
-
-        # Add index suffix so that user can select url easily
-        def _mark_link(match):
-            nonlocal link_idx
-            url = match.group(1)
-            repl = url + "(" + str(link_idx) + ")"
-            link_idx += 1
-            return repl
-
-        marked_msg = link_reg.sub(_mark_link, r.message)
-
-        for l in marked_msg.split("\n"):
-            buf.push(l, brushes["normal"])
-            buf.break_line(1)
-
-        end = len(buf)
-
-        anchors.append((start, end))
-
-        buf.break_line(1)
-
-        # don't render bookmark if bookmark points last response
-        if r.number == bookmark and len(responses) != bookmark:
-            buf.push("─" * width, brushes["bookmark"])
-            buf.break_line(2)
-
-    return (buf, anchors)
+link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
 
 
 class ThreadView(Frame):
@@ -137,8 +66,7 @@ class ThreadView(Frame):
 
     def _data_context_changed(self, property_name: str):
         if property_name == "responses":
-            self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._data_context.bookmark,
-                                                           self._data_context.ng, self._rtext.width, THREAD_BRUSHES)
+            self._update_buffer()
 
             bookmark = self._data_context.bookmark
 
@@ -149,7 +77,6 @@ class ThreadView(Frame):
                     self._rtext.go_to(line)
                 else:
                     self._rtext.go_to(self._anchors[bookmark - 1][0])
-
             else:
                 self._rtext.reset_offset()
 
@@ -157,8 +84,65 @@ class ThreadView(Frame):
         property_name, kind, arg = args
 
         if property_name == "responses":
-            self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._data_context.bookmark,
-                                                           self._data_context.ng, self._rtext.width, THREAD_BRUSHES)
+            self._update_buffer()
+
+    def _update_buffer(self):
+        buf = Buffer(self._rtext.width)
+        self._anchors = []
+        link_idx = 0
+
+        for r in self._data_context.responses:
+            mode = self._data_context.ng.is_ng(r, self._data_context.board, self._data_context.key)
+
+            if mode == 1:
+                start = len(buf)
+                buf.push(str(r.number) + " " + "あぼーん", THREAD_BRUSHES["normal"])
+                buf.break_line(1)
+                end = len(buf)
+                self._anchors.append((start, end))
+                buf.break_line(1)
+                continue
+            elif mode == 2:
+                self._anchors.append((len(buf), len(buf)))
+                continue
+
+            start = len(buf)
+
+            buf.push(str(r.number) + " ", THREAD_BRUSHES["normal"])
+
+            buf.push(r.name, THREAD_BRUSHES["name"])
+
+            buf.push(" " + r.date + " " + r.id, THREAD_BRUSHES["normal"])
+
+            buf.break_line(2)
+
+            # Add index suffix so that user can select url easily
+            def _mark_link(match):
+                nonlocal link_idx
+                url = match.group(1)
+                repl = url + "(" + str(link_idx) + ")"
+                link_idx += 1
+                return repl
+
+            marked_msg = link_reg.sub(_mark_link, r.message)
+
+            for l in marked_msg.split("\n"):
+                buf.push(l, THREAD_BRUSHES["normal"])
+                buf.break_line(1)
+
+            end = len(buf)
+
+            self._anchors.append((start, end))
+
+            buf.break_line(1)
+
+            # don't render bookmark if bookmark points last response
+            if r.number == self._data_context.bookmark and \
+                    len(self._data_context.responses) != self._data_context.bookmark:
+                buf.push("─" * self._rtext.width, THREAD_BRUSHES["bookmark"])
+                buf.break_line(2)
+
+        self._rtext.value = buf
 
     def _on_load_(self):
         pass
