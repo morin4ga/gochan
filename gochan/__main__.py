@@ -10,7 +10,7 @@ from gochan.config import BROWSER_PATH, THEME, KEY_BINDINGS
 from gochan.key import KeyLogger
 from gochan.views import BbsmenuView, BoardView, ImageView, ResponseForm, ThreadView, NGView
 from gochan.models import AppContext
-from gochan.view_models import BbsmenuVM, BoardVM, ThreadVM, ImageVM, ResponseFormVM, NGViewModel
+from gochan.view_models import BbsmenuVM, BoardVM, ThreadVM, ImageVM, ResponseFormVM, NGVM
 
 
 def global_shortcuts(event):
@@ -27,7 +27,7 @@ def demo(screen: Screen, scene: Scene, app_context: AppContext):
     thread_view = ThreadView(screen, ThreadVM(app_context))
     resform = ResponseForm(screen, ResponseFormVM(app_context))
     image_view = ImageView(screen, ImageVM(app_context))
-    ng_view = NGView(screen, NGViewModel(app_context))
+    ng_view = NGView(screen, NGVM(app_context))
     keylog = KeyLogger(screen)
 
     app_context.set_bbsmenu()

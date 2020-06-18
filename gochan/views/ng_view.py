@@ -2,13 +2,13 @@ from asciimatics.widgets import Frame, ListBox, Widget, Layout, VerticalDivider,
 from asciimatics.screen import Screen
 from typing import List
 
-from gochan.view_models import NGViewModel
+from gochan.view_models import NGVM
 from gochan.models.ng import NGItem
 from gochan.effects import NGForm
 
 
 class NGView(Frame):
-    def __init__(self, screen: Screen, data_context: NGViewModel):
+    def __init__(self, screen: Screen, data_context: NGVM):
         super().__init__(screen,
                          screen.height,
                          screen.width,
@@ -20,6 +20,10 @@ class NGView(Frame):
         self.set_theme("user_theme")
 
         self._data_context = data_context
+        self._data_context.on_property_changed = self._context_changed
+
+        self._selected_list = None
+        self._selected_item = None
 
         self._kind_list = ListBox(4,
                                   [("Title", 0), ("Name", 1), ("Id", 2), ("Word", 3)],
@@ -27,7 +31,8 @@ class NGView(Frame):
                                   on_change=self._on_pick_kind)
         self._ng_list = ListBox(Widget.FILL_COLUMN, [], name="ng_list", add_scroll_bar=True,
                                 on_change=self._on_pick_ng, on_select=self._on_select_ng)
-        self._scope_label = Label("")
+        self._board_label = Label("")
+        self._key_label = Label("")
         self._use_reg_label = Label("")
         self._hide_label = Label("")
 
@@ -37,69 +42,65 @@ class NGView(Frame):
         self.add_layout(layout)
         layout.add_widget(self._kind_list, 0)
         layout.add_widget(Divider(), 0)
-        layout.add_widget(self._scope_label, 0)
+        layout.add_widget(self._board_label, 0)
+        layout.add_widget(self._key_label, 0)
         layout.add_widget(self._use_reg_label, 0)
         layout.add_widget(self._hide_label, 0)
         layout.add_widget(VerticalDivider(), 1)
         layout.add_widget(self._ng_list, 2)
         self.fix()
 
+    def _context_changed(self, property_name: str):
+        pass
+
     def _on_pick_kind(self):
         self.save()
         idx = self.data.get("kind_list")
 
         if idx == 0:
-            self._ng_list.options = _to_options(self._data_context.config.titles)
+            self._selected_list = self._data_context.title_ngs
         elif idx == 1:
-            self._ng_list.options = _to_options(self._data_context.config.names)
+            self._selected_list = self._data_context.name_ngs
         elif idx == 2:
-            self._ng_list.options = _to_options(self._data_context.config.ids)
+            self._selected_list = self._data_context.id_ngs
         elif idx == 3:
-            self._ng_list.options = _to_options(self._data_context.config.words)
+            self._selected_list = self._data_context.word_ngs
+
+        if self._selected_list is not None:
+            self._ng_list.options = _to_options(self._selected_list)
 
         self._on_pick_ng()
 
     def _on_pick_ng(self):
         self.save()
-        idx1 = self.data.get("kind_list")
-        idx2 = self.data.get("ng_list")
+        idx = self.data.get("ng_list")
 
-        if idx1 is None or idx2 is None:
-            self._scope_label.text = ""
+        if self._selected_list is None or idx is None:
+            self._board_label.text = ""
+            self._key_label.text = ""
             self._use_reg_label.text = ""
             self._hide_label.text = ""
             return
 
-        if idx1 == 0:
-            self._scope_label.text = "scope: " + self._data_context.config.titles[idx2].scope
-            self._use_reg_label.text = "use_reg: " + str(self._data_context.config.titles[idx2].use_reg)
-            self._hide_label.text = "hide: " + str(self._data_context.config.titles[idx2].hide)
-        elif idx1 == 1:
-            self._scope_label.text = "scope: " + self._data_context.config.names[idx2].scope
-            self._use_reg_label.text = "use_reg: " + str(self._data_context.config.names[idx2].use_reg)
-            self._hide_label.text = "hide: " + str(self._data_context.config.names[idx2].hide)
-        elif idx1 == 2:
-            self._scope_label.text = "scope: " + self._data_context.config.ids[idx2].scope
-            self._use_reg_label.text = "use_reg: " + str(self._data_context.config.ids[idx2].use_reg)
-            self._hide_label.text = "hide: " + str(self._data_context.config.ids[idx2].hide)
-        elif idx1 == 3:
-            self._scope_label.text = "scope: " + self._data_context.config.words[idx2].scope
-            self._use_reg_label.text = "use_reg: " + str(self._data_context.config.words[idx2].use_reg)
-            self._hide_label.text = "hide: " + str(self._data_context.config.words[idx2].hide)
+        self._selected_item = self._selected_list[idx]
+
+        self._board_label.text = "board: " + \
+            (self._selected_item.board if self._selected_item.board is not None else "")
+        self._key_label.text = "key: " + (self._selected_item.key if self._selected_item.key is not None else "")
+        self._use_reg_label.text = "use_reg: " + str(self._selected_item.use_reg)
+        self._hide_label.text = "hide: " + str(self._selected_item.hide)
 
     def _on_select_ng(self):
         self.save()
-        idx1 = self.data.get("kind_list")
-        idx2 = self.data.get("ng_list")
 
-        if idx1 is None or idx2 is None:
+        if self._selected_item is None:
             return
 
-        self._form = NGForm(self.screen, self._form_closed)
+        self._form = NGForm(self.screen, self._replace_item, self._selected_item.board, self._selected_item.key)
         self._scene.add_effect(self._form)
 
-    def _form_closed(self, scope, kind, use_reg, hide, value):
-        pass
+    def _replace_item(self, kind, use_reg, hide, value, board, key):
+        self._data_context.replace_item(self._selected_item.id, kind, use_reg, hide, value, board, key)
 
 
 def _to_options(from_: List[NGItem]):

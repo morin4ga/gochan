@@ -1,3 +1,5 @@
+from typing import List
+
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, Text, TextBox, CheckBox, Layout, Widget, Divider, Button, DropdownList, Label,\
     VerticalDivider
@@ -5,7 +7,12 @@ from asciimatics.event import KeyboardEvent
 
 
 class NGForm(Frame):
-    def __init__(self, screen: Screen, on_close):
+    def __init__(self, screen: Screen, on_close, board: str = None, key: str = None):
+        """
+        Parameters
+        ----------
+        on_close : (kind, use_reg, hide, value, board, key) -> None
+        """
         super().__init__(screen,
                          int(screen.height * 0.8),
                          int(screen.width * 0.8),
@@ -16,9 +23,20 @@ class NGForm(Frame):
 
         self.set_theme("user_theme")
 
+        self._board = board
+        self._key = key
+
         self._on_close = on_close
 
-        self._scope_text = Text(name="scope_text")
+        scopes = [("全ての板", 0)]
+
+        if board is not None:
+            scopes.append((board, 1))
+
+            if key is not None:
+                scopes.append((board + "-" + key, 2))
+
+        self._scope_drop = DropdownList(scopes, name="scope_drop")
         self._kind_drop = DropdownList([("title", 0), ("name", 1), ("id", 2),
                                         ("word", 3)], name="kind_drop")
         self._use_reg_chk = CheckBox("", name="use_reg_chk")
@@ -31,7 +49,7 @@ class NGForm(Frame):
         self.add_layout(layout)
         layout.add_widget(Label("scope"), 0)
         layout.add_widget(VerticalDivider(), 1)
-        layout.add_widget(self._scope_text, 2)
+        layout.add_widget(self._scope_drop, 2)
 
         layout2 = Layout([100])
         self.add_layout(layout2)
@@ -97,23 +115,32 @@ class NGForm(Frame):
     def _save_clicked(self):
         self.save()
 
-        scope = self.data.get("scope_text")
-        kind = self.data.get("kind_drop")
+        scope_idx = self.data.get("scope_drop")
+        kind_idx = self.data.get("kind_drop")
         use_reg = self.data.get("use_reg_chk")
         hide = self.data.get("hide_chk")
         value = self.data.get("value_box")
 
-        if scope is not None and kind is not None and use_reg is not None and hide is not None\
+        if scope_idx is not None and kind_idx is not None and use_reg is not None and hide is not None\
                 and value is not None:
-            # Convert kind from index to str
-            if kind == 0:
+
+            board = None
+            key = None
+
+            if scope_idx == 1:
+                board = self._board
+            elif scope_idx == 2:
+                board = self._board
+                key = self._key
+
+            if kind_idx == 0:
                 kind = "title"
-            elif kind == 1:
+            elif kind_idx == 1:
                 kind = "name"
-            elif kind == 2:
+            elif kind_idx == 2:
                 kind = "id"
-            elif kind == 3:
+            elif kind_idx == 3:
                 kind = "word"
 
             self.disappaer()
-            self._on_close(scope, kind, use_reg, hide, value)
+            self._on_close(kind, use_reg, hide, value, board, key)
