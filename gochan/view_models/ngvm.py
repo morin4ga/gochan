@@ -13,7 +13,7 @@ class NGVM:
         self.title_ngs = self._app_context.ng.filter("title")
         self.name_ngs = self._app_context.ng.filter("name")
         self.id_ngs = self._app_context.ng.filter("id")
-        self.word_ngs = self._app_context.ng.filter("title")
+        self.word_ngs = self._app_context.ng.filter("word")
 
     def add_item(self, kind: str, value: str, use_reg: bool, hide: bool, board: Optional[str], key: Optional[str]):
         self._app_context.ng.add_item(kind, value, use_reg, hide, board, key)
@@ -29,7 +29,7 @@ class NGVM:
         self.title_ngs = self._app_context.ng.filter("title")
         self.name_ngs = self._app_context.ng.filter("name")
         self.id_ngs = self._app_context.ng.filter("id")
-        self.word_ngs = self._app_context.ng.filter("title")
+        self.word_ngs = self._app_context.ng.filter("word")
 
         self.on_property_changed("title_ngs")
         self.on_property_changed("name_ngs")
