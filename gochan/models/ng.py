@@ -9,16 +9,70 @@ from gochan.event_handler import EventHandler
 
 
 class NGItem:
-    def __init__(self, id: int, kind: str, value: str, use_reg: bool, hide: bool,
+    def __init__(self, kind: str, value: str, use_reg: bool, hide: bool,
                  board: Optional[str], key: Optional[str]):
         super().__init__()
-        self.id = id
-        self.board = board
-        self.key = key
-        self.kind = kind
-        self.value = value
-        self.use_reg = use_reg
-        self.hide = hide
+        self._board = board
+        self._key = key
+        self._kind = kind
+        self._value = value
+        self._use_reg = use_reg
+        self._hide = hide
+        self.on_property_changed = EventHandler()
+
+    @property
+    def board(self):
+        return self.board
+
+    @board.setter
+    def board(self, value: str):
+        self._board = value
+        self.on_property_changed(self, "board")
+
+    @property
+    def key(self):
+        return self._key
+
+    @key.setter
+    def key(self, value: str):
+        self._key = value
+        self.on_property_changed(self, "key")
+
+    @property
+    def kind(self):
+        return self._kind
+
+    @kind.setter
+    def kind(self, value: str):
+        self._kind = value
+        self.on_property_changed(self, "kind")
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def kind(self, value_: str):
+        self._value = value_
+        self.on_property_changed(self, "value")
+
+    @property
+    def use_reg(self):
+        return self._use_reg
+
+    @use_reg.setter
+    def use_reg(self, value: bool):
+        self._use_reg = value
+        self.on_property_changed(self, "use_reg")
+
+    @property
+    def hide(self):
+        return self._hide
+
+    @hide.setter
+    def hide(self, value: bool):
+        self._hide = value
+        self.on_property_changed(self, "hide")
 
     def match(self, obj: Union[Response, str]):
         """
@@ -55,29 +109,37 @@ class NGItem:
 class NGList:
     def __init__(self):
         super().__init__()
-        self.on_property_changed = EventHandler()
-        self.list: List[NGItem] = []
-        self._last_id = 0
+        self.on_collection_changed = EventHandler()
+        self._list: List[NGItem] = []
+
+    def __delitem__(self, key):
+        item = self._list.__getitem__(key)
+        item.on_property_changed.remove(self._on_item_changed)
+        self._list.__delitem__(key)
+        self.on_collection_changed(self, "delete", key)
+
+    def __getitem__(self, key):
+        return self._list.__getitem__(key)
+
+    def __setitem__(self, key, value):
+        self._list.__setitem__(key, value)
+        self.on_collection_changed(self, "set", key)
+
+    def __iter__(self):
+        return self._list.__iter__()
+
+    def __len__(self):
+        return self._list.__len__()
 
     def add_item(self, kind: str, value: str, use_reg: bool, hide: bool, board: Optional[str], key: Optional[str]):
-        self._last_id += 1
-        self.list.append(NGItem(self._last_id, kind, value, use_reg, hide, board, key))
-        self.on_property_changed("list")
+        item = NGItem(self._last_id, kind, value, use_reg, hide, board, key)
+        item.on_property_changed.add(self._on_item_changed)
+        self._list.append(item)
+        self.on_collection_changed(self, "add", item)
 
-    def replace_item(self, target: id, kind: str, value: str, use_reg: bool, hide: bool,
-                     board: Optional[str], key: Optional[str]):
-        for item in self.list:
-            if item.id == target:
-                self.list.remove(item)
-
-        self.add_item(kind, value, use_reg, hide, board, key)
-        self.on_property_changed("list")
-
-    def delete_item(self, target: id):
-        for item in self.list:
-            if item.id == target:
-                self._list.remove(item)
-                self.on_property_changed("list")
+    def delete_item(self, item: NGItem):
+        self._list.remove(item)
+        self.on_collection_changed(self, "delete", item)
 
     def is_ng(self, obj: Union[Response, str], board: str = None, key: str = None) -> int:
         """
@@ -97,6 +159,9 @@ class NGList:
                 return 2 if item.hide else 1
 
         return 0
+
+    def _on_item_changed(self, sender: NGItem, property_name: str):
+        self.on_collection_changed(self, "change", self._list.index(sender))
 
 
 ng = NGList()
