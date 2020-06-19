@@ -11,4 +11,4 @@ class EventHandler:
 
     def __call__(self, *args):
         for h in self._handlers:
-            h(args)
+            h(*args)
