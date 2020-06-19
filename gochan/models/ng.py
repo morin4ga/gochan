@@ -141,6 +141,18 @@ class NGList:
         self._list.remove(item)
         self.on_collection_changed(self, "delete", item)
 
+    def filter(self, kind: str):
+        if kind == "title":
+            return list(filter(lambda x: x.kind == "title", self._list))
+        elif kind == "name":
+            return list(filter(lambda x: x.kind == "name", self._list))
+        elif kind == "id":
+            return list(filter(lambda x: x.kind == "id", self._list))
+        elif kind == "word":
+            return list(filter(lambda x: x.kind == "word", self._list))
+        else:
+            raise ValueError("wrong kind " + kind)
+
     def is_ng(self, obj: Union[Response, str], board: str = None, key: str = None) -> int:
         """
         Returns
