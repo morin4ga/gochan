@@ -9,7 +9,7 @@ from gochan.models.ng import NGItem
 
 
 class NGEditor(Frame):
-    def __init__(self, screen: Screen, item: NGItem):
+    def __init__(self, screen: Screen, item: NGItem, on_close):
         super().__init__(screen,
                          int(screen.height * 0.8),
                          int(screen.width * 0.8),
@@ -21,6 +21,7 @@ class NGEditor(Frame):
         self.set_theme("user_theme")
 
         self._item = item
+        self._on_close = on_close
 
         self._board_text = Text(name="board_text")
         self._board_text.value = item.board
@@ -164,3 +165,4 @@ class NGEditor(Frame):
             self._item.value = value
 
             self.disappaer()
+            self._on_close()

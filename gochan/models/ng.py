@@ -172,6 +172,28 @@ class NGList:
 
         return 0
 
+    def save(self):
+        d_list = []
+
+        for item in self._list:
+            d = {}
+
+            if item.board is not None:
+                d["board"] = item.board
+            if item.key is not None:
+                d["key"] = item.key
+
+            d["kind"] = item.kind
+            d["use_reg"] = item.use_reg
+            d["hide"] = item.hide
+            d["value"] = item.value
+
+            d_list.append(d)
+
+        obj = {"items": d_list}
+        j = json.dumps(obj, ensure_ascii=False, indent=2)
+        NG_PATH.write_text(j)
+
     def _on_item_changed(self, sender: NGItem, property_name: str):
         self.on_collection_changed(self, "change", self._list.index(sender))
 

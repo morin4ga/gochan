@@ -96,7 +96,7 @@ class NGView(Frame):
 
     def _on_select_ng(self):
         if self._selected_item is not None:
-            self._form = NGEditor(self.screen, self._selected_item)
+            self._form = NGEditor(self.screen, self._selected_item, lambda: self._data_context.save())
             self._scene.add_effect(self._form)
 
 

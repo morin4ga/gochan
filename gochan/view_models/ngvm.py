@@ -25,6 +25,9 @@ class NGVM:
     def delete_item(self, target: id):
         self._app_context.ng.delete_item(target)
 
+    def save(self):
+        self._app_context.ng.save()
+
     def _ng_changed(self, sender, type: str, *arg):
         self.title_ngs = self._app_context.ng.filter("title")
         self.name_ngs = self._app_context.ng.filter("name")
