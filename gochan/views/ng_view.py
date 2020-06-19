@@ -4,7 +4,7 @@ from typing import List
 
 from gochan.view_models import NGVM
 from gochan.models.ng import NGItem
-from gochan.effects import NGForm
+from gochan.effects import NGEditor
 
 
 class NGView(Frame):
@@ -51,7 +51,11 @@ class NGView(Frame):
         self.fix()
 
     def _context_changed(self, property_name: str):
-        pass
+        self._selected_list = None
+        self._selected_item = None
+        self._kind_list.value = 0
+        self._ng_list.value = None
+        self.switch_focus(self._layouts[0], 0, 0)
 
     def _on_pick_kind(self):
         self.save()
@@ -91,16 +95,9 @@ class NGView(Frame):
         self._hide_label.text = "hide: " + str(self._selected_item.hide)
 
     def _on_select_ng(self):
-        self.save()
-
-        if self._selected_item is None:
-            return
-
-        self._form = NGForm(self.screen, self._replace_item, self._selected_item.board, self._selected_item.key)
-        self._scene.add_effect(self._form)
-
-    def _replace_item(self, kind, use_reg, hide, value, board, key):
-        self._data_context.replace_item(self._selected_item.id, kind, use_reg, hide, value, board, key)
+        if self._selected_item is not None:
+            self._form = NGEditor(self.screen, self._selected_item)
+            self._scene.add_effect(self._form)
 
 
 def _to_options(from_: List[NGItem]):

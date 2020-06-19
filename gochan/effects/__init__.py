@@ -1,2 +1,2 @@
 from .command_line import CommandLine
-from .ng_form import NGForm
+from .ng_editor import NGEditor
