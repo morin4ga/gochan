@@ -22,7 +22,7 @@ class NGItem:
 
     @property
     def board(self):
-        return self.board
+        return self._board
 
     @board.setter
     def board(self, value: str):
@@ -52,7 +52,7 @@ class NGItem:
         return self._value
 
     @value.setter
-    def kind(self, value_: str):
+    def value(self, value_: str):
         self._value = value_
         self.on_property_changed(self, "value")
 
@@ -132,7 +132,7 @@ class NGList:
         return self._list.__len__()
 
     def add_item(self, kind: str, value: str, use_reg: bool, hide: bool, board: Optional[str], key: Optional[str]):
-        item = NGItem(self._last_id, kind, value, use_reg, hide, board, key)
+        item = NGItem(kind, value, use_reg, hide, board, key)
         item.on_property_changed.add(self._on_item_changed)
         self._list.append(item)
         self.on_collection_changed(self, "add", item)
