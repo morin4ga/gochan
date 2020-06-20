@@ -18,6 +18,7 @@ class ThreadVM:
         self.on_collection_changed = EventHandler()
 
         app_context.on_property_changed.add(self._app_context_changed)
+        app_context.ng.on_collection_changed.add(self._ng_changed)
 
     @property
     def server(self) -> Optional[str]:
@@ -97,3 +98,6 @@ class ThreadVM:
 
         if property_name == "responses":
             self.on_collection_changed(args)
+
+    def _ng_changed(self, sender, type: str, *arg):
+        self.on_property_changed("ng")
