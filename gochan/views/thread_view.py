@@ -66,6 +66,9 @@ class ThreadView(Frame):
 
     def _data_context_changed(self, property_name: str):
         if property_name == "responses" or property_name == "ng":
+            if self._data_context.responses is None:
+                return
+
             self._update_buffer()
 
             bookmark = self._data_context.bookmark
