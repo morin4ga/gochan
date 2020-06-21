@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Callable, Dict, Any
 
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, Text, TextBox, CheckBox, Layout, Widget, Divider, Button, DropdownList, Label,\
@@ -9,7 +9,7 @@ from gochan.models.ng import NGItem
 
 
 class NGEditor(Frame):
-    def __init__(self, screen: Screen, item: NGItem, on_close):
+    def __init__(self, screen: Screen, item: NGItem, on_close: Callable[[Dict[str, Any]], None]):
         super().__init__(screen,
                          int(screen.height * 0.8),
                          int(screen.width * 0.8),
@@ -157,12 +157,14 @@ class NGEditor(Frame):
             elif kind_idx == 3:
                 kind = "word"
 
-            self._item.board = board
-            self._item.key = key
-            self._item.kind = kind
-            self._item.use_reg = use_reg
-            self._item.hide = hide
-            self._item.value = value
+            d = {
+                "board": board,
+                "key": key,
+                "kind": kind,
+                "use_reg": use_reg,
+                "hide": hide,
+                "value": value
+            }
 
             self.disappaer()
-            self._on_close()
+            self._on_close(d)
