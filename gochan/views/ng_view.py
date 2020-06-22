@@ -102,7 +102,13 @@ class NGView(Frame):
                                           lambda values: self._data_context.update(self._selected_item.id, values))
                     self._scene.add_effect(self._form)
                 elif idx == 1:
-                    self._data_context.delete(self._selected_item.id)
+                    def on_close_del_dialog(idx):
+                        if idx == 0:
+                            self._data_context.delete(self._selected_item.id)
+
+                    self._scene.add_effect(PopUpDialog(self._screen, "Really want to delete it?",
+                                                       ["Delete", "Cancel"], on_close=on_close_del_dialog,
+                                                       theme="user_theme"))
 
             self._scene.add_effect(PopUpDialog(self._screen, "Choose manipulation", [
                                    "Edit", "Delete", "Cancel"], on_close=on_select_manipilation, theme="user_theme"))
