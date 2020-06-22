@@ -1,4 +1,4 @@
-from asciimatics.widgets import Frame, ListBox, Widget, Layout, VerticalDivider, Divider, Text, Label
+from asciimatics.widgets import Frame, ListBox, Widget, Layout, VerticalDivider, Divider, Text, Label, PopUpDialog
 from asciimatics.screen import Screen
 from typing import List
 
@@ -96,9 +96,16 @@ class NGView(Frame):
 
     def _on_select_ng(self):
         if self._selected_item is not None:
-            self._form = NGEditor(self.screen, self._selected_item,
-                                  lambda values: self._data_context.update(self._selected_item.id, values))
-            self._scene.add_effect(self._form)
+            def on_select_manipilation(idx):
+                if idx == 0:
+                    self._form = NGEditor(self.screen, self._selected_item,
+                                          lambda values: self._data_context.update(self._selected_item.id, values))
+                    self._scene.add_effect(self._form)
+                elif idx == 1:
+                    self._data_context.delete(self._selected_item.id)
+
+            self._scene.add_effect(PopUpDialog(self._screen, "Choose manipulation", [
+                                   "Edit", "Delete", "Cancel"], on_close=on_select_manipilation, theme="user_theme"))
 
 
 def _to_options(from_: List[NGItem]):
