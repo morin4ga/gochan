@@ -21,8 +21,8 @@ class NGVM:
     def update(self, target: id, values: Dict[str, Any]):
         self._app_context.ng.update(target, values)
 
-    def delete_item(self, target: id):
-        self._app_context.ng.delete_item(target)
+    def delete(self, target: id):
+        self._app_context.ng.delete(target)
 
     def _ng_changed(self, sender, type: str, *arg):
         self.title_ngs = self._app_context.ng.select("title")
