@@ -170,15 +170,20 @@ class NGList:
 ng = NGList()
 
 if NG_PATH.is_file():
-    d = json.loads(NG_PATH.read_text())
+    text = NG_PATH.read_text()
 
-    for item in d["items"]:
-        kind = item["kind"]
-        value = item["value"]
+    # Ensure it's not empty
+    if len(text.replace(" ", "")) != 0:
+        d = json.loads(text)
 
-        hide = item["hide"] if "hide" in item else False
-        use_reg = item["use_reg"] if "use_reg" in item else False
-        board = item.get("board")
-        key = item.get("key")
+        if "items" in d:
+            for item in d["items"]:
+                kind = item["kind"]
+                value = item["value"]
 
-        ng.insert(kind, value, use_reg, hide, board, key)
+                hide = item["hide"] if "hide" in item else False
+                use_reg = item["use_reg"] if "use_reg" in item else False
+                board = item.get("board")
+                key = item.get("key")
+
+                ng.insert(kind, value, use_reg, hide, board, key)
