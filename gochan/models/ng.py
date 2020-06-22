@@ -12,13 +12,41 @@ class NGItem:
     def __init__(self, id: int, kind: str, value: str, use_reg: bool, hide: bool,
                  board: Optional[str], key: Optional[str]):
         super().__init__()
-        self.id = id
-        self.board = board
-        self.key = key
-        self.kind = kind
-        self.value = value
-        self.use_reg = use_reg
-        self.hide = hide
+        self._id = id
+        self._board = board
+        self._key = key
+        self._kind = kind
+        self._value = value
+        self._use_reg = use_reg
+        self._hide = hide
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def board(self):
+        return self._board
+
+    @property
+    def key(self):
+        return self._key
+
+    @property
+    def kind(self):
+        return self._kind
+
+    @property
+    def value(self):
+        return self._value
+
+    @property
+    def use_reg(self):
+        return self._use_reg
+
+    @property
+    def hide(self):
+        return self._hide
 
     def match(self, obj: Union[Response, str]):
         """
@@ -59,21 +87,6 @@ class NGList:
         self._list: List[NGItem] = []
         self._last_id = 0
 
-    """
-    def __delitem__(self, key):
-        item = self._list.__getitem__(key)
-        item.on_property_changed.remove(self._on_item_changed)
-        self._list.__delitem__(key)
-        self.on_collection_changed(self, "delete", key)
-
-    def __getitem__(self, key):
-        return self._list.__getitem__(key)
-
-    def __setitem__(self, key, value):
-        self._list.__setitem__(key, value)
-        self.on_collection_changed(self, "set", key)
-    """
-
     def __iter__(self):
         return self._list.__iter__()
 
@@ -98,17 +111,17 @@ class NGList:
         for item in self._list:
             if item.id == id:
                 if "board" in values:
-                    item.board = values["board"]
+                    item._board = values["board"]
                 if "key" in values:
-                    item.key = values["key"]
+                    item._key = values["key"]
                 if "kind" in values:
-                    item.kind = values["kind"]
+                    item._kind = values["kind"]
                 if "use_reg" in values:
-                    item.use_reg = values["use_reg"]
+                    item._use_reg = values["use_reg"]
                 if "hide" in values:
-                    item.hide = values["hide"]
+                    item._hide = values["hide"]
                 if "value" in values:
-                    item.value = values["value"]
+                    item._value = values["value"]
 
                 self._save()
                 self.on_collection_changed(self, "update", item)
