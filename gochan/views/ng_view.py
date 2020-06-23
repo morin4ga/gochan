@@ -118,6 +118,6 @@ def _to_options(from_: List[NGItem]):
     result = []
 
     for i, item in enumerate(from_):
-        result.append((item.value, i))
+        result.append((item.value.split("\n")[0], i))
 
     return result
