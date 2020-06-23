@@ -52,7 +52,9 @@ class NGView(Frame):
         self._selected_list = None
         self._selected_item = None
         self._kind_list.value = 0
-        self._ng_list.value = None
+        self._ng_list.value = 0
+
+        self._on_pick_kind()
         self.switch_focus(self._layouts[0], 0, 0)
 
     def _on_pick_kind(self):
@@ -78,6 +80,7 @@ class NGView(Frame):
         idx = self._ng_list.value
 
         if self._selected_list is None or idx is None:
+            self._selected_item = None
             self._board_label.text = ""
             self._key_label.text = ""
             self._use_reg_label.text = ""
