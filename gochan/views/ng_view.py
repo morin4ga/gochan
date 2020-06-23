@@ -25,11 +25,9 @@ class NGView(Frame):
         self._selected_list = None
         self._selected_item = None
 
-        self._kind_list = ListBox(4,
-                                  [("Title", 0), ("Name", 1), ("Id", 2), ("Word", 3)],
-                                  name="kind_list",
+        self._kind_list = ListBox(4, [("Title", 0), ("Name", 1), ("Id", 2), ("Word", 3)],
                                   on_change=self._on_pick_kind)
-        self._ng_list = ListBox(Widget.FILL_COLUMN, [], name="ng_list", add_scroll_bar=True,
+        self._ng_list = ListBox(Widget.FILL_COLUMN, [], add_scroll_bar=True,
                                 on_change=self._on_pick_ng, on_select=self._on_select_ng)
         self._board_label = Label("")
         self._key_label = Label("")
@@ -59,7 +57,7 @@ class NGView(Frame):
 
     def _on_pick_kind(self):
         self.save()
-        idx = self.data.get("kind_list")
+        idx = self._kind_list.value
 
         if idx == 0:
             self._selected_list = self._data_context.title_ngs
@@ -77,7 +75,7 @@ class NGView(Frame):
 
     def _on_pick_ng(self):
         self.save()
-        idx = self.data.get("ng_list")
+        idx = self._ng_list.value
 
         if self._selected_list is None or idx is None:
             self._board_label.text = ""
