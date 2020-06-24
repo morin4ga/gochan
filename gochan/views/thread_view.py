@@ -34,8 +34,6 @@ class ThreadView(Frame):
 
         self._anchors: List[int] = None
 
-        self._cli = None
-
         self.set_theme("user_theme")
 
         self._rtext = RichText(
@@ -163,26 +161,22 @@ class ThreadView(Frame):
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
             if event.key_code == KEY_BINDINGS["thread"]["open_link"]:
-                if self._cli is None:
-                    self._cli = CommandLine(self._screen, "open:", self._open_link)
-                    self._scene.add_effect(self._cli)
+                if len(self._scene.effects) == 1:
+                # If any effects except this frame are not opened
+                self._scene.add_effect(CommandLine(self._screen, "open:", self._open_link))
                 return None
             elif event.key_code == ord("a"):
-                if self._cli is None:
-                    self._cli = CommandLine(self._screen, "show:", self._show_image)
-                    self._scene.add_effect(self._cli)
+                if len(self._scene.effects) == 1:
+                self._scene.add_effect(CommandLine(self._screen, "show:", self._show_image))
                 return None
             elif event.key_code == ord("g"):
-                if self._cli is None:
-                    self._cli = CommandLine(self._screen, "go to:", self._go_to)
-                    self._scene.add_effect(self._cli)
+                if len(self._scene.effects) == 1:
+                self._scene.add_effect(CommandLine(self._screen, "go to:", self._go_to))
                 return None
 
         return super().process_event(event)
 
     def _open_link(self, cmd: str):
-        self._cli = None
-
         if cmd.isdecimal():
             idx = int(cmd)
 
@@ -202,8 +196,6 @@ class ThreadView(Frame):
                     open_links(self._data_context.links[start_idx:(end_idx + 1)])
 
     def _show_image(self, cmd: str):
-        self._cli = None
-
         if cmd.isdecimal():
             idx = int(cmd)
 
@@ -216,8 +208,6 @@ class ThreadView(Frame):
                     raise NextScene("Image")
 
     def _go_to(self, cmd: str):
-        self._cli = None
-
         if cmd.isdecimal():
             idx = int(cmd) - 1
 
