@@ -26,8 +26,10 @@ class NGCreator(Frame):
         self._key = key
         self._kind = kind
 
-        options = [("全ての板", 0)]
+        options = []
 
+        if kind != "id":
+            options.append(("全ての板", 0))
         if board is not None:
             options.append(("この板のみ", 1))
         if key is not None:
