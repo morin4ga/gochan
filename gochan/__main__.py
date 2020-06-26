@@ -1,16 +1,16 @@
 import sys
 
 from asciimatics.event import KeyboardEvent
-from asciimatics.exceptions import ResizeScreenError, StopApplication
+from asciimatics.exceptions import ResizeScreenError, StopApplication, NextScene
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.widgets import THEMES, Button, Divider, Frame, Layout, ListBox, Text, TextBox, Widget
 
 from gochan.config import BROWSER_PATH, THEME, KEY_BINDINGS
 from gochan.key import KeyLogger
-from gochan.views import BbsmenuView, BoardView, ImageView, ResponseForm, ThreadView
+from gochan.views import BbsmenuView, BoardView, ImageView, ResponseForm, ThreadView, NGView
 from gochan.models import AppContext
-from gochan.view_models import BbsmenuVM, BoardVM, ThreadVM, ImageVM, ResponseFormVM
+from gochan.view_models import BbsmenuVM, BoardVM, ThreadVM, ImageVM, ResponseFormVM, NGVM
 
 
 def global_shortcuts(event):
@@ -19,6 +19,14 @@ def global_shortcuts(event):
 
         if c == KEY_BINDINGS["global"]["exit"]:
             raise StopApplication("stop")
+        elif c == KEY_BINDINGS["global"]["bbsmenu_view"]:
+            raise NextScene("Bbsmenu")
+        elif c == KEY_BINDINGS["global"]["board_view"]:
+            raise NextScene("Board")
+        elif c == KEY_BINDINGS["global"]["thread_view"]:
+            raise NextScene("Thread")
+        elif c == KEY_BINDINGS["global"]["ng_view"]:
+            raise NextScene("NG")
 
 
 def demo(screen: Screen, scene: Scene, app_context: AppContext):
@@ -27,6 +35,7 @@ def demo(screen: Screen, scene: Scene, app_context: AppContext):
     thread_view = ThreadView(screen, ThreadVM(app_context))
     resform = ResponseForm(screen, ResponseFormVM(app_context))
     image_view = ImageView(screen, ImageVM(app_context))
+    ng_view = NGView(screen, NGVM(app_context))
     keylog = KeyLogger(screen)
 
     app_context.set_bbsmenu()
@@ -37,7 +46,8 @@ def demo(screen: Screen, scene: Scene, app_context: AppContext):
         Scene([board_view], -1, name="Board"),
         Scene([thread_view], -1, name="Thread"),
         Scene([resform], -1, name="ResponseForm"),
-        Scene([image_view], -1, name="Image")
+        Scene([image_view], -1, name="Image"),
+        Scene([ng_view], -1, name="NG")
     ]
 
     screen.play(scenes, stop_on_resize=True, start_scene=scene, unhandled_input=global_shortcuts, allow_int=True)

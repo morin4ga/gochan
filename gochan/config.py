@@ -9,6 +9,7 @@ from gochan.key import Key, parse_key
 from gochan.widgets import Brush
 
 CACHE_PATH = Path("~/.config/gochan/cache").expanduser()
+NG_PATH = Path(Path.home() / ".config/gochan/ng.json")
 
 USE_IMAGE_CACHE = True
 MAX_IMAGE_CACHE = 5
@@ -46,7 +47,11 @@ THREAD_BRUSHES = {
 }
 KEY_BINDINGS = {
     "global": {
-        "exit": Key.Ctrl.C
+        "exit": Key.Ctrl.C,
+        "bbsmenu_view": Key.F1,
+        "board_view": Key.F2,
+        "thread_view": Key.F3,
+        "ng_view": Key.F4
     },
     "bbsmenu": {
         "select_up": Key.UP,
@@ -107,6 +112,14 @@ if keybindins_file.is_file():
     if "global" in keybindings:
         if "exit" in keybindings["global"]:
             KEY_BINDINGS["global"]["exit"] = parse_key(keybindings["global"]["exit"])
+        if "bbsmenu_view" in keybindings["global"]:
+            KEY_BINDINGS["global"]["bbsmenu_view"] = parse_key(keybindings["global"]["bbsmenu_view"])
+        if "board_view" in keybindings["global"]:
+            KEY_BINDINGS["global"]["board_view"] = parse_key(keybindings["global"]["board_view"])
+        if "thread_view" in keybindings["global"]:
+            KEY_BINDINGS["global"]["thread_view"] = parse_key(keybindings["global"]["thread_view"])
+        if "ng_view" in keybindings["global"]:
+            KEY_BINDINGS["global"]["ng_view"] = parse_key(keybindings["global"]["ng_view"])
 
     if "bbsmenu" in keybindings:
         if "select_up" in keybindings["bbsmenu"]:

@@ -9,6 +9,6 @@ class EventHandler:
     def remove(self, handler):
         self._handlers.remove(handler)
 
-    def __call__(self, args):
+    def __call__(self, *args):
         for h in self._handlers:
-            h(args)
+            h(*args)

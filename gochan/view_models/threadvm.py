@@ -3,6 +3,7 @@ import re
 from typing import List, Dict, Tuple, Optional, Any
 
 from gochan.models import Thread, Response, AppContext
+from gochan.models.ng import NGList
 from gochan.widgets import Buffer, Brush
 from gochan.event_handler import EventHandler
 
@@ -17,6 +18,7 @@ class ThreadVM:
         self.on_collection_changed = EventHandler()
 
         app_context.on_property_changed.add(self._app_context_changed)
+        app_context.ng.on_collection_changed.add(self._ng_changed)
 
     @property
     def server(self) -> Optional[str]:
@@ -55,6 +57,10 @@ class ThreadVM:
         if self._thread is not None:
             self._thread.bookmark = value
 
+    @property
+    def ng(self) -> NGList:
+        return self._app_context.ng
+
     def update(self):
         if self._app_context.thread is not None:
             self._app_context.thread.update()
@@ -92,3 +98,6 @@ class ThreadVM:
 
         if property_name == "responses":
             self.on_collection_changed(args)
+
+    def _ng_changed(self, sender, type: str, *arg):
+        self.on_property_changed("ng")

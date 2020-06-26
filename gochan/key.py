@@ -218,6 +218,17 @@ class Key:
     X = ord('x')
     Y = ord('y')
     Z = ord('z')
+    N1 = ord('1')
+    N2 = ord('2')
+    N3 = ord('3')
+    N4 = ord('4')
+    N5 = ord('5')
+    N6 = ord('6')
+    N7 = ord('7')
+    N8 = ord('8')
+    N9 = ord('9')
+    N0 = ord('0')
+
 
     Shift = Shift
     Ctrl = Ctrl

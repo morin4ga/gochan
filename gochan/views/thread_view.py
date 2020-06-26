@@ -10,67 +10,11 @@ from gochan.browser import open_link, open_links
 from gochan.config import BROWSER_PATH, KEY_BINDINGS, THREAD_BRUSHES
 from gochan.models import Response
 from gochan.view_models import ThreadVM
-from gochan.effects import CommandLine
+from gochan.effects import CommandLine, NGCreator
 from gochan.widgets import Brush, Buffer, Cell, RichText
 from wcwidth import wcwidth
 
-
-def _gen_buffer(responses: List[Response], bookmark: int, width: int, brushes: Dict[str, int])\
-        -> Tuple[Buffer, List[Tuple[int, int]]]:
-    """
-    Parameters
-    ----------
-    width : int
-    brush : {'normal', 'name', 'bookmark'}
-
-    Returns
-    -------
-    Buffer
-    anchors : [(int, int)]
-    List of tuple that represents the location of response by start/end line number
-    """
-    buf = Buffer(width)
-    anchors = []
-    link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
-    link_idx = 0
-
-    for r in responses:
-        start = len(buf)
-
-        buf.push(str(r.number) + " ", brushes["normal"])
-
-        buf.push(r.name, brushes["name"])
-
-        buf.push(" " + r.date + " " + r.id, brushes["normal"])
-
-        buf.break_line(2)
-
-        # Add index suffix so that user can select url easily
-        def _mark_link(match):
-            nonlocal link_idx
-            url = match.group(1)
-            repl = url + "(" + str(link_idx) + ")"
-            link_idx += 1
-            return repl
-
-        marked_msg = link_reg.sub(_mark_link, r.message)
-
-        for l in marked_msg.split("\n"):
-            buf.push(l, brushes["normal"])
-            buf.break_line(1)
-
-        end = len(buf)
-
-        anchors.append((start, end))
-
-        buf.break_line(1)
-
-        # don't render bookmark if bookmark points last response
-        if r.number == bookmark and len(responses) != bookmark:
-            buf.push("─" * width, brushes["bookmark"])
-            buf.break_line(2)
-
-    return (buf, anchors)
+link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
 
 
 class ThreadView(Frame):
@@ -89,10 +33,6 @@ class ThreadView(Frame):
         self._data_context.on_collection_changed.add(self._collection_changed)
 
         self._anchors: List[int] = None
-
-        self._open_link_cli = None
-        self._show_image_cli = None
-        self._goto_cli = None
 
         self.set_theme("user_theme")
 
@@ -121,9 +61,11 @@ class ThreadView(Frame):
         self.fix()
 
     def _data_context_changed(self, property_name: str):
-        if property_name == "responses":
-            self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._data_context.bookmark,
-                                                           self._rtext.width, THREAD_BRUSHES)
+        if property_name == "responses" or property_name == "ng":
+            if self._data_context.responses is None:
+                return
+
+            self._update_buffer()
 
             bookmark = self._data_context.bookmark
 
@@ -134,7 +76,6 @@ class ThreadView(Frame):
                     self._rtext.go_to(line)
                 else:
                     self._rtext.go_to(self._anchors[bookmark - 1][0])
-
             else:
                 self._rtext.reset_offset()
 
@@ -142,8 +83,65 @@ class ThreadView(Frame):
         property_name, kind, arg = args
 
         if property_name == "responses":
-            self._rtext.value, self._anchors = _gen_buffer(self._data_context.responses, self._data_context.bookmark,
-                                                           self._rtext.width, THREAD_BRUSHES)
+            self._update_buffer()
+
+    def _update_buffer(self):
+        buf = Buffer(self._rtext.width)
+        self._anchors = []
+        link_idx = 0
+
+        for r in self._data_context.responses:
+            mode = self._data_context.ng.is_ng(r, self._data_context.board, self._data_context.key)
+
+            if mode == 1:
+                start = len(buf)
+                buf.push(str(r.number) + " " + "あぼーん", THREAD_BRUSHES["normal"])
+                buf.break_line(1)
+                end = len(buf)
+                self._anchors.append((start, end))
+                buf.break_line(1)
+                continue
+            elif mode == 2:
+                self._anchors.append((len(buf), len(buf)))
+                continue
+
+            start = len(buf)
+
+            buf.push(str(r.number) + " ", THREAD_BRUSHES["normal"])
+
+            buf.push(r.name, THREAD_BRUSHES["name"])
+
+            buf.push(" " + r.date + " " + r.id, THREAD_BRUSHES["normal"])
+
+            buf.break_line(2)
+
+            # Add index suffix so that user can select url easily
+            def _mark_link(match):
+                nonlocal link_idx
+                url = match.group(1)
+                repl = url + "(" + str(link_idx) + ")"
+                link_idx += 1
+                return repl
+
+            marked_msg = link_reg.sub(_mark_link, r.message)
+
+            for l in marked_msg.split("\n"):
+                buf.push(l, THREAD_BRUSHES["normal"])
+                buf.break_line(1)
+
+            end = len(buf)
+
+            self._anchors.append((start, end))
+
+            buf.break_line(1)
+
+            # don't render bookmark if bookmark points last response
+            if r.number == self._data_context.bookmark and \
+                    len(self._data_context.responses) != self._data_context.bookmark:
+                buf.push("─" * self._rtext.width, THREAD_BRUSHES["bookmark"])
+                buf.break_line(2)
+
+        self._rtext.value = buf
 
     def _on_load_(self):
         pass
@@ -163,27 +161,32 @@ class ThreadView(Frame):
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
             if event.key_code == KEY_BINDINGS["thread"]["open_link"]:
-                if not self._is_cli_opened():
-                    self._open_link_cli = CommandLine(self._screen, "open:", self._open_link)
-                    self._scene.add_effect(self._open_link_cli)
+                if len(self._scene.effects) == 1:
+                    # If any effects except this frame are not opened
+                    self._scene.add_effect(CommandLine(self._screen, "open:", self._open_link))
                 return None
             elif event.key_code == ord("a"):
-                if not self._is_cli_opened():
-                    self._show_image_cli = CommandLine(self._screen, "show:", self._show_image)
-                    self._scene.add_effect(self._show_image_cli)
+                if len(self._scene.effects) == 1:
+                    self._scene.add_effect(CommandLine(self._screen, "show:", self._show_image))
                 return None
             elif event.key_code == ord("g"):
-                if not self._is_cli_opened():
-                    self._goto_cli = CommandLine(self._screen, "go to:", self._go_to)
-                    self._scene.add_effect(self._goto_cli)
+                if len(self._scene.effects) == 1:
+                    self._scene.add_effect(CommandLine(self._screen, "go to:", self._go_to))
+                return None
+            elif event.key_code == ord("n"):
+                if len(self._scene.effects) == 1:
+                    self._scene.add_effect(CommandLine(self._screen, "ng name:", self._add_ng_name))
+                return None
+            elif event.key_code == ord("i"):
+                if len(self._scene.effects) == 1:
+                    self._scene.add_effect(CommandLine(self._screen, "ng id:", self._add_ng_id))
+                return None
+            elif event.key_code == ord("w"):
+                if len(self._scene.effects) == 1:
+                    self._scene.add_effect(CommandLine(self._screen, "ng word:", self._add_ng_word))
                 return None
 
         return super().process_event(event)
-
-    def _is_cli_opened(self):
-        return self._open_link_cli is not None\
-            or self._show_image_cli is not None\
-            or self._goto_cli is not None
 
     def _open_link(self, cmd: str):
         if cmd.isdecimal():
@@ -204,11 +207,7 @@ class ThreadView(Frame):
                         and end_idx < len(self._data_context.links):
                     open_links(self._data_context.links[start_idx:(end_idx + 1)])
 
-        self._open_link_cli = None
-
     def _show_image(self, cmd: str):
-        self._show_image_cli = None
-
         if cmd.isdecimal():
             idx = int(cmd)
 
@@ -221,13 +220,44 @@ class ThreadView(Frame):
                     raise NextScene("Image")
 
     def _go_to(self, cmd: str):
-        self._goto_cli = None
-
         if cmd.isdecimal():
             idx = int(cmd) - 1
 
             if idx >= 0 and idx < len(self._anchors):
                 self._rtext.go_to(self._anchors[idx][0])
+
+    def _add_ng_name(self, number: str):
+        if number.isdecimal():
+            idx = int(number) - 1
+
+            if self._data_context.responses is not None \
+                    and len(self._data_context.responses) > idx \
+                    and idx >= 0:
+                self._scene.add_effect(NGCreator(self._screen, self._data_context.ng.insert, "name",
+                                                 self._data_context.responses[idx].name, self._data_context.board,
+                                                 self._data_context.key))
+
+    def _add_ng_id(self, number: str):
+        if number.isdecimal():
+            idx = int(number) - 1
+
+            if self._data_context.responses is not None \
+                    and len(self._data_context.responses) > idx \
+                    and idx >= 0:
+                self._scene.add_effect(NGCreator(self._screen, self._data_context.ng.insert, "id",
+                                                 self._data_context.responses[idx].id, self._data_context.board,
+                                                 self._data_context.key))
+
+    def _add_ng_word(self, number: str):
+        if number.isdecimal():
+            idx = int(number) - 1
+
+            if self._data_context.responses is not None \
+                    and len(self._data_context.responses) > idx \
+                    and idx >= 0:
+                self._scene.add_effect(NGCreator(self._screen, self._data_context.ng.insert, "word",
+                                                 self._data_context.responses[idx].message, self._data_context.board,
+                                                 self._data_context.key))
 
     def _update_bookmark(self):
         if self._data_context.bookmark is None:
