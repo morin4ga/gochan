@@ -48,10 +48,10 @@ THREAD_BRUSHES = {
 KEY_BINDINGS = {
     "global": {
         "exit": Key.Ctrl.C,
-        "bbsmenu_view": Key.N1,
-        "board_view": Key.N2,
-        "thread_view": Key.N3,
-        "ng_view": Key.N4
+        "bbsmenu_view": Key.F1,
+        "board_view": Key.F2,
+        "thread_view": Key.F3,
+        "ng_view": Key.F4
     },
     "bbsmenu": {
         "select_up": Key.UP,
