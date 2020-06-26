@@ -78,7 +78,8 @@ class BoardView(Frame):
     def _update_options(self):
         if self._data_context.threads is not None:
             self._thread_list.options = [([str(x.number), "|" + x.title, " |" + str(x.count), " |" + str(x.speed)], i)
-                                         for i, x in enumerate(self._data_context.threads)]
+                                         for i, x in enumerate(self._data_context.threads)
+                                         if self._data_context.ng.is_ng(x.title) == 0]
         else:
             self._thread_list.options = []
 

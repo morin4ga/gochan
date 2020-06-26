@@ -1,6 +1,7 @@
 from typing import Optional, List
 
 from gochan.models import AppContext, Board, ThreadHeader
+from gochan.models.ng import NGList
 from gochan.event_handler import EventHandler
 
 
@@ -17,6 +18,10 @@ class BoardVM:
     @property
     def threads(self) -> Optional[List[ThreadHeader]]:
         return self._board.threads if self._board is not None else None
+
+    @property
+    def ng(self) -> NGList:
+        return self._app_context.ng
 
     def sort_thread(self, key: str, reverse=False):
         if self._board is None:
