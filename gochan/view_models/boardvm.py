@@ -13,7 +13,12 @@ class BoardVM:
         self._board = app_context.board
 
         self._app_context.on_property_changed.add(self._app_context_changed)
+        self._app_context.ng.on_collection_changed.add(self._ng_changed)
         self.on_property_changed = EventHandler()
+
+    @property
+    def board(self) -> Optional[str]:
+        return self._board.board if self._board is not None else None
 
     @property
     def threads(self) -> Optional[List[ThreadHeader]]:
@@ -54,6 +59,9 @@ class BoardVM:
         if self._board is not None:
             self._board.update()
 
+    def add_ng(self, kind, value, use_reg, hide, board, key):
+        self._app_context.ng.insert(kind, value, use_reg, hide, board, key)
+
     def _app_context_changed(self, property_name: str):
         if property_name == "board":
             if self._board is not None:
@@ -67,3 +75,6 @@ class BoardVM:
     def _board_changed(self, property_name):
         if property_name == "threads":
             self.on_property_changed("threads")
+
+    def _ng_changed(self, sender, kind, *args):
+        self.on_property_changed("ng")
