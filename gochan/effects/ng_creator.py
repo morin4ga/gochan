@@ -45,7 +45,7 @@ class NGCreator(Frame):
         self._value_box.value = value
 
         self._save_btn = Button("Save", self._save_clicked)
-        self._cancel_btn = Button("Cancel", lambda _: self.disappaer())
+        self._cancel_btn = Button("Cancel", lambda: self.disappaer())
 
         l = Layout([10, 3, 87])
         self.add_layout(l)
@@ -90,6 +90,7 @@ class NGCreator(Frame):
         l = Layout([25, 25, 25, 25])
         self.add_layout(l)
         l.add_widget(self._save_btn)
+        l.add_widget(self._cancel_btn, 1)
 
         self.fix()
 
