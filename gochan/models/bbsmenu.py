@@ -27,6 +27,7 @@ class Bbsmenu:
         super().__init__()
 
         self.categories = None
+        self.dns = {}
         self.on_property_changed = EventHandler()
 
     def update(self):
@@ -38,6 +39,7 @@ class Bbsmenu:
             boards = []
             for b in c["boards"]:
                 boards.append(BoardHeader(b["server"], b["board"], b["name"]))
+                self.dns[b["board"]] = b["name"]
 
             self.categories.append(Category(c["name"], boards))
 

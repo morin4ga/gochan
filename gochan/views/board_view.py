@@ -3,7 +3,7 @@ from typing import Callable, Dict, List, Tuple
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
-from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, MultiColumnListBox, Widget
+from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, MultiColumnListBox, Widget, Label
 
 from gochan.config import KEY_BINDINGS
 from gochan.view_models import BoardVM
@@ -28,7 +28,7 @@ class BoardView(Frame):
 
         self._keybindings = KEY_BINDINGS["board"]
 
-        self._cli = None
+        self._title_label = Label("")
 
         self._thread_list = MultiColumnListBoxK(
             Widget.FILL_FRAME,
@@ -41,6 +41,10 @@ class BoardView(Frame):
             on_change=self._on_pick,
             on_select=self._on_select,
         )
+
+        l = Layout([100])
+        self.add_layout(l)
+        l.add_widget(self._title_label)
 
         layout1 = Layout([100], fill_frame=True)
         self.add_layout(layout1)
@@ -58,6 +62,7 @@ class BoardView(Frame):
     def _data_context_changed(self, property_name: str):
         if property_name == "threads":
             self._update_options()
+            self._title_label.text = self._data_context.name + "(" + str(len(self._data_context.threads)) + ")"
         elif property_name == "ng":
             self._update_options()
 

@@ -25,6 +25,11 @@ class BoardVM:
         return self._board.threads if self._board is not None else None
 
     @property
+    def name(self) -> Optional[str]:
+        return self._app_context.bbsmenu.dns[self._board.board] \
+            if self._board is not None else None
+
+    @property
     def ng(self) -> NGList:
         return self._app_context.ng
 
