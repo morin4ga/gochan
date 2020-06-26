@@ -136,7 +136,7 @@ class ThreadParserH:
         m = re.search("<title>(.*?)\n</title>", self._html)
 
         if m is not None:
-            return m.group(1)
+            return unescape(m.group(1))
         else:
             return None
 
@@ -193,7 +193,7 @@ class ThreadParserD:
         return self._dat
 
     def title(self) -> str:
-        return re.search(r".*<>(.*?)$", self._lines[0]).group(1)
+        return unescape(re.search(r".*<>(.*?)$", self._lines[0]).group(1))
 
     def is_pastlog(self) -> bool:
         if len(self._lines) == 2:
