@@ -42,8 +42,6 @@ class BoardView(Frame):
             on_select=self._on_select,
         )
 
-        self._back_button = Button("Back", self._on_back)
-
         layout1 = Layout([100], fill_frame=True)
         self.add_layout(layout1)
         layout1.add_widget(self._thread_list)
@@ -51,7 +49,8 @@ class BoardView(Frame):
 
         layout2 = Layout([25, 25, 25, 25])
         self.add_layout(layout2)
-        layout2.add_widget(self._back_button, 0)
+        layout2.add_widget(Button("Back", self._back_btn_clicked), 0)
+        layout2.add_widget(Button("Update", self._update_btn_clicked), 1)
 
         self.fix()
         self._on_pick()
@@ -62,8 +61,11 @@ class BoardView(Frame):
         elif property_name == "ng":
             self._update_options()
 
-    def _on_back(self):
+    def _back_btn_clicked(self):
         raise NextScene("Bbsmenu")
+
+    def _update_btn_clicked(self):
+        self._data_context.update()
 
     def _on_pick(self):
         pass
