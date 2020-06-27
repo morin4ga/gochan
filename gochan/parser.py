@@ -133,12 +133,7 @@ class ThreadParserH:
         return self._html
 
     def title(self) -> str:
-        m = re.search("<title>(.*?)\n</title>", self._html)
-
-        if m is not None:
-            return unescape(m.group(1))
-        else:
-            return None
+        return unescape(re.search("<title>(.*?)\n</title>", self._html).group(1)).strip()
 
     def is_pastlog(self) -> bool:
         return re.search('<div class="stoplight stopred stopdone', self._html) is None
