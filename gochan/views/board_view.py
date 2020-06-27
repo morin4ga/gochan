@@ -62,7 +62,7 @@ class BoardView(Frame):
     def _data_context_changed(self, property_name: str):
         if property_name == "threads":
             self._update_options()
-            self._title_label.text = self._data_context.name + "(" + str(len(self._data_context.threads)) + ")"
+            self._title_label.text = self._data_context.name + " (" + str(len(self._data_context.threads)) + ")"
         elif property_name == "ng":
             self._update_options()
 
