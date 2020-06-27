@@ -4,7 +4,7 @@ from typing import Callable, List, Dict, Tuple
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
-from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget
+from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget, Label
 
 from gochan.browser import open_link, open_links
 from gochan.config import BROWSER_PATH, KEY_BINDINGS, THREAD_BRUSHES
@@ -36,6 +36,8 @@ class ThreadView(Frame):
 
         self.set_theme("user_theme")
 
+        self._title_label = Label("")
+
         self._rtext = RichText(
             Widget.FILL_FRAME,
             Cell(" ", THREAD_BRUSHES["normal"]),
@@ -46,6 +48,11 @@ class ThreadView(Frame):
         self._back_button = Button("Back", on_click=self._on_back_btn_pushed)
         self._update_button = Button("Update", on_click=self._on_update_btn_pushed)
         self._write_button = Button("Write", on_click=self._on_write_btn_pushed)
+
+        l = Layout([100])
+        self.add_layout(l)
+        l.add_widget(self._title_label)
+        l.add_widget(Divider())
 
         layout1 = Layout([100], fill_frame=True)
         self.add_layout(layout1)
@@ -66,6 +73,8 @@ class ThreadView(Frame):
                 return
 
             self._update_buffer()
+
+            self._title_label.text = self._data_context.title + " (" + str(len(self._data_context.responses)) + ")"
 
             bookmark = self._data_context.bookmark
 
