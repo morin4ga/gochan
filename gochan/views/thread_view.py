@@ -4,13 +4,13 @@ from typing import Callable, List, Dict, Tuple
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
-from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget, Label
+from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget, Label, PopUpDialog
 
 from gochan.browser import open_link, open_links
 from gochan.config import BROWSER_PATH, KEY_BINDINGS, THREAD_BRUSHES
 from gochan.models import Response
 from gochan.view_models import ThreadVM
-from gochan.effects import CommandLine, NGCreator
+from gochan.effects import CommandLine, NGCreator, PostForm
 from gochan.widgets import Brush, Buffer, Cell, RichText
 from wcwidth import wcwidth
 
@@ -164,8 +164,12 @@ class ThreadView(Frame):
         self.switch_focus(self._layouts[0], 0, 0)
 
     def _on_write_btn_pushed(self):
-        self._update_bookmark()
-        raise NextScene("ResponseForm")
+        self._scene.add_effect(PostForm(self._screen, self._form_closed, "response"))
+
+    def _form_closed(self, name: str, mail: str, msg: str):
+        result = self._data_context.post(name, mail, msg)
+        self._scene.add_effect(PopUpDialog(self._screen, result, ["Close"], theme="user_theme"))
+        self._data_context.update()
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):

@@ -71,6 +71,12 @@ class ThreadVM:
     def set_image(self, url: str):
         self._app_context.set_image(url)
 
+    def post(self, name: str, mail: str, msg: str) -> Optional[str]:
+        if self._thread is not None:
+            return self._thread.post(name, mail, msg)
+
+        return None
+
     def _app_context_changed(self, property_name: str):
         if property_name == "thread":
             if self._thread is not None:
