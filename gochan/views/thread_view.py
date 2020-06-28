@@ -7,7 +7,8 @@ from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget, Label, PopUpDialog
 
 from gochan.browser import open_link, open_links
-from gochan.config import BROWSER_PATH, KEY_BINDINGS, THREAD_BRUSHES
+from gochan.config import BROWSER_PATH, THREAD_BRUSHES
+from gochan.keybinding import KEY_BINDINGS
 from gochan.models import Response
 from gochan.view_models import ThreadVM
 from gochan.effects import CommandLine, NGCreator, PostForm

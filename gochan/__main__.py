@@ -6,7 +6,8 @@ from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.widgets import THEMES, Button, Divider, Frame, Layout, ListBox, Text, TextBox, Widget
 
-from gochan.config import BROWSER_PATH, THEME, KEY_BINDINGS
+from gochan.config import BROWSER_PATH, THEME
+from gochan.keybinding import KEY_BINDINGS
 from gochan.key import KeyLogger
 from gochan.views import BbsmenuView, BoardView, ImageView, ThreadView, NGView
 from gochan.models import AppContext

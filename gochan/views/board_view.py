@@ -5,7 +5,7 @@ from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, MultiColumnListBox, Widget, Label
 
-from gochan.config import KEY_BINDINGS
+from gochan.keybinding import KEY_BINDINGS
 from gochan.view_models import BoardVM
 from gochan.effects import CommandLine, NGCreator
 from gochan.widgets import MultiColumnListBoxK

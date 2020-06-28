@@ -4,7 +4,7 @@ from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, Layout, Widget
 
-from gochan.config import KEY_BINDINGS
+from gochan.keybinding import KEY_BINDINGS
 from gochan.view_models import BbsmenuVM
 from gochan.widgets import ListBoxK
 
