@@ -6,10 +6,10 @@ from gochan.key import parse_key, Key
 KEY_BINDINGS = {
     "global": {
         "exit": Key.Ctrl.C,
-        "bbsmenu_view": Key.N1,
-        "board_view": Key.N2,
-        "thread_view": Key.N3,
-        "ng_view": Key.N4
+        "bbsmenu_view": Key.Ctrl.H,
+        "board_view": Key.Ctrl.J,
+        "thread_view": Key.Ctrl.K,
+        "ng_view": Key.Ctrl.L
     },
     "bbsmenu": {
         "select_up": Key.UP,
