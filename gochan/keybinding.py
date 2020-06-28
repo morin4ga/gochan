@@ -35,16 +35,23 @@ KEY_BINDINGS = {
         "sort_3": Key.E,
         "dsort_3": Key.Shift.E,
         "sort_4": Key.R,
-        "dsort_4": Key.Shift.R
+        "dsort_4": Key.Shift.R,
+        "find": Key.F,
+        "ng_title": Key.N
     },
     "thread": {
-        "open_link": Key.O,
         "scroll_up": Key.UP,
         "scroll_down": Key.DOWN,
         "page_up": Key.PAGE_UP,
         "page_down": Key.PAGE_DOWN,
         "go_to_top": Key.Ctrl.HOME,
-        "go_to_bottom": Key.Ctrl.END
+        "go_to_bottom": Key.Ctrl.END,
+        "open_link": Key.O,
+        "show_image": Key.S,
+        "go_to": Key.G,
+        "ng_name": Key.N,
+        "ng_id": Key.I,
+        "ng_word": Key.W,
     }
 }
 
@@ -110,10 +117,12 @@ if KEYBINDINGS_PATH.is_file():
             KEY_BINDINGS["board"]["sort_4"] = parse_key(keybindings["board"]["sort_4"])
         if "dsort_4" in keybindings["board"]:
             KEY_BINDINGS["board"]["dsort_4"] = parse_key(keybindings["board"]["dsort_4"])
+        if "find" in keybindings["board"]:
+            KEY_BINDINGS["board"]["find"] = parse_key(keybindings["board"]["find"])
+        if "ng_title" in keybindings["board"]:
+            KEY_BINDINGS["board"]["ng_title"] = parse_key(keybindings["board"]["ng_title"])
 
     if "thread" in keybindings:
-        if "open_link" in keybindings["thread"]:
-            KEY_BINDINGS["thread"]["open_link"] = parse_key(keybindings["thread"]["open_link"])
         if "scroll_up" in keybindings["thread"]:
             KEY_BINDINGS["thread"]["scroll_up"] = parse_key(keybindings["thread"]["scroll_up"])
         if "scroll_down" in keybindings["thread"]:
@@ -126,3 +135,15 @@ if KEYBINDINGS_PATH.is_file():
             KEY_BINDINGS["thread"]["go_to_top"] = parse_key(keybindings["thread"]["go_to_top"])
         if "go_to_bottom" in keybindings["thread"]:
             KEY_BINDINGS["thread"]["go_to_bottom"] = parse_key(keybindings["thread"]["go_to_bottom"])
+        if "open_link" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["open_link"] = parse_key(keybindings["thread"]["open_link"])
+        if "show_image" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["show_image"] = parse_key(keybindings["thread"]["show_image"])
+        if "go_to" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["go_to"] = parse_key(keybindings["thread"]["go_to"])
+        if "ng_name" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["ng_name"] = parse_key(keybindings["thread"]["ng_name"])
+        if "ng_id" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["ng_id"] = parse_key(keybindings["thread"]["ng_id"])
+        if "ng_word" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["ng_word"] = parse_key(keybindings["thread"]["ng_word"])

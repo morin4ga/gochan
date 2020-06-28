@@ -118,10 +118,10 @@ class BoardView(Frame):
             elif event.key_code == self._keybindings["dsort_4"]:
                 self._data_context.sort_thread("speed", True)
                 return None
-            elif event.key_code == ord("f"):
+            elif event.key_code == self._keybindings["find"]:
                 self._scene.add_effect(CommandLine(self._screen, "find:", self._find))
                 return None
-            elif event.key_code == ord("n"):
+            elif event.key_code == self._keybindings["ng_title"]:
                 self._scene.add_effect(CommandLine(self._screen, "ng:", self._add_ng))
                 return None
 

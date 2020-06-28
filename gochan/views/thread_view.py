@@ -29,6 +29,8 @@ class ThreadView(Frame):
                          has_border=False
                          )
 
+        self._keybindings = KEY_BINDINGS["thread"]
+
         self._data_context: ThreadVM = data_context
         self._data_context.on_property_changed.add(self._data_context_changed)
         self._data_context.on_collection_changed.add(self._collection_changed)
@@ -173,31 +175,25 @@ class ThreadView(Frame):
         self._data_context.update()
 
     def process_event(self, event):
-        if isinstance(event, KeyboardEvent):
-            if event.key_code == KEY_BINDINGS["thread"]["open_link"]:
-                if len(self._scene.effects) == 1:
-                    # If any effects except this frame are not opened
-                    self._scene.add_effect(CommandLine(self._screen, "open:", self._open_link))
+        # If any effects except this frame are not opened
+        if isinstance(event, KeyboardEvent) and len(self._scene.effects) == 1:
+            if event.key_code == self._keybindings["open_link"]:
+                self._scene.add_effect(CommandLine(self._screen, "open:", self._open_link))
                 return None
-            elif event.key_code == ord("a"):
-                if len(self._scene.effects) == 1:
-                    self._scene.add_effect(CommandLine(self._screen, "show:", self._show_image))
+            elif event.key_code == self._keybindings["show_image"]:
+                self._scene.add_effect(CommandLine(self._screen, "show:", self._show_image))
                 return None
-            elif event.key_code == ord("g"):
-                if len(self._scene.effects) == 1:
-                    self._scene.add_effect(CommandLine(self._screen, "go to:", self._go_to))
+            elif event.key_code == self._keybindings["go_to"]:
+                self._scene.add_effect(CommandLine(self._screen, "go to:", self._go_to))
                 return None
-            elif event.key_code == ord("n"):
-                if len(self._scene.effects) == 1:
-                    self._scene.add_effect(CommandLine(self._screen, "ng name:", self._add_ng_name))
+            elif event.key_code == self._keybindings["ng_name"]:
+                self._scene.add_effect(CommandLine(self._screen, "ng name:", self._add_ng_name))
                 return None
-            elif event.key_code == ord("i"):
-                if len(self._scene.effects) == 1:
-                    self._scene.add_effect(CommandLine(self._screen, "ng id:", self._add_ng_id))
+            elif event.key_code == self._keybindings["ng_id"]:
+                self._scene.add_effect(CommandLine(self._screen, "ng id:", self._add_ng_id))
                 return None
-            elif event.key_code == ord("w"):
-                if len(self._scene.effects) == 1:
-                    self._scene.add_effect(CommandLine(self._screen, "ng word:", self._add_ng_word))
+            elif event.key_code == self._keybindings["ng_word"]:
+                self._scene.add_effect(CommandLine(self._screen, "ng word:", self._add_ng_word))
                 return None
 
         return super().process_event(event)
