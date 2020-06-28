@@ -18,9 +18,9 @@ from gochan.models.ng import ng, NGList
 class AppContext:
     def __init__(self):
         super().__init__()
-        self.bbsmenu: Bbsmenu = None
-        self.board: Board = None
-        self.thread: Thread = None
+        self.bbsmenu: Optional[Bbsmenu] = None
+        self.board: Optional[Board] = None
+        self.thread: Optional[Thread] = None
         self._image: Optional[str] = None
         self._image_error: Optional[HTTPError] = None
         self.ng: NGList = ng
