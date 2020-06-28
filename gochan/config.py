@@ -21,6 +21,9 @@ MAX_THREAD_CACHE = 5
 
 BROWSER_PATH = None
 
+USER_AGENT = "Mozilla/5.0"
+COOKIE = "yuki=akari"
+
 conf_file = Path(Path.home() / ".config/gochan/conf.json")
 
 if conf_file.is_file():
@@ -32,3 +35,7 @@ if conf_file.is_file():
         USE_CACHE = conf["use_cache"]
     if "max_cache" in conf:
         MAX_CACHE = conf["max_cache"]
+    if "user_agent" in conf:
+        USER_AGENT = conf["user_agent"]
+    if "cookie" in conf:
+        COOKIE = conf["cookie"]
