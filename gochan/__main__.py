@@ -6,12 +6,13 @@ from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.widgets import THEMES, Button, Divider, Frame, Layout, ListBox, Text, TextBox, Widget
 
-from gochan.config import BROWSER_PATH, THEME
+from gochan.config import BROWSER_PATH
 from gochan.keybinding import KEY_BINDINGS
 from gochan.key import KeyLogger
 from gochan.views import BbsmenuView, BoardView, ImageView, ThreadView, NGView
 from gochan.models import AppContext
 from gochan.view_models import BbsmenuVM, BoardVM, ThreadVM, ImageVM, NGVM
+from gochan.theme import THEME
 
 
 def global_shortcuts(event):
