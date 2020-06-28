@@ -2,8 +2,8 @@ import re
 import tempfile
 import pickle
 
-from typing import Callable, List, TypeVar, Generic, Optional, Tuple
-from urllib.request import HTTPError
+from typing import Callable, List, TypeVar, Generic, Optional, Tuple, Union
+from urllib.request import HTTPError, URLError
 
 from gochan.event_handler import EventHandler
 from gochan.models.bbsmenu import Bbsmenu
@@ -21,29 +21,10 @@ class AppContext:
         self.bbsmenu: Optional[Bbsmenu] = None
         self.board: Optional[Board] = None
         self.thread: Optional[Thread] = None
-        self._image: Optional[str] = None
-        self._image_error: Optional[HTTPError] = None
+        self.image: Optional[Union[str, HTTPError, URLError]] = None
         self.ng: NGList = ng
 
         self.on_property_changed = EventHandler()
-
-    @property
-    def image(self) -> Optional[str]:
-        return self._image
-
-    @image.setter
-    def image(self, path: str):
-        self._image = path
-        self.on_property_changed("image")
-
-    @property
-    def image_error(self) -> Optional[HTTPError]:
-        return self._image_error
-
-    @image_error.setter
-    def image_error(self, value):
-        self._image_error = value
-        self.on_property_changed("image_error")
 
     def set_bbsmenu(self):
         self.bbsmenu = Bbsmenu()
@@ -85,18 +66,20 @@ class AppContext:
             else:
                 result = download_image(url)
 
-                if isinstance(result, HTTPError):
-                    self.image_error = result
+                if isinstance(result, HTTPError) or isinstance(result, URLError):
+                    self.image = result
                 else:
                     image_cache.store(file_name, result)
                     self.image = image_cache.path + "/" + file_name
         else:
             result = download_image(url)
 
-            if isinstance(result, HTTPError):
-                self.image_error = result
+            if isinstance(result, HTTPError) or isinstance(result, URLError):
+                self.image = result
             else:
                 f = tempfile.NamedTemporaryFile()
                 f.write(result)
                 self.image = f.name
                 f.close()
+
+        self.on_property_changed("image")

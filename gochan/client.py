@@ -69,3 +69,5 @@ def download_image(url: str) -> Union[bytes, HTTPError, URLError]:
             return data
     except HTTPError as e:
         return e
+    except URLError as e:
+        return e
