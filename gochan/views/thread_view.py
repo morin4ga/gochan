@@ -97,6 +97,7 @@ class ThreadView(Frame):
 
         if property_name == "responses":
             self._update_buffer()
+            self._title_label.text = self._data_context.title + " (" + str(len(self._data_context.responses)) + ")"
 
     def _update_buffer(self):
         buf = Buffer(self._rtext.width)
