@@ -76,7 +76,7 @@ class Thread:
 
             self.responses = []
             self._add_response(parser.responses())
-            self.on_collection_changed(("responses", "add", self.responses[0:]))
+            self.on_collection_changed("responses", "add", self.responses[0:])
         else:
             html = get_responses_after(self.server, self.board, self.key, len(self.responses))
             parser = ThreadParserH(html)
@@ -86,7 +86,7 @@ class Thread:
             if len(new) > 1:
                 start = len(self.responses)
                 self._add_response(new[1:])
-                self.on_collection_changed(("responses", "add", self.responses[start:]))
+                self.on_collection_changed("responses", "add", self.responses[start:])
 
     def post(self, name: str, mail: str, message: str) -> str:
         return post_response(self.server, self.board, self.key, name, mail, message)

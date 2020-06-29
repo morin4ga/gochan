@@ -99,11 +99,9 @@ class ThreadVM:
         if property_name == "responses":
             self.on_property_changed("responses")
 
-    def _thread_collection_changed(self, args: Tuple[str, str, Any]):
-        (property_name, kind, arg) = args
-
+    def _thread_collection_changed(self, property_name: str, kind: str, item: Any):
         if property_name == "responses":
-            self.on_collection_changed(args)
+            self.on_collection_changed(property_name, kind, item)
 
     def _ng_changed(self, sender, type: str, *arg):
         self.on_property_changed("ng")

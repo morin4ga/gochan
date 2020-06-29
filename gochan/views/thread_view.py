@@ -1,5 +1,5 @@
 import re
-from typing import Callable, List, Dict, Tuple
+from typing import Callable, List, Dict, Tuple, Any
 
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
@@ -92,9 +92,7 @@ class ThreadView(Frame):
             else:
                 self._rtext.reset_offset()
 
-    def _collection_changed(self, args):
-        property_name, kind, arg = args
-
+    def _collection_changed(self, property_name: str, kind: str, item: Any):
         if property_name == "responses":
             self._update_buffer()
             self._title_label.text = self._data_context.title + " (" + str(len(self._data_context.responses)) + ")"
