@@ -124,6 +124,9 @@ class BoardView(Frame):
             elif event.key_code == self._keybindings["ng_title"]:
                 self._scene.add_effect(CommandLine(self._screen, "ng:", self._add_ng))
                 return None
+            elif event.key_code == self._keybindings["update"]:
+                self._data_context.update()
+                return None
 
         return super().process_event(event)
 
