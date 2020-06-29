@@ -103,5 +103,5 @@ class ThreadVM:
         if property_name == "responses":
             self.on_collection_changed(property_name, kind, item)
 
-    def _ng_changed(self, sender, type: str, *arg):
+    def _ng_changed(self, property_name: str, type: str, *arg):
         self.on_property_changed("ng")

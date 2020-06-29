@@ -98,14 +98,14 @@ class NGList:
         item = NGItem(self._last_id, kind, value, use_reg, hide, board, key)
         self._list.append(item)
         self._save()
-        self.on_collection_changed(self, "insert", item)
+        self.on_collection_changed("self", "insert", item)
 
     def delete(self, id: int):
         for item in self._list:
             if item.id == id:
                 self._list.remove(item)
                 self._save()
-                self.on_collection_changed(self, "delete", item)
+                self.on_collection_changed("self", "delete", item)
 
     def update(self, id: int, values: Dict[str, Any]):
         for item in self._list:
@@ -124,7 +124,7 @@ class NGList:
                     item._value = values["value"]
 
                 self._save()
-                self.on_collection_changed(self, "update", item)
+                self.on_collection_changed("self", "update", item)
 
     def select(self, kind: str):
         if kind == "title":

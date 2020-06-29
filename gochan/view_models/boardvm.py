@@ -81,5 +81,5 @@ class BoardVM:
         if property_name == "threads":
             self.on_property_changed("threads")
 
-    def _ng_changed(self, sender, kind, *args):
+    def _ng_changed(self, property_name, kind, *args):
         self.on_property_changed("ng")
