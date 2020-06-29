@@ -196,6 +196,9 @@ class ThreadView(Frame):
             elif event.key_code == self._keybindings["ng_word"]:
                 self._scene.add_effect(CommandLine(self._screen, "ng word:", self._add_ng_word))
                 return None
+            elif event.key_code == self._keybindings["update"]:
+                self._data_context.update()
+                return None
 
         return super().process_event(event)
 

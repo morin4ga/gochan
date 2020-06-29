@@ -53,6 +53,7 @@ KEY_BINDINGS = {
         "ng_name": Key.N,
         "ng_id": Key.I,
         "ng_word": Key.W,
+        "update": Key.U
     }
 }
 
@@ -150,3 +151,5 @@ if KEYBINDINGS_PATH.is_file():
             KEY_BINDINGS["thread"]["ng_id"] = parse_key(keybindings["thread"]["ng_id"])
         if "ng_word" in keybindings["thread"]:
             KEY_BINDINGS["thread"]["ng_word"] = parse_key(keybindings["thread"]["ng_word"])
+        if "update" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["updete"] = parse_key(keybindings["thread"]["update"])
