@@ -38,7 +38,8 @@ KEY_BINDINGS = {
         "dsort_4": Key.Shift.R,
         "find": Key.F,
         "ng_title": Key.N,
-        "update": Key.U
+        "update": Key.U,
+        "back": Key.B
     },
     "thread": {
         "scroll_up": Key.UP,
@@ -53,7 +54,8 @@ KEY_BINDINGS = {
         "ng_name": Key.N,
         "ng_id": Key.I,
         "ng_word": Key.W,
-        "update": Key.U
+        "update": Key.U,
+        "back": Key.B
     }
 }
 
@@ -125,6 +127,8 @@ if KEYBINDINGS_PATH.is_file():
             KEY_BINDINGS["board"]["ng_title"] = parse_key(keybindings["board"]["ng_title"])
         if "update" in keybindings["board"]:
             KEY_BINDINGS["board"]["update"] = parse_key(keybindings["board"]["update"])
+        if "back" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["back"] = parse_key(keybindings["thread"]["back"])
 
     if "thread" in keybindings:
         if "scroll_up" in keybindings["thread"]:
@@ -153,3 +157,5 @@ if KEYBINDINGS_PATH.is_file():
             KEY_BINDINGS["thread"]["ng_word"] = parse_key(keybindings["thread"]["ng_word"])
         if "update" in keybindings["thread"]:
             KEY_BINDINGS["thread"]["updete"] = parse_key(keybindings["thread"]["update"])
+        if "back" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["back"] = parse_key(keybindings["thread"]["back"])

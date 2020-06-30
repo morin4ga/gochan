@@ -127,6 +127,9 @@ class BoardView(Frame):
             elif event.key_code == self._keybindings["update"]:
                 self._data_context.update()
                 return None
+            elif event.key_code == self._keybindings["back"]:
+                raise NextScene("Bbsmenu")
+                return None
 
         return super().process_event(event)
 

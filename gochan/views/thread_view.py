@@ -198,6 +198,9 @@ class ThreadView(Frame):
             elif event.key_code == self._keybindings["update"]:
                 self._data_context.update()
                 return None
+            elif event.key_code == self._keybindings["back"]:
+                self._update_bookmark()
+                raise NextScene("Board")
 
         return super().process_event(event)
 
