@@ -4,7 +4,7 @@ import urllib
 from pathlib import Path, PosixPath
 from typing import Optional
 
-from gochan.config import CACHE_PATH, MAX_IMAGE_CACHE, MAX_THREAD_CACHE
+from gochan.config import CACHE_PATH, MAX_IMAGE_CACHE, LOG_PATH, MAX_THREAD_LOG
 
 
 class Storage:
@@ -38,5 +38,5 @@ class Storage:
             items[i].unlink()
 
 
-image_cache = Storage(CACHE_PATH.joinpath("image"), MAX_IMAGE_CACHE)
-thread_cache = Storage(CACHE_PATH.joinpath("thread"), MAX_THREAD_CACHE)
+image_cache = Storage(CACHE_PATH, MAX_IMAGE_CACHE)
+thread_log = Storage(LOG_PATH, MAX_THREAD_LOG)

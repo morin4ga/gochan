@@ -9,8 +9,8 @@ from gochan.event_handler import EventHandler
 from gochan.models.bbsmenu import Bbsmenu
 from gochan.models.board import Board
 from gochan.models.thread import Thread
-from gochan.config import USE_IMAGE_CACHE, USE_THREAD_CACHE
-from gochan.storage import image_cache, thread_cache
+from gochan.config import USE_IMAGE_CACHE, SAVE_THREAD_LOG
+from gochan.storage import image_cache, thread_log
 from gochan.client import download_image
 from gochan.models.ng import ng, NGList
 
@@ -37,11 +37,11 @@ class AppContext:
         self.on_property_changed("board")
 
     def set_thread(self, server: str, board: str, key: str):
-        if USE_THREAD_CACHE:
+        if SAVE_THREAD_LOG:
             self.save_thread()
 
-            if thread_cache.contains(board + "-" + key):
-                data = thread_cache.get(board + "-" + key)
+            if thread_log.contains(board + "-" + key):
+                data = thread_log.get(board + "-" + key)
                 d = pickle.loads(data)
                 self.thread = Thread.restore(d)
                 self.thread.update()
@@ -55,7 +55,7 @@ class AppContext:
     def save_thread(self):
         if self.thread is not None:
             data = pickle.dumps(self.thread.to_dict())
-            thread_cache.store(self.thread.board + "-" + self.thread.key, data)
+            thread_log.store(self.thread.board + "-" + self.thread.key, data)
 
     def set_image(self, url: str):
         if USE_IMAGE_CACHE:
