@@ -35,7 +35,7 @@ def post_response(server: str, board: str, key: str, name: str, mail: str, msg: 
     url = f"https://{server}.5ch.net/test/bbs.cgi"
     ref = f"https://{server}.5ch.net/test/read.cgi/{board}/{key}"
     params = {"bbs": board, "key": key, "time": "1588219909",
-              "FROM": name, "mail": mail, "MESSAGE": msg, "submit": "書き込み"}
+              "FROM": name, "mail": mail, "MESSAGE": msg, "submit": "書き込み", "oekaki_thread1": ""}
 
     data = urlencode(params, encoding="shift-jis", errors="xmlcharrefreplace").encode()
     hdrs = {"Referer": ref, "User-Agent": USER_AGENT, "Cookie": COOKIE}
