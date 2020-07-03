@@ -1,12 +1,6 @@
 import json
-import re
 from pathlib import Path
 
-from asciimatics.event import KeyboardEvent
-from asciimatics.screen import Screen
-
-from gochan.key import Key, parse_key
-from gochan.widgets import Brush
 
 KEYBINDINGS_PATH = Path("~/.gochan/keybindings.json").expanduser()
 CACHE_PATH = Path("~/.gochan/cache").expanduser()

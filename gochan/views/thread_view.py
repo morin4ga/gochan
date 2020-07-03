@@ -1,20 +1,17 @@
 import re
-from typing import Callable, List, Dict, Tuple, Any
+from typing import List, Any
 
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
-from asciimatics.widgets import Button, Divider, Frame, Layout, TextBox, Widget, Label, PopUpDialog
+from asciimatics.widgets import Button, Divider, Frame, Layout, Widget, Label, PopUpDialog
 
 from gochan.browser import open_link, open_links
-from gochan.config import BROWSER_PATH
 from gochan.theme import THREAD_BRUSHES
 from gochan.keybinding import KEY_BINDINGS
-from gochan.models import Response
 from gochan.view_models import ThreadVM
 from gochan.effects import CommandLine, NGCreator, PostForm
-from gochan.widgets import Brush, Buffer, Cell, RichText
-from wcwidth import wcwidth
+from gochan.widgets import Buffer, Cell, RichText
 
 link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
 
@@ -53,10 +50,10 @@ class ThreadView(Frame):
         self._update_button = Button("Update", on_click=self._on_update_btn_pushed)
         self._write_button = Button("Write", on_click=self._on_write_btn_pushed)
 
-        l = Layout([100])
-        self.add_layout(l)
-        l.add_widget(self._title_label)
-        l.add_widget(Divider())
+        layout = Layout([100])
+        self.add_layout(layout)
+        layout.add_widget(self._title_label)
+        layout.add_widget(Divider())
 
         layout1 = Layout([100], fill_frame=True)
         self.add_layout(layout1)

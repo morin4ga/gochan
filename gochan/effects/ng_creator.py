@@ -1,11 +1,8 @@
-from typing import List, Tuple, Optional, Callable
+from typing import Optional
 
 from asciimatics.screen import Screen
-from asciimatics.widgets import Frame, Text, TextBox, CheckBox, Layout, Widget, Divider, Button, DropdownList, Label,\
+from asciimatics.widgets import Frame, TextBox, CheckBox, Layout, Widget, Divider, Button, Label,\
     VerticalDivider, RadioButtons
-from asciimatics.event import KeyboardEvent
-
-from gochan.models.ng import NGItem
 
 
 class NGCreator(Frame):
@@ -48,50 +45,50 @@ class NGCreator(Frame):
         self._save_btn = Button("Save", self._save_clicked)
         self._cancel_btn = Button("Cancel", lambda: self.disappaer())
 
-        l = Layout([10, 3, 87])
-        self.add_layout(l)
-        l.add_widget(Label("scope"), 0)
-        l.add_widget(VerticalDivider(), 1)
-        l.add_widget(self._scope_radio, 2)
+        layout = Layout([10, 3, 87])
+        self.add_layout(layout)
+        layout.add_widget(Label("scope"), 0)
+        layout.add_widget(VerticalDivider(), 1)
+        layout.add_widget(self._scope_radio, 2)
 
-        l = Layout([100])
-        self.add_layout(l)
-        l.add_widget(Divider())
+        layout = Layout([100])
+        self.add_layout(layout)
+        layout.add_widget(Divider())
 
-        l = Layout([10, 3, 87])
-        self.add_layout(l)
-        l.add_widget(Label("use_reg"), 0)
-        l.add_widget(VerticalDivider(), 1)
-        l.add_widget(self._use_reg_chk, 2)
+        layout = Layout([10, 3, 87])
+        self.add_layout(layout)
+        layout.add_widget(Label("use_reg"), 0)
+        layout.add_widget(VerticalDivider(), 1)
+        layout.add_widget(self._use_reg_chk, 2)
 
-        l = Layout([100])
-        self.add_layout(l)
-        l.add_widget(Divider())
+        layout = Layout([100])
+        self.add_layout(layout)
+        layout.add_widget(Divider())
 
-        l = Layout([10, 3, 87])
-        self.add_layout(l)
-        l.add_widget(Label("hide"), 0)
-        l.add_widget(VerticalDivider(), 1)
-        l.add_widget(self._hide_chk, 2)
+        layout = Layout([10, 3, 87])
+        self.add_layout(layout)
+        layout.add_widget(Label("hide"), 0)
+        layout.add_widget(VerticalDivider(), 1)
+        layout.add_widget(self._hide_chk, 2)
 
-        l = Layout([100])
-        self.add_layout(l)
-        l.add_widget(Divider())
+        layout = Layout([100])
+        self.add_layout(layout)
+        layout.add_widget(Divider())
 
-        l = Layout([10, 3, 87], fill_frame=True)
-        self.add_layout(l)
-        l.add_widget(Label("value"), 0)
-        l.add_widget(VerticalDivider(), 1)
-        l.add_widget(self._value_box, 2)
+        layout = Layout([10, 3, 87], fill_frame=True)
+        self.add_layout(layout)
+        layout.add_widget(Label("value"), 0)
+        layout.add_widget(VerticalDivider(), 1)
+        layout.add_widget(self._value_box, 2)
 
-        l = Layout([100])
-        self.add_layout(l)
-        l.add_widget(Divider())
+        layout = Layout([100])
+        self.add_layout(layout)
+        layout.add_widget(Divider())
 
-        l = Layout([5, 5])
-        self.add_layout(l)
-        l.add_widget(self._save_btn)
-        l.add_widget(self._cancel_btn, 1)
+        layout = Layout([5, 5])
+        self.add_layout(layout)
+        layout.add_widget(self._save_btn)
+        layout.add_widget(self._cancel_btn, 1)
 
         self.fix()
 

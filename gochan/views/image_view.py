@@ -1,4 +1,3 @@
-from typing import Optional
 from urllib.error import HTTPError, URLError
 
 from asciimatics.effects import Print
@@ -8,7 +7,6 @@ from asciimatics.renderers import ColourImageFile
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, PopUpDialog
 
-from gochan.models import AppContext
 from gochan.view_models import ImageVM
 
 

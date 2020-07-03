@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from gochan.models import AppContext, Board, ThreadHeader
+from gochan.models import AppContext, ThreadHeader
 from gochan.models.ng import NGList
 from gochan.event_handler import EventHandler
 

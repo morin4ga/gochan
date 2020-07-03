@@ -1,10 +1,7 @@
-import re
+from typing import List, Optional, Any
 
-from typing import List, Dict, Tuple, Optional, Any
-
-from gochan.models import Thread, Response, AppContext
+from gochan.models import Response, AppContext
 from gochan.models.ng import NGList
-from gochan.widgets import Buffer, Brush
 from gochan.event_handler import EventHandler
 
 

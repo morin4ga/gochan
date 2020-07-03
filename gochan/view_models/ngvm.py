@@ -1,4 +1,4 @@
-from typing import Optional, List, Tuple, Any, Dict
+from typing import Optional, Any, Dict
 from gochan.models import AppContext
 from gochan.event_handler import EventHandler
 

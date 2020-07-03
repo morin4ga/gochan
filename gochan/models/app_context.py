@@ -2,7 +2,7 @@ import re
 import tempfile
 import pickle
 
-from typing import Callable, List, TypeVar, Generic, Optional, Tuple, Union
+from typing import Optional, Union
 from urllib.request import HTTPError, URLError
 
 from gochan.event_handler import EventHandler

@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List
 
 from gochan.client import get_bbsmenu
 from gochan.event_handler import EventHandler

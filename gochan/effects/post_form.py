@@ -1,5 +1,3 @@
-from asciimatics.exceptions import NextScene
-from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, PopUpDialog, Text, TextBox, Widget
 

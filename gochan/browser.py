@@ -1,4 +1,3 @@
-import urllib
 import webbrowser
 from subprocess import Popen
 from typing import List

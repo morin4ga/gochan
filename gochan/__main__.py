@@ -4,9 +4,8 @@ from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import ResizeScreenError, StopApplication, NextScene
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
-from asciimatics.widgets import THEMES, Button, Divider, Frame, Layout, ListBox, Text, TextBox, Widget
+from asciimatics.widgets import THEMES
 
-from gochan.config import BROWSER_PATH
 from gochan.keybinding import KEY_BINDINGS
 from gochan.key import KeyLogger
 from gochan.views import BbsmenuView, BoardView, ImageView, ThreadView, NGView
@@ -37,7 +36,7 @@ def demo(screen: Screen, scene: Scene, app_context: AppContext):
     thread_view = ThreadView(screen, ThreadVM(app_context))
     image_view = ImageView(screen, ImageVM(app_context))
     ng_view = NGView(screen, NGVM(app_context))
-    keylog = KeyLogger(screen)
+    keylog = KeyLogger(screen)  # noqa: F841
 
     app_context.set_bbsmenu()
 

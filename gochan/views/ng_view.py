@@ -1,4 +1,4 @@
-from asciimatics.widgets import Frame, ListBox, Widget, Layout, VerticalDivider, Divider, Text, Label, PopUpDialog
+from asciimatics.widgets import Frame, ListBox, Widget, Layout, VerticalDivider, Divider, Label, PopUpDialog
 from asciimatics.screen import Screen
 from typing import List
 

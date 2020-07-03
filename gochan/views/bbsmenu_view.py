@@ -1,5 +1,3 @@
-from typing import Callable, Optional
-
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, Layout, Widget

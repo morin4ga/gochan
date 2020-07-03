@@ -1,7 +1,7 @@
 import re
 import time
 
-from typing import List, Tuple, Dict, Union
+from typing import List, Dict, Union
 from html import unescape
 
 

@@ -1,8 +1,4 @@
-import re
-import time
-import urllib
-from pathlib import Path, PosixPath
-from typing import Optional
+from pathlib import Path
 
 from gochan.config import CACHE_PATH, MAX_IMAGE_CACHE, LOG_PATH, MAX_THREAD_LOG
 

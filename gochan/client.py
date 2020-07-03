@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import Union
 
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen, URLError, HTTPError

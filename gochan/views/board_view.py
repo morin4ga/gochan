@@ -1,9 +1,7 @@
-from typing import Callable, Dict, List, Tuple
-
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
-from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, MultiColumnListBox, Widget, Label
+from asciimatics.widgets import Button, Divider, Frame, Layout, Widget, Label
 
 from gochan.keybinding import KEY_BINDINGS
 from gochan.view_models import BoardVM
@@ -42,9 +40,9 @@ class BoardView(Frame):
             on_select=self._on_select,
         )
 
-        l = Layout([100])
-        self.add_layout(l)
-        l.add_widget(self._title_label)
+        layout = Layout([100])
+        self.add_layout(layout)
+        layout.add_widget(self._title_label)
 
         layout1 = Layout([100], fill_frame=True)
         self.add_layout(layout1)

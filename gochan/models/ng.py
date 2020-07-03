@@ -1,7 +1,7 @@
 import re
 import json
 
-from typing import List, Dict, Union, Optional, Tuple, Any
+from typing import List, Dict, Union, Optional, Any
 
 from gochan.config import NG_PATH
 from gochan.models import Response
