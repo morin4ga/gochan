@@ -175,8 +175,7 @@ class ThreadView(Frame):
         self._data_context.update()
 
     def process_event(self, event):
-        # If any effects except this frame are not opened
-        if isinstance(event, KeyboardEvent) and len(self._scene.effects) == 1:
+        if isinstance(event, KeyboardEvent):
             if event.key_code == self._keybindings["open_link"]:
                 self._scene.add_effect(CommandLine(self._screen, "open:", self._open_link))
                 return None

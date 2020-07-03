@@ -93,7 +93,7 @@ class BoardView(Frame):
             self._thread_list.options = []
 
     def process_event(self, event):
-        if isinstance(event, KeyboardEvent) and len(self._scene.effects) == 1:
+        if isinstance(event, KeyboardEvent):
             if event.key_code == self._keybindings["sort_1"]:
                 self._data_context.sort_thread("number")
                 return None
