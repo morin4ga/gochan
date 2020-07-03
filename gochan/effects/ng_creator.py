@@ -88,7 +88,7 @@ class NGCreator(Frame):
         self.add_layout(l)
         l.add_widget(Divider())
 
-        l = Layout([25, 25, 25, 25])
+        l = Layout([5, 5])
         self.add_layout(l)
         l.add_widget(self._save_btn)
         l.add_widget(self._cancel_btn, 1)
