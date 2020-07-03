@@ -51,6 +51,7 @@ class NGEditor(Frame):
         self._value_box.value = item.value
 
         self._save_btn = Button("Save", self._save_clicked)
+        self._cancel_btn = Button("Cancel", self._cancel_clicked)
 
         l = Layout([10, 3, 87])
         self.add_layout(l)
@@ -112,14 +113,18 @@ class NGEditor(Frame):
         self.add_layout(l)
         l.add_widget(Divider())
 
-        l = Layout([25, 25, 25, 25])
+        l = Layout([5, 5])
         self.add_layout(l)
         l.add_widget(self._save_btn)
+        l.add_widget(self._cancel_btn, 1)
 
         self.fix()
 
     def disappaer(self):
         self._scene.remove_effect(self)
+
+    def _cancel_clicked(self):
+        self.disappaer()
 
     def _save_clicked(self):
         self.save()
