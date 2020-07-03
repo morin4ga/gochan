@@ -17,6 +17,7 @@ class NGCreator(Frame):
                          hover_focus=True,
                          can_scroll=False,
                          has_border=True,
+                         is_modal=True
                          )
 
         self.set_theme("user_theme")

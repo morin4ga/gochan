@@ -12,6 +12,7 @@ class PostForm(Frame):
                          hover_focus=True,
                          can_scroll=False,
                          has_border=False,
+                         is_modal=True
                          )
 
         self.set_theme("user_theme")
