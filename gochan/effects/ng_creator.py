@@ -98,14 +98,6 @@ class NGCreator(Frame):
     def disappaer(self):
         self._scene.remove_effect(self)
 
-    def process_event(self, event):
-        if isinstance(event, KeyboardEvent):
-            if event.key_code == ord('q'):
-                self.disappaer()
-                return None
-
-        super().process_event(event)
-
     def _save_clicked(self):
         self.save()
 
