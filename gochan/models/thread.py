@@ -43,11 +43,29 @@ class Thread:
         self.key = key
         self.title: str = None
         self.responses: List[Response] = None
-        self.is_pastlog: bool = False
+        self._is_pastlog: bool = False
         self.links = []
-        self.bookmark = 0
+        self._bookmark = 0
         self.on_property_changed = EventHandler()
         self.on_collection_changed = EventHandler()
+
+    @property
+    def is_pastlog(self) -> bool:
+        return self._is_pastlog
+
+    @is_pastlog.setter
+    def is_pastlog(self, value: bool):
+        self._is_pastlog = value
+        self.on_property_changed("is_pastlog")
+
+    @property
+    def bookmark(self) -> int:
+        return self._bookmark
+
+    @bookmark.setter
+    def bookmark(self, value: int):
+        self._bookmark = value
+        self.on_property_changed("bookmark")
 
     @staticmethod
     def restore(dict) -> "Thread":

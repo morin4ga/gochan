@@ -95,6 +95,8 @@ class ThreadVM:
     def _thread_changed(self, property_name: str):
         if property_name == "responses":
             self.on_property_changed("responses")
+        elif property_name == "bookmark":
+            self.on_property_changed("bookmark")
 
     def _thread_collection_changed(self, property_name: str, kind: str, item: Any):
         if property_name == "responses":
