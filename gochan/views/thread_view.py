@@ -69,12 +69,12 @@ class ThreadView(Frame):
         self.fix()
 
     def _data_context_changed(self, property_name: str):
-        if property_name == "responses" or property_name == "ng":
-            if self._data_context.responses is None:
-                return
+        if property_name == "responses" or property_name == "bookmark" or property_name == "ng":
+            if self._data_context.responses is not None:
+                self._update_buffer()
 
-            self._update_buffer()
-
+        # If responses is changed, update title and scroll to top of unread responses
+        if property_name == "responses":
             self._title_label.text = self._data_context.title + " (" + str(len(self._data_context.responses)) + ")"
 
             bookmark = self._data_context.bookmark
@@ -161,6 +161,7 @@ class ThreadView(Frame):
 
     def _on_update_btn_pushed(self):
         self._data_context.update()
+        self._update_bookmark()
         self.switch_focus(self._layouts[0], 0, 0)
 
     def _on_write_btn_pushed(self):
@@ -193,6 +194,7 @@ class ThreadView(Frame):
                 return None
             elif event.key_code == self._keybindings["update"]:
                 self._data_context.update()
+                self._update_bookmark()
                 return None
             elif event.key_code == self._keybindings["back"]:
                 self._update_bookmark()
@@ -277,6 +279,10 @@ class ThreadView(Frame):
 
         displayed_end_line = self._rtext.scroll_offset + self._rtext._h
 
+        new_bookmark = self._data_context.bookmark
+
         for number, (_, end) in enumerate(self._anchors, 1):
             if displayed_end_line >= end and self._data_context.bookmark < number:
-                self._data_context.bookmark = number
+                new_bookmark = number
+
+        self._data_context.bookmark = new_bookmark
