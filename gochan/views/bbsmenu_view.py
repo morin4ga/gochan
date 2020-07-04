@@ -1,10 +1,8 @@
-from typing import Callable, Optional
-
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, Layout, Widget
 
-from gochan.config import KEY_BINDINGS
+from gochan.keybinding import KEY_BINDINGS
 from gochan.view_models import BbsmenuVM
 from gochan.widgets import ListBoxK
 
@@ -14,7 +12,6 @@ class BbsmenuView(Frame):
         super().__init__(screen,
                          screen.height,
                          screen.width,
-                         on_load=self._on_load_,
                          hover_focus=True,
                          can_scroll=False,
                          has_border=False,
@@ -76,10 +73,6 @@ class BbsmenuView(Frame):
                 opitons.append((b.name, i))
 
             self._board_list.options = opitons
-
-    def _on_load_(self, new_value=None):
-        self._cat_list.value = new_value
-        self._on_pick_c()
 
     def _on_pick_c(self):
         self.save()

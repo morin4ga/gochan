@@ -1,4 +1,5 @@
-from typing import Optional, Tuple
+from typing import Optional, Union
+from urllib.error import HTTPError, URLError
 
 from gochan.event_handler import EventHandler
 from gochan.models import AppContext
@@ -12,16 +13,9 @@ class ImageVM:
         self.on_property_changed = EventHandler()
 
     @property
-    def image(self) -> Optional[str]:
+    def image(self) -> Optional[Union[str, HTTPError, URLError]]:
         return self._app_context.image
-
-    @property
-    def error(self) -> Optional[str]:
-        if self._app_context.image_error is not None:
-            return str(self._app_context.image_error.code) + "\n" + self._app_context.image_error.reason
 
     def _context_changed(self, property_name: str):
         if property_name == "image":
             self.on_property_changed("image")
-        elif property_name == "image_error":
-            self.on_property_changed("error")

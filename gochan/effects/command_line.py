@@ -12,7 +12,8 @@ class CommandLine(Frame):
                          int(screen.width * 0.6),
                          hover_focus=True,
                          can_scroll=False,
-                         has_border=True
+                         has_border=True,
+                         is_modal=True
                          )
 
         self.set_theme("user_theme")

@@ -1,13 +1,11 @@
-from typing import Callable, Dict, List, Tuple
-
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
-from asciimatics.widgets import Button, Divider, Frame, Layout, ListBox, MultiColumnListBox, Widget
+from asciimatics.widgets import Button, Divider, Frame, Layout, Widget, Label
 
-from gochan.config import KEY_BINDINGS
+from gochan.keybinding import KEY_BINDINGS
 from gochan.view_models import BoardVM
-from gochan.effects import CommandLine
+from gochan.effects import CommandLine, NGCreator
 from gochan.widgets import MultiColumnListBoxK
 
 
@@ -17,7 +15,6 @@ class BoardView(Frame):
                          screen.height,
                          screen.width,
                          has_border=False,
-                         on_load=self._on_load_,
                          hover_focus=True,
                          can_scroll=False,
                          )
@@ -29,7 +26,7 @@ class BoardView(Frame):
 
         self._keybindings = KEY_BINDINGS["board"]
 
-        self._cli = None
+        self._title_label = Label("")
 
         self._thread_list = MultiColumnListBoxK(
             Widget.FILL_FRAME,
@@ -43,7 +40,9 @@ class BoardView(Frame):
             on_select=self._on_select,
         )
 
-        self._back_button = Button("Back", self._on_back)
+        layout = Layout([100])
+        self.add_layout(layout)
+        layout.add_widget(self._title_label)
 
         layout1 = Layout([100], fill_frame=True)
         self.add_layout(layout1)
@@ -52,7 +51,8 @@ class BoardView(Frame):
 
         layout2 = Layout([25, 25, 25, 25])
         self.add_layout(layout2)
-        layout2.add_widget(self._back_button, 0)
+        layout2.add_widget(Button("Back", self._back_btn_clicked), 0)
+        layout2.add_widget(Button("Update", self._update_btn_clicked), 1)
 
         self.fix()
         self._on_pick()
@@ -60,16 +60,18 @@ class BoardView(Frame):
     def _data_context_changed(self, property_name: str):
         if property_name == "threads":
             self._update_options()
+            self._title_label.text = self._data_context.name + " (" + str(len(self._data_context.threads)) + ")"
+        elif property_name == "ng":
+            self._update_options()
 
-    def _on_back(self):
+    def _back_btn_clicked(self):
         raise NextScene("Bbsmenu")
+
+    def _update_btn_clicked(self):
+        self._data_context.update()
 
     def _on_pick(self):
         pass
-
-    # _on_load is already used by Frame. So use _on_load_ here
-    def _on_load_(self, new_value=None):
-        self._thread_list.value = new_value
 
     def _on_select(self):
         if self._data_context.threads is None:
@@ -83,53 +85,64 @@ class BoardView(Frame):
     def _update_options(self):
         if self._data_context.threads is not None:
             self._thread_list.options = [([str(x.number), "|" + x.title, " |" + str(x.count), " |" + str(x.speed)], i)
-                                         for i, x in enumerate(self._data_context.threads)]
+                                         for i, x in enumerate(self._data_context.threads)
+                                         if self._data_context.ng.is_ng(x.title, self._data_context.board) == 0]
         else:
             self._thread_list.options = []
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
             if event.key_code == self._keybindings["sort_1"]:
-                if self._cli is None:
-                    self._data_context.sort_thread("number")
-                    return None
+                self._data_context.sort_thread("number")
+                return None
             elif event.key_code == self._keybindings["dsort_1"]:
-                if self._cli is None:
-                    self._data_context.sort_thread("number", True)
-                    return None
+                self._data_context.sort_thread("number", True)
+                return None
             elif event.key_code == self._keybindings["sort_2"]:
-                if self._cli is None:
-                    self._data_context.sort_thread("title")
-                    return None
+                self._data_context.sort_thread("title")
+                return None
             elif event.key_code == self._keybindings["dsort_2"]:
-                if self._cli is None:
-                    self._data_context.sort_thread("title", True)
-                    return None
+                self._data_context.sort_thread("title", True)
+                return None
             elif event.key_code == self._keybindings["sort_3"]:
-                if self._cli is None:
-                    self._data_context.sort_thread("count")
-                    return None
+                self._data_context.sort_thread("count")
+                return None
             elif event.key_code == self._keybindings["dsort_3"]:
-                if self._cli is None:
-                    self._data_context.sort_thread("count", True)
-                    return None
+                self._data_context.sort_thread("count", True)
+                return None
             elif event.key_code == self._keybindings["sort_4"]:
-                if self._cli is None:
-                    self._data_context.sort_thread("speed")
-                    return None
+                self._data_context.sort_thread("speed")
+                return None
             elif event.key_code == self._keybindings["dsort_4"]:
-                if self._cli is None:
-                    self._data_context.sort_thread("speed", True)
-                    return None
-            elif event.key_code == ord("f"):
-                if self._cli is None:
-                    self._cli = CommandLine(self._screen, "find:", self._find)
-                    self._scene.add_effect(self._cli)
-                    return None
+                self._data_context.sort_thread("speed", True)
+                return None
+            elif event.key_code == self._keybindings["find"]:
+                self._scene.add_effect(CommandLine(self._screen, "find:", self._find))
+                return None
+            elif event.key_code == self._keybindings["ng_title"]:
+                self._scene.add_effect(CommandLine(self._screen, "ng:", self._add_ng))
+                return None
+            elif event.key_code == self._keybindings["update"]:
+                self._data_context.update()
+                return None
+            elif event.key_code == self._keybindings["back"]:
+                raise NextScene("Bbsmenu")
+                return None
 
         return super().process_event(event)
 
     def _find(self, word: str):
         if self._data_context.threads is not None:
             self._data_context.sort_thread_by_word(word)
-            self._cli = None
+
+    def _add_ng(self, number: str):
+        if number.isdecimal() and self._data_context.threads is not None:
+            target = None
+            for t in self._data_context.threads:
+                if int(number) == t.number:
+                    target = t
+                    break
+
+            if target is not None:
+                self._scene.add_effect(NGCreator(self._screen, self._data_context.add_ng, "title",
+                                                 target.title, self._data_context.board))

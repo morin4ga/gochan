@@ -18,6 +18,21 @@ class Response:
         self.id = id
         self.message = message
 
+    @staticmethod
+    def restore(dict) -> "Response":
+        return Response(dict["number"], dict["name"], dict["mail"], dict["date"], dict["id"], dict["message"])
+
+    def to_dict(self):
+        d = {}
+        d["number"] = self.number
+        d["name"] = self.name
+        d["mail"] = self.mail
+        d["date"] = self.date
+        d["id"] = self.id
+        d["message"] = self.message
+
+        return d
+
 
 class Thread:
     def __init__(self, server: str, board: str, key: str):
@@ -28,10 +43,43 @@ class Thread:
         self.key = key
         self.title: str = None
         self.responses: List[Response] = None
-        self.is_pastlog: bool = False
+        self._is_pastlog: bool = False
         self.links = []
+        self._bookmark = 0
         self.on_property_changed = EventHandler()
         self.on_collection_changed = EventHandler()
+
+    @property
+    def is_pastlog(self) -> bool:
+        return self._is_pastlog
+
+    @is_pastlog.setter
+    def is_pastlog(self, value: bool):
+        self._is_pastlog = value
+        self.on_property_changed("is_pastlog")
+
+    @property
+    def bookmark(self) -> int:
+        return self._bookmark
+
+    @bookmark.setter
+    def bookmark(self, value: int):
+        self._bookmark = value
+        self.on_property_changed("bookmark")
+
+    @staticmethod
+    def restore(dict) -> "Thread":
+        t = Thread(dict["server"], dict["board"], dict["key"])
+        t.title = dict["title"]
+        t.links = dict["links"]
+        t.is_pastlog = dict["is_pastlog"]
+        t.bookmark = dict["bookmark"]
+        t.responses = []
+
+        for r in dict["responses"]:
+            t.responses.append(Response.restore(r))
+
+        return t
 
     def update(self):
         # If this instance has not initialized yet
@@ -46,7 +94,7 @@ class Thread:
 
             self.responses = []
             self._add_response(parser.responses())
-            self.on_collection_changed(("responses", "add", self.responses[0:]))
+            self.on_collection_changed("responses", "add", self.responses[0:])
         else:
             html = get_responses_after(self.server, self.board, self.key, len(self.responses))
             parser = ThreadParserH(html)
@@ -56,10 +104,26 @@ class Thread:
             if len(new) > 1:
                 start = len(self.responses)
                 self._add_response(new[1:])
-                self.on_collection_changed(("responses", "add", self.responses[start:]))
+                self.on_collection_changed("responses", "add", self.responses[start:])
 
     def post(self, name: str, mail: str, message: str) -> str:
         return post_response(self.server, self.board, self.key, name, mail, message)
+
+    def to_dict(self):
+        d = {}
+        d["server"] = self.server
+        d["board"] = self.board
+        d["key"] = self.key
+        d["title"] = self.title
+        d["is_pastlog"] = self.is_pastlog
+        d["links"] = self.links
+        d["bookmark"] = self.bookmark
+        d["responses"] = []
+
+        for r in self.responses:
+            d["responses"].append(r.to_dict())
+
+        return d
 
     def _add_response(self, rs: List[Dict[str, Union[int, str]]]):
         for r in rs:

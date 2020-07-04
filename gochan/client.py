@@ -1,7 +1,9 @@
-from typing import List, Union
+from typing import Union
 
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen, URLError, HTTPError
+
+from gochan.config import USER_AGENT, COOKIE
 
 
 def get_bbsmenu() -> str:
@@ -33,10 +35,10 @@ def post_response(server: str, board: str, key: str, name: str, mail: str, msg: 
     url = f"https://{server}.5ch.net/test/bbs.cgi"
     ref = f"https://{server}.5ch.net/test/read.cgi/{board}/{key}"
     params = {"bbs": board, "key": key, "time": "1588219909",
-              "FROM": name, "mail": mail, "MESSAGE": msg, "submit": "書き込み"}
+              "FROM": name, "mail": mail, "MESSAGE": msg, "submit": "書き込み", "oekaki_thread1": ""}
 
     data = urlencode(params, encoding="shift-jis", errors="xmlcharrefreplace").encode()
-    hdrs = {"Referer": ref, "User-Agent": "Mozilla/5.0", "Cookie": "yuki=akari"}
+    hdrs = {"Referer": ref, "User-Agent": USER_AGENT, "Cookie": COOKIE}
 
     req = Request(url, headers=hdrs)
 
@@ -48,7 +50,7 @@ def post_response(server: str, board: str, key: str, name: str, mail: str, msg: 
 
 
 def _get_content(url: str, proxy: str = None) -> str:
-    hdr = {"User-Agent": "Mozilla/5.0"}
+    hdr = {"User-Agent": USER_AGENT}
 
     req = Request(url, headers=hdr)
 
@@ -68,4 +70,6 @@ def download_image(url: str) -> Union[bytes, HTTPError, URLError]:
             data = response.read()
             return data
     except HTTPError as e:
+        return e
+    except URLError as e:
         return e
