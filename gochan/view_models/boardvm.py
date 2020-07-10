@@ -1,7 +1,7 @@
-from typing import Optional, List
+from typing import Optional, List, Union
 
 from gochan.models import AppContext, ThreadHeader
-from gochan.models.ng import NGList
+from gochan.models.ng import NG
 from gochan.event_handler import EventHandler
 
 
@@ -11,6 +11,7 @@ class BoardVM:
 
         self._app_context = app_context
         self._board = app_context.board
+        self._filtered_threads = None
 
         self._app_context.on_property_changed.add(self._app_context_changed)
         self._app_context.ng.on_collection_changed.add(self._ng_changed)
@@ -30,7 +31,11 @@ class BoardVM:
             if self._board is not None else None
 
     @property
-    def ng(self) -> NGList:
+    def filtered_threads(self) -> Optional[List[Union[ThreadHeader, None]]]:
+        return self._filtered_threads
+
+    @property
+    def ng(self) -> NG:
         return self._app_context.ng
 
     def sort_thread(self, key: str, reverse=False):
@@ -75,11 +80,21 @@ class BoardVM:
             self._board = self._app_context.board
             self._board.on_property_changed.add(self._board_changed)
 
+            self._filtered_threads = self._app_context.ng.filter_threads(self._board)
+
             self.on_property_changed("threads")
+            self.on_property_changed("filtered_threads")
 
     def _board_changed(self, property_name):
         if property_name == "threads":
+            self._filtered_threads = self._app_context.ng.filter_threads(self._board)
+
             self.on_property_changed("threads")
+            self.on_property_changed("filtered_threads")
 
     def _ng_changed(self, property_name, kind, *args):
+        if self._board is not None:
+            self._filtered_threads = self._app_context.ng.filter_threads(self._board)
+
         self.on_property_changed("ng")
+        self.on_property_changed("filtered_threads")

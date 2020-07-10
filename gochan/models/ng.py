@@ -1,186 +1,339 @@
 import re
 import json
 
-from typing import List, Dict, Union, Optional, Any
+from enum import Enum
+from typing import List, Optional, Union
 
 from gochan.config import NG_PATH
-from gochan.models import Response
 from gochan.event_handler import EventHandler
+from gochan.models import Board, ThreadHeader, Thread, Response
+
+
+class BreakException(Exception):
+    pass
+
+
+class NGResponse(Enum):
+    ABORN = 0
+    HIDE = 1
 
 
 class NGItem:
-    def __init__(self, id: int, kind: str, value: str, use_reg: bool, hide: bool,
-                 board: Optional[str], key: Optional[str]):
+    def __init__(self, id: int, value: str, use_reg: bool):
         super().__init__()
-        self._id = id
-        self._board = board
-        self._key = key
-        self._kind = kind
-        self._value = value
-        self._use_reg = use_reg
-        self._hide = hide
+        self.id = id
+        self.value = value
+        self.use_reg = use_reg
 
-    @property
-    def id(self):
-        return self._id
-
-    @property
-    def board(self):
-        return self._board
-
-    @property
-    def key(self):
-        return self._key
-
-    @property
-    def kind(self):
-        return self._kind
-
-    @property
-    def value(self):
-        return self._value
-
-    @property
-    def use_reg(self):
-        return self._use_reg
-
-    @property
-    def hide(self):
-        return self._hide
-
-    def match(self, obj: Union[Response, str]):
-        """
-        Parameters
-        ----------
-        obj : Union[Response, str]
-              Response or thread title
-        """
-        if isinstance(obj, Response):
-            if self.kind == "name":
-                if self.use_reg:
-                    return re.search(self.value, obj.name) is not None
-                else:
-                    return self.value in obj.name
-            elif self.kind == "id":
-                if self.use_reg:
-                    return re.search(self.value, obj.id) is not None
-                else:
-                    return self.value in obj.id
-            elif self.kind == "word":
-                if self.use_reg:
-                    return re.search(self.value, obj.message) is not None
-                else:
-                    return self.value in obj.message
-
-            return False
+    def match(self, s) -> bool:
+        if self.use_reg:
+            return re.search(self.value, s) is not None
         else:
-            if self.use_reg:
-                return re.search(self.value, obj)
-            else:
-                return self.value in obj
+            return self.value in s
 
 
-class NGList:
+class NGName(NGItem):
+    def __init__(self, id: int, value: str, use_reg: bool, hide: bool,
+                 board: Optional[str] = None, key: Optional[str] = None):
+        super().__init__(id, value, use_reg)
+        self.hide = hide
+        self.board = board
+        self.key = key
+
+
+class NGWord(NGItem):
+    def __init__(self, id: int, value: str, use_reg: bool, hide: bool,
+                 board: Optional[str] = None, key: Optional[str] = None):
+        super().__init__(id, value, use_reg)
+        self.hide = hide
+        self.board = board
+        self.key = key
+
+
+class NGId(NGItem):
+    def __init__(self, id: int, value: str, use_reg: bool, hide: bool,
+                 board: Optional[str] = None, key: Optional[str] = None):
+        super().__init__(id, value, use_reg)
+        self.hide = hide
+        self.board = board
+        self.key = key
+
+
+class NGTitle(NGItem):
+    def __init__(self, id: int, value: str, use_reg: bool, board: Optional[str] = None):
+        super().__init__(id, value, use_reg)
+        self.board = board
+
+
+class NG:
     def __init__(self):
         super().__init__()
-        self.on_collection_changed = EventHandler()
-        self._list: List[NGItem] = []
         self._last_id = 0
+        self.names: List[NGName] = []
+        self.words: List[NGWord] = []
+        self.ids: List[NGId] = []
+        self.titles: List[NGTitle] = []
+        self.on_collection_changed = EventHandler()
 
-    def __iter__(self):
-        return self._list.__iter__()
-
-    def __len__(self):
-        return self._list.__len__()
-
-    def insert(self, kind: str, value: str, use_reg: bool, hide: bool, board: Optional[str], key: Optional[str]):
+    def add_name_ng(self, value: str, use_reg: bool, hide: bool,
+                    board: Optional[str] = None, key: Optional[str] = None):
         self._last_id += 1
-        item = NGItem(self._last_id, kind, value, use_reg, hide, board, key)
-        self._list.append(item)
-        self._save()
-        self.on_collection_changed("self", "insert", item)
+        item = NGName(self._last_id, value, use_reg, hide, board, key)
+        self.names.append(item)
+        self.on_collection_changed("names", "add", item)
 
-    def delete(self, id: int):
-        for item in self._list:
-            if item.id == id:
-                self._list.remove(item)
-                self._save()
-                self.on_collection_changed("self", "delete", item)
+    def add_word_ng(self, value: str, use_reg: bool, hide: bool,
+                    board: Optional[str] = None, key: Optional[str] = None):
+        self._last_id += 1
+        item = NGWord(self._last_id, value, use_reg, hide, board, key)
+        self.words.append(item)
+        self.on_collection_changed("words", "add", item)
 
-    def update(self, id: int, values: Dict[str, Any]):
-        for item in self._list:
-            if item.id == id:
-                if "board" in values:
-                    item._board = values["board"]
-                if "key" in values:
-                    item._key = values["key"]
-                if "kind" in values:
-                    item._kind = values["kind"]
-                if "use_reg" in values:
-                    item._use_reg = values["use_reg"]
-                if "hide" in values:
-                    item._hide = values["hide"]
+    def add_id_ng(self, value: str, use_reg: bool, hide: bool,
+                  board: Optional[str] = None, key: Optional[str] = None):
+        self._last_id += 1
+        item = NGId(self._last_id, value, use_reg, hide, board, key)
+        self.ids.append(item)
+        self.on_collection_changed("ids", "add", item)
+
+    def add_title_ng(self, value: str, use_reg: bool, board: Optional[str] = None):
+        self._last_id += 1
+        item = NGTitle(self._last_id, value, use_reg, board)
+        self.titles.append(item)
+        self.on_collection_changed("titles", "add", item)
+
+    def update_ng(self, id: int, values):
+        for item in self.names:
+            if id == item.id:
                 if "value" in values:
-                    item._value = values["value"]
+                    item.value = values["value"]
+                if "use_reg" in values:
+                    item.use_reg = values["use_reg"]
+                if "hide" in values:
+                    item.hide = values["hide"]
+                if "board" in values:
+                    item.board = values["board"]
+                if "key" in values:
+                    item.key = values["key"]
 
-                self._save()
-                self.on_collection_changed("self", "update", item)
+                self.on_collection_changed("names", "change", item)
+                return
 
-    def select(self, kind: str):
-        if kind == "title":
-            return list(filter(lambda x: x.kind == "title", self._list))
-        elif kind == "name":
-            return list(filter(lambda x: x.kind == "name", self._list))
-        elif kind == "id":
-            return list(filter(lambda x: x.kind == "id", self._list))
-        elif kind == "word":
-            return list(filter(lambda x: x.kind == "word", self._list))
-        else:
-            raise ValueError("wrong kind " + kind)
+        for item in self.words:
+            if id == item.id:
+                if "value" in values:
+                    item.value = values["value"]
+                if "use_reg" in values:
+                    item.use_reg = values["use_reg"]
+                if "hide" in values:
+                    item.hide = values["hide"]
+                if "board" in values:
+                    item.board = values["board"]
+                if "key" in values:
+                    item.key = values["key"]
 
-    def is_ng(self, obj: Union[Response, str], board: str = None, key: str = None) -> int:
-        """
-        Returns
-        -------
-        0 : is not ng
-        1 : is ng
-        2 : is ng and hide
-        """
-        for item in self._list:
-            if item.board is not None and item.board != board:
-                continue
-            if item.key is not None and item.key != key:
-                continue
+                self.on_collection_changed("words", "change", item)
+                return
 
-            if item.match(obj):
-                return 2 if item.hide else 1
+        for item in self.ids:
+            if id == item.id:
+                if "value" in values:
+                    item.value = values["value"]
+                if "use_reg" in values:
+                    item.use_reg = values["use_reg"]
+                if "hide" in values:
+                    item.hide = values["hide"]
+                if "board" in values:
+                    item.board = values["board"]
+                if "key" in values:
+                    item.key = values["key"]
 
-        return 0
+                self.on_collection_changed("ids", "change", item)
+                return
 
-    def _save(self):
-        d_list = []
+        for item in self.titles:
+            if id == item.id:
+                if "value" in values:
+                    item.value = values["value"]
+                if "use_reg" in values:
+                    item.use_reg = values["use_reg"]
+                if "board" in values:
+                    item.board = values["board"]
 
-        for item in self._list:
+                self.on_collection_changed("titles", "change", item)
+                return
+
+    def delete_ng(self, id: int):
+        for n in self.names:
+            if n.id == id:
+                self.names.remove(n)
+                self.on_collection_changed("names", "delete", n)
+                return
+
+        for n in self.ids:
+            if n.id == id:
+                self.ids.remove(n)
+                self.on_collection_changed("ids", "delete", n)
+                return
+
+        for n in self.words:
+            if n.id == id:
+                self.words.remove(n)
+                self.on_collection_changed("words", "delete", n)
+                return
+
+        for n in self.titles:
+            if n.id == id:
+                self.titles.remove(n)
+                self.on_collection_changed("titles", "delete", n)
+                return
+
+    def filter_threads(self, board: Board) -> List[Union[ThreadHeader, None]]:
+        result = []
+
+        for h in board.threads:
+            try:
+                for n in self.titles:
+                    # Ignore ng when the response is out of ng's scope
+                    if n.board is not None and n.board != h.board:
+                        continue
+
+                    if n.match(h.title):
+                        result.append(None)
+                        raise BreakException()
+
+                result.append(h)
+            except BreakException:
+                pass
+
+        return result
+
+    def filter_responses(self, thread: Thread) -> List[Union[Response, NGResponse]]:
+        result = []
+
+        for r in thread.responses:
+            try:
+                for n in self.names:
+                    # Ignore ng when the response is out of ng's scope
+                    if n.board is not None and n.board != thread.board:
+                        continue
+                    if n.key is not None and n.key != thread.key:
+                        continue
+
+                    if n.match(r.name):
+                        if n.hide:
+                            result.append(NGResponse.HIDE)
+                        else:
+                            result.append(NGResponse.ABORN)
+
+                        raise BreakException()
+
+                for n in self.ids:
+                    # Ignore ng when the response is out of ng's scope
+                    if n.board is not None and n.board != thread.board:
+                        continue
+                    if n.key is not None and n.key != thread.key:
+                        continue
+
+                    if n.match(r.id):
+                        if n.hide:
+                            result.append(NGResponse.HIDE)
+                        else:
+                            result.append(NGResponse.ABORN)
+
+                        raise BreakException()
+
+                for n in self.words:
+                    # Ignore ng when the response is out of ng's scope
+                    if n.board is not None and n.board != thread.board:
+                        continue
+                    if n.key is not None and n.key != thread.key:
+                        continue
+
+                    if n.match(r.message):
+                        if n.hide:
+                            result.append(NGResponse.HIDE)
+                        else:
+                            result.append(NGResponse.ABORN)
+
+                        raise BreakException()
+
+                result.append(r)
+
+            except BreakException:
+                pass
+
+        return result
+
+    def save(self):
+        names = []
+        words = []
+        ids = []
+        titles = []
+
+        for name in self.names:
             d = {}
+            d["value"] = name.value
+            d["use_reg"] = name.use_reg
+            d["hide"] = name.hide
 
-            if item.board is not None:
-                d["board"] = item.board
-            if item.key is not None:
-                d["key"] = item.key
+            if name.board is not None:
+                d["board"] = name.board
 
-            d["kind"] = item.kind
-            d["use_reg"] = item.use_reg
-            d["hide"] = item.hide
-            d["value"] = item.value
+            if name.key is not None:
+                d["key"] = name.key
 
-            d_list.append(d)
+            names.append(d)
 
-        obj = {"items": d_list}
+        for word in self.words:
+            d = {}
+            d["value"] = word.value
+            d["use_reg"] = word.use_reg
+            d["hide"] = word.hide
+
+            if word.board is not None:
+                d["board"] = word.board
+
+            if word.key is not None:
+                d["key"] = word.key
+
+            words.append(d)
+
+        for id in self.ids:
+            d = {}
+            d["value"] = id.value
+            d["use_reg"] = id.use_reg
+            d["hide"] = id.hide
+
+            if id.board is not None:
+                d["board"] = id.board
+
+            if id.key is not None:
+                d["key"] = id.key
+
+            ids.append(d)
+
+        for title in self.titles:
+            d = {}
+            d["value"] = title.value
+            d["use_reg"] = title.use_reg
+
+            if title.board is not None:
+                d["board"] = title.board
+
+            titles.append(d)
+
+        obj = {}
+        obj["names"] = names
+        obj["words"] = words
+        obj["ids"] = ids
+        obj["titles"] = titles
+
         j = json.dumps(obj, ensure_ascii=False, indent=2)
         NG_PATH.write_text(j)
 
 
-ng = NGList()
+ng = NG()
 
 if NG_PATH.is_file():
     text = NG_PATH.read_text()
@@ -189,14 +342,36 @@ if NG_PATH.is_file():
     if len(text.replace(" ", "")) != 0:
         d = json.loads(text)
 
-        if "items" in d:
-            for item in d["items"]:
-                kind = item["kind"]
+        if "names" in d:
+            for item in d["names"]:
                 value = item["value"]
-
-                hide = item["hide"] if "hide" in item else False
-                use_reg = item["use_reg"] if "use_reg" in item else False
+                use_reg = item["use_reg"]
+                hide = item["hide"]
                 board = item.get("board")
                 key = item.get("key")
+                ng.add_name_ng(value, use_reg, hide, board, key)
 
-                ng.insert(kind, value, use_reg, hide, board, key)
+        if "words" in d:
+            for item in d["words"]:
+                value = item["value"]
+                use_reg = item["use_reg"]
+                hide = item["hide"]
+                board = item.get("board")
+                key = item.get("key")
+                ng.add_word_ng(value, use_reg, hide, board, key)
+
+        if "ids" in d:
+            for item in d["ids"]:
+                value = item["value"]
+                use_reg = item["use_reg"]
+                hide = item["hide"]
+                board = item.get("board")
+                key = item.get("key")
+                ng.add_id_ng(value, use_reg, hide, board, key)
+
+        if "titles" in d:
+            for item in d["titles"]:
+                value = item["value"]
+                use_reg = item["use_reg"]
+                board = item.get("board")
+                ng.add_title_ng(value, use_reg, board)

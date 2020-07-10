@@ -1,5 +1,7 @@
-from typing import Optional, Any, Dict
+from typing import List
+
 from gochan.models import AppContext
+from gochan.models.ng import NGName, NGWord, NGId, NGTitle, NGItem  # noqa: F401
 from gochan.event_handler import EventHandler
 
 
@@ -10,27 +12,27 @@ class NGVM:
         self._app_context.ng.on_collection_changed.add(self._ng_changed)
         self.on_property_changed = EventHandler()
 
-        self.title_ngs = self._app_context.ng.select("title")
-        self.name_ngs = self._app_context.ng.select("name")
-        self.id_ngs = self._app_context.ng.select("id")
-        self.word_ngs = self._app_context.ng.select("word")
+    @property
+    def names(self) -> List[NGName]:
+        return self._app_context.ng.names
 
-    def insert(self, kind: str, value: str, use_reg: bool, hide: bool, board: Optional[str], key: Optional[str]):
-        self._app_context.ng.insert(kind, value, use_reg, hide, board, key)
+    @property
+    def ids(self) -> List[NGId]:
+        return self._app_context.ng.ids
 
-    def update(self, target: id, values: Dict[str, Any]):
-        self._app_context.ng.update(target, values)
+    @property
+    def words(self) -> List[NGWord]:
+        return self._app_context.ng.words
 
-    def delete(self, target: id):
-        self._app_context.ng.delete(target)
+    @property
+    def titles(self) -> List[NGTitle]:
+        return self._app_context.ng.titles
 
-    def _ng_changed(self, property_name: str, type: str, *arg):
-        self.title_ngs = self._app_context.ng.select("title")
-        self.name_ngs = self._app_context.ng.select("name")
-        self.id_ngs = self._app_context.ng.select("id")
-        self.word_ngs = self._app_context.ng.select("word")
+    def update_ng(self, id, values):
+        self._app_context.ng.update_ng(id, values)
 
-        self.on_property_changed("title_ngs")
-        self.on_property_changed("name_ngs")
-        self.on_property_changed("id_ngs")
-        self.on_property_changed("word_ngs")
+    def delete_ng(self, id):
+        self._app_context.ng.delete_ng(id)
+
+    def _ng_changed(self, property_name: str, type: str, item):
+        self.on_property_changed(property_name)

@@ -12,7 +12,7 @@ from gochan.models.thread import Thread
 from gochan.config import USE_IMAGE_CACHE, SAVE_THREAD_LOG
 from gochan.storage import image_cache, thread_log
 from gochan.client import download_image
-from gochan.models.ng import ng, NGList
+from gochan.models.ng import ng, NG
 
 
 class AppContext:
@@ -22,7 +22,7 @@ class AppContext:
         self.board: Optional[Board] = None
         self.thread: Optional[Thread] = None
         self.image: Optional[Union[str, HTTPError, URLError]] = None
-        self.ng: NGList = ng
+        self.ng: NG = ng
 
         self.on_property_changed = EventHandler()
 
