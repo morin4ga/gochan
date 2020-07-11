@@ -12,6 +12,7 @@ from gochan.keybinding import KEY_BINDINGS
 from gochan.view_models import ThreadVM
 from gochan.effects import CommandLine, NGCreator, PostForm
 from gochan.widgets import Buffer, Cell, RichText
+from gochan.models.ng import NGResponse
 
 link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
 
@@ -99,10 +100,8 @@ class ThreadView(Frame):
         self._anchors = []
         link_idx = 0
 
-        for r in self._data_context.responses:
-            mode = self._data_context.ng.is_ng(r, self._data_context.board, self._data_context.key)
-
-            if mode == 1:
+        for r in self._data_context.filtered_responses:
+            if r == NGResponse.ABORN:
                 start = len(buf)
                 buf.push(str(r.number) + " " + "あぼーん", THREAD_BRUSHES["normal"])
                 buf.break_line(1)
@@ -110,7 +109,7 @@ class ThreadView(Frame):
                 self._anchors.append((start, end))
                 buf.break_line(1)
                 continue
-            elif mode == 2:
+            elif r == NGResponse.HIDE:
                 self._anchors.append((len(buf), len(buf)))
                 continue
 

@@ -1,10 +1,9 @@
 from asciimatics.widgets import Frame, ListBox, Widget, Layout, VerticalDivider, Divider, Label, PopUpDialog
 from asciimatics.screen import Screen
-from typing import List
+from typing import List, Optional
 
-from gochan.view_models import NGVM
-from gochan.models.ng import NGItem
-from gochan.effects import NGEditor
+from gochan.view_models.ngvm import NGVM, NGItem, NGTitle, NGName, NGId, NGWord
+from gochan.effects import NGEditor, NGTitleEditor
 
 
 class NGView(Frame):
@@ -22,17 +21,18 @@ class NGView(Frame):
         self._data_context = data_context
         self._data_context.on_property_changed = self._context_changed
 
-        self._selected_list = None
-        self._selected_item = None
+        self._selected_list: List[NGItem] = None
+        self._selected_item: Optional[NGItem] = None
 
         self._kind_list = ListBox(4, [("Title", 0), ("Name", 1), ("Id", 2), ("Word", 3)],
                                   on_change=self._on_pick_kind)
         self._ng_list = ListBox(Widget.FILL_COLUMN, [], add_scroll_bar=True,
                                 on_change=self._on_pick_ng, on_select=self._on_select_ng)
-        self._board_label = Label("")
-        self._key_label = Label("")
-        self._use_reg_label = Label("")
-        self._hide_label = Label("")
+
+        self._label1 = Label("")
+        self._label2 = Label("")
+        self._label3 = Label("")
+        self._label4 = Label("")
 
         self._form = None
 
@@ -40,10 +40,10 @@ class NGView(Frame):
         self.add_layout(layout)
         layout.add_widget(self._kind_list, 0)
         layout.add_widget(Divider(), 0)
-        layout.add_widget(self._board_label, 0)
-        layout.add_widget(self._key_label, 0)
-        layout.add_widget(self._use_reg_label, 0)
-        layout.add_widget(self._hide_label, 0)
+        layout.add_widget(self._label1, 0)
+        layout.add_widget(self._label2, 0)
+        layout.add_widget(self._label3, 0)
+        layout.add_widget(self._label4, 0)
         layout.add_widget(VerticalDivider(), 1)
         layout.add_widget(self._ng_list, 2)
         self.fix()
@@ -62,13 +62,13 @@ class NGView(Frame):
         idx = self._kind_list.value
 
         if idx == 0:
-            self._selected_list = self._data_context.title_ngs
+            self._selected_list = self._data_context.titles
         elif idx == 1:
-            self._selected_list = self._data_context.name_ngs
+            self._selected_list = self._data_context.names
         elif idx == 2:
-            self._selected_list = self._data_context.id_ngs
+            self._selected_list = self._data_context.ids
         elif idx == 3:
-            self._selected_list = self._data_context.word_ngs
+            self._selected_list = self._data_context.words
 
         if self._selected_list is not None:
             self._ng_list.options = _to_options(self._selected_list)
@@ -81,38 +81,66 @@ class NGView(Frame):
 
         if self._selected_list is None or idx is None:
             self._selected_item = None
-            self._board_label.text = ""
-            self._key_label.text = ""
-            self._use_reg_label.text = ""
-            self._hide_label.text = ""
+            self._label1.text = ""
+            self._label2.text = ""
+            self._label3.text = ""
+            self._label4.text = ""
             return
 
         self._selected_item = self._selected_list[idx]
 
-        self._board_label.text = "board: " + \
-            (self._selected_item.board if self._selected_item.board is not None else "")
-        self._key_label.text = "key: " + (self._selected_item.key if self._selected_item.key is not None else "")
-        self._use_reg_label.text = "use_reg: " + str(self._selected_item.use_reg)
-        self._hide_label.text = "hide: " + str(self._selected_item.hide)
+        if isinstance(self._selected_item, NGName) or isinstance(self._selected_item, NGWord) \
+                or isinstance(self._selected_item, NGId):
+            self._label1.text = "board: " + \
+                (self._selected_item.board if self._selected_item.board is not None else "")
+            self._label2.text = "key: " + (self._selected_item.key if self._selected_item.key is not None else "")
+            self._label3.text = "use_reg: " + str(self._selected_item.use_reg)
+            self._label4.text = "hide: " + str(self._selected_item.hide)
+        else:
+            self._label1.text = "board: " + \
+                (self._selected_item.board if self._selected_item.board is not None else "")
+            self._label2.text = "use_reg: " + str(self._selected_item.use_reg)
+            self._label3.text = ""
+            self._label4.text = ""
 
     def _on_select_ng(self):
-        if self._selected_item is not None:
-            def on_select_manipilation(idx):
+        self._scene.add_effect(PopUpDialog(self._screen, "Choose manipulation", [
+            "Edit", "Delete", "Cancel"], on_close=self._on_select_manipilation, theme="user_theme"))
+
+    def _on_select_manipilation(self, idx):
+        if idx == 0:
+            self._open_ng_editor()
+        elif idx == 1:
+            def on_close_del_dialog(idx):
                 if idx == 0:
-                    self._form = NGEditor(self.screen, self._selected_item,
-                                          lambda values: self._data_context.update(self._selected_item.id, values))
-                    self._scene.add_effect(self._form)
-                elif idx == 1:
-                    def on_close_del_dialog(idx):
-                        if idx == 0:
-                            self._data_context.delete(self._selected_item.id)
+                    self._selected_list.delete(self._selected_item.id)
 
-                    self._scene.add_effect(PopUpDialog(self._screen, "Really want to delete it?",
-                                                       ["Delete", "Cancel"], on_close=on_close_del_dialog,
-                                                       theme="user_theme"))
+            self._scene.add_effect(PopUpDialog(self._screen, "Really want to delete it?",
+                                               ["Delete", "Cancel"], on_close=on_close_del_dialog,
+                                               theme="user_theme"))
 
-            self._scene.add_effect(PopUpDialog(self._screen, "Choose manipulation", [
-                                   "Edit", "Delete", "Cancel"], on_close=on_select_manipilation, theme="user_theme"))
+    def _open_ng_editor(self):
+        if self._selected_item is not None:
+            if isinstance(self._selected_item, NGName) \
+                    or isinstance(self._selected_item, NGId) \
+                    or isinstance(self._selected_item, NGWord):
+                d = {}
+                d["value"] = self._selected_item.value
+                d["use_reg"] = self._selected_item.use_reg
+                d["hide"] = self._selected_item.hide
+                d["board"] = self._selected_item.board
+                d["key"] = self._selected_item.key
+
+                self._scene.add_effect(NGEditor(self._screen, d,
+                                                lambda d: self._data_context.update_ng(self._selected_item.id, d)))
+            elif isinstance(self._selected_item, NGTitle):
+                d = {}
+                d["value"] = self._selected_item.value
+                d["use_reg"] = self._selected_item.use_reg
+                d["board"] = self._selected_item.board
+
+                self._scene.add_effect(NGTitleEditor(self._screen, d,
+                                                     lambda d: self._data_context.update_ng(self._selected_item.id, d)))
 
 
 def _to_options(from_: List[NGItem]):
