@@ -113,7 +113,7 @@ class NGView(Frame):
         elif idx == 1:
             def on_close_del_dialog(idx):
                 if idx == 0:
-                    self._selected_list.delete(self._selected_item.id)
+                    self._data_context.delete_ng(self._selected_item.id)
 
             self._scene.add_effect(PopUpDialog(self._screen, "Really want to delete it?",
                                                ["Delete", "Cancel"], on_close=on_close_del_dialog,
