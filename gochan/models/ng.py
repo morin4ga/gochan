@@ -13,9 +13,11 @@ class BreakException(Exception):
     pass
 
 
-class NGResponse(Enum):
-    ABORN = 0
-    HIDE = 1
+class NGResponse:
+    def __init__(self, hide: bool, origin: Response):
+        super().__init__()
+        self.hide = hide
+        self.origin = origin
 
 
 class NGItem:
@@ -221,11 +223,7 @@ class NG:
                         continue
 
                     if n.match(r.name):
-                        if n.hide:
-                            result.append(NGResponse.HIDE)
-                        else:
-                            result.append(NGResponse.ABORN)
-
+                        result.append(NGResponse(n.hide, r))
                         raise BreakException()
 
                 for n in self.ids:
@@ -236,11 +234,7 @@ class NG:
                         continue
 
                     if n.match(r.id):
-                        if n.hide:
-                            result.append(NGResponse.HIDE)
-                        else:
-                            result.append(NGResponse.ABORN)
-
+                        result.append(NGResponse(n.hide, r))
                         raise BreakException()
 
                 for n in self.words:
@@ -251,11 +245,7 @@ class NG:
                         continue
 
                     if n.match(r.message):
-                        if n.hide:
-                            result.append(NGResponse.HIDE)
-                        else:
-                            result.append(NGResponse.ABORN)
-
+                        result.append(NGResponse(n.hide, r))
                         raise BreakException()
 
                 result.append(r)

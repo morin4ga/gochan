@@ -101,17 +101,18 @@ class ThreadView(Frame):
         link_idx = 0
 
         for r in self._data_context.filtered_responses:
-            if r == NGResponse.ABORN:
-                start = len(buf)
-                buf.push(str(r.number) + " " + "あぼーん", THREAD_BRUSHES["normal"])
-                buf.break_line(1)
-                end = len(buf)
-                self._anchors.append((start, end))
-                buf.break_line(1)
-                continue
-            elif r == NGResponse.HIDE:
-                self._anchors.append((len(buf), len(buf)))
-                continue
+            if isinstance(r, NGResponse):
+                if r.hide:
+                    self._anchors.append((len(buf), len(buf)))
+                    continue
+                else:
+                    start = len(buf)
+                    buf.push(str(r.origin.number) + " " + "あぼーん", THREAD_BRUSHES["normal"])
+                    buf.break_line(1)
+                    end = len(buf)
+                    self._anchors.append((start, end))
+                    buf.break_line(1)
+                    continue
 
             start = len(buf)
 
