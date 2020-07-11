@@ -1,13 +1,10 @@
-from typing import Optional
-
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, TextBox, CheckBox, Layout, Widget, Divider, Button, Label,\
     VerticalDivider, RadioButtons, PopUpDialog
 
 
 class NGCreator(Frame):
-    def __init__(self, screen: Screen, on_close, default_value: str,
-                 key: Optional[str] = None):
+    def __init__(self, screen: Screen, on_close, default_value: str):
         """
         Parameters
         ----------
