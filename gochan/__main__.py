@@ -63,6 +63,7 @@ def main():
         try:
             Screen.wrapper(demo, catch_interrupt=True, arguments=[last_scene, app_context])
             app_context.save_thread()
+            app_context.ng.save()
             sys.exit(0)
         except ResizeScreenError as e:
             last_scene = e.scene
