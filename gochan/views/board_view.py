@@ -5,7 +5,7 @@ from asciimatics.widgets import Button, Divider, Frame, Layout, Widget, Label
 
 from gochan.keybinding import KEY_BINDINGS
 from gochan.view_models import BoardVM
-from gochan.effects import CommandLine, NGCreator
+from gochan.effects import CommandLine, NGTitleCreator
 from gochan.widgets import MultiColumnListBoxK
 
 
@@ -120,7 +120,7 @@ class BoardView(Frame):
                 self._scene.add_effect(CommandLine(self._screen, "find:", self._find))
                 return None
             elif event.key_code == self._keybindings["ng_title"]:
-                self._scene.add_effect(CommandLine(self._screen, "ng:", self._add_ng))
+                self._scene.add_effect(CommandLine(self._screen, "ng:", self._open_ngcreator))
                 return None
             elif event.key_code == self._keybindings["update"]:
                 self._data_context.update()
@@ -135,7 +135,7 @@ class BoardView(Frame):
         if self._data_context.threads is not None:
             self._data_context.sort_thread_by_word(word)
 
-    def _add_ng(self, number: str):
+    def _open_ngcreator(self, number: str):
         if number.isdecimal() and self._data_context.threads is not None:
             target = None
             for t in self._data_context.threads:
@@ -144,5 +144,10 @@ class BoardView(Frame):
                     break
 
             if target is not None:
-                self._scene.add_effect(NGCreator(self._screen, self._data_context.add_ng, "title",
-                                                 target.title, self._data_context.board))
+                self._scene.add_effect(NGTitleCreator(self._screen, self._add_title_ng, target.title))
+
+    def _add_title_ng(self, value, use_reg, scope_idx):
+        if scope_idx == 0:
+            self._data_context.add_title_ng(value, use_reg, None)
+        elif scope_idx == 1:
+            self._data_context.add_title_ng(value, use_reg, self._data_context.board)

@@ -69,8 +69,8 @@ class BoardVM:
         if self._board is not None:
             self._board.update()
 
-    def add_ng(self, kind, value, use_reg, hide, board, key):
-        self._app_context.ng.insert(kind, value, use_reg, hide, board, key)
+    def add_title_ng(self, value, use_reg, board):
+        self._app_context.ng.add_title_ng(value, use_reg, board)
 
     def _app_context_changed(self, property_name: str):
         if property_name == "board":
