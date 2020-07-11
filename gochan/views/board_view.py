@@ -144,10 +144,10 @@ class BoardView(Frame):
                     break
 
             if target is not None:
-                self._scene.add_effect(NGTitleCreator(self._screen, self._add_title_ng, target.title))
+                self._scene.add_effect(NGTitleCreator(self._screen, self._add_ng_title, target.title))
 
-    def _add_title_ng(self, value, use_reg, scope_idx):
+    def _add_ng_title(self, value, use_reg, scope_idx):
         if scope_idx == 0:
-            self._data_context.add_title_ng(value, use_reg, None)
+            self._data_context.add_ng_title(value, use_reg, None)
         elif scope_idx == 1:
-            self._data_context.add_title_ng(value, use_reg, self._data_context.board)
+            self._data_context.add_ng_title(value, use_reg, self._data_context.board)

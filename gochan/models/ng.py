@@ -75,28 +75,28 @@ class NG:
         self.titles: List[NGTitle] = []
         self.on_collection_changed = EventHandler()
 
-    def add_name_ng(self, value: str, use_reg: bool, hide: bool,
+    def add_ng_name(self, value: str, use_reg: bool, hide: bool,
                     board: Optional[str] = None, key: Optional[str] = None):
         self._last_id += 1
         item = NGName(self._last_id, value, use_reg, hide, board, key)
         self.names.append(item)
         self.on_collection_changed("names", "add", item)
 
-    def add_word_ng(self, value: str, use_reg: bool, hide: bool,
+    def add_ng_word(self, value: str, use_reg: bool, hide: bool,
                     board: Optional[str] = None, key: Optional[str] = None):
         self._last_id += 1
         item = NGWord(self._last_id, value, use_reg, hide, board, key)
         self.words.append(item)
         self.on_collection_changed("words", "add", item)
 
-    def add_id_ng(self, value: str, use_reg: bool, hide: bool,
+    def add_ng_id(self, value: str, use_reg: bool, hide: bool,
                   board: Optional[str] = None, key: Optional[str] = None):
         self._last_id += 1
         item = NGId(self._last_id, value, use_reg, hide, board, key)
         self.ids.append(item)
         self.on_collection_changed("ids", "add", item)
 
-    def add_title_ng(self, value: str, use_reg: bool, board: Optional[str] = None):
+    def add_ng_title(self, value: str, use_reg: bool, board: Optional[str] = None):
         self._last_id += 1
         item = NGTitle(self._last_id, value, use_reg, board)
         self.titles.append(item)
@@ -349,7 +349,7 @@ if NG_PATH.is_file():
                 hide = item["hide"]
                 board = item.get("board")
                 key = item.get("key")
-                ng.add_name_ng(value, use_reg, hide, board, key)
+                ng.add_ng_name(value, use_reg, hide, board, key)
 
         if "words" in d:
             for item in d["words"]:
@@ -358,7 +358,7 @@ if NG_PATH.is_file():
                 hide = item["hide"]
                 board = item.get("board")
                 key = item.get("key")
-                ng.add_word_ng(value, use_reg, hide, board, key)
+                ng.add_ng_word(value, use_reg, hide, board, key)
 
         if "ids" in d:
             for item in d["ids"]:
@@ -367,11 +367,11 @@ if NG_PATH.is_file():
                 hide = item["hide"]
                 board = item.get("board")
                 key = item.get("key")
-                ng.add_id_ng(value, use_reg, hide, board, key)
+                ng.add_ng_id(value, use_reg, hide, board, key)
 
         if "titles" in d:
             for item in d["titles"]:
                 value = item["value"]
                 use_reg = item["use_reg"]
                 board = item.get("board")
-                ng.add_title_ng(value, use_reg, board)
+                ng.add_ng_title(value, use_reg, board)
