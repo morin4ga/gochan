@@ -183,13 +183,13 @@ class ThreadView(Frame):
                 self._scene.add_effect(CommandLine(self._screen, "go to:", self._go_to))
                 return None
             elif event.key_code == self._keybindings["ng_name"]:
-                self._scene.add_effect(CommandLine(self._screen, "ng name:", self._add_ng_name))
+                self._scene.add_effect(CommandLine(self._screen, "ng name:", self._open_ngeditor_name))
                 return None
             elif event.key_code == self._keybindings["ng_id"]:
-                self._scene.add_effect(CommandLine(self._screen, "ng id:", self._add_ng_id))
+                self._scene.add_effect(CommandLine(self._screen, "ng id:", self._open_ngeditor_id))
                 return None
             elif event.key_code == self._keybindings["ng_word"]:
-                self._scene.add_effect(CommandLine(self._screen, "ng word:", self._add_ng_word))
+                self._scene.add_effect(CommandLine(self._screen, "ng word:", self._open_ngeditor_word))
                 return None
             elif event.key_code == self._keybindings["update"]:
                 self._data_context.update()
@@ -239,38 +239,58 @@ class ThreadView(Frame):
             if idx >= 0 and idx < len(self._anchors):
                 self._rtext.go_to(self._anchors[idx][0])
 
-    def _add_ng_name(self, number: str):
+    def _open_ngeditor_name(self, number: str):
         if number.isdecimal():
             idx = int(number) - 1
 
             if self._data_context.responses is not None \
                     and len(self._data_context.responses) > idx \
                     and idx >= 0:
-                self._scene.add_effect(NGCreator(self._screen, self._data_context.ng.insert, "name",
-                                                 self._data_context.responses[idx].name, self._data_context.board,
-                                                 self._data_context.key))
+                self._scene.add_effect(NGCreator(self._screen, self._add_name_ng,
+                                                 self._data_context.responses[idx].name))
 
-    def _add_ng_id(self, number: str):
+    def _add_name_ng(self, value, use_reg, hide, scope_idx):
+        if scope_idx == 0:
+            self._data_context.add_name_ng(value, use_reg, hide, None, None)
+        elif scope_idx == 1:
+            self._data_context.add_name_ng(value, use_reg, hide, self._data_context.board, None)
+        elif scope_idx == 2:
+            self._data_context.add_name_ng(value, use_reg, hide, self._data_context.board, self._data_context.key)
+
+    def _open_ngeditor_id(self, number: str):
         if number.isdecimal():
             idx = int(number) - 1
 
             if self._data_context.responses is not None \
                     and len(self._data_context.responses) > idx \
                     and idx >= 0:
-                self._scene.add_effect(NGCreator(self._screen, self._data_context.ng.insert, "id",
-                                                 self._data_context.responses[idx].id, self._data_context.board,
-                                                 self._data_context.key))
+                self._scene.add_effect(NGCreator(self._screen, self._add_id_ng, self._data_context.responses[idx].id))
 
-    def _add_ng_word(self, number: str):
+    def _add_id_ng(self, value, use_reg, hide, scope_idx):
+        if scope_idx == 0:
+            self._data_context.add_id_ng(value, use_reg, hide, None, None)
+        elif scope_idx == 1:
+            self._data_context.add_id_ng(value, use_reg, hide, self._data_context.board, None)
+        elif scope_idx == 2:
+            self._data_context.add_id_ng(value, use_reg, hide, self._data_context.board, self._data_context.key)
+
+    def _open_ngeditor_word(self, number: str):
         if number.isdecimal():
             idx = int(number) - 1
 
             if self._data_context.responses is not None \
                     and len(self._data_context.responses) > idx \
                     and idx >= 0:
-                self._scene.add_effect(NGCreator(self._screen, self._data_context.ng.insert, "word",
-                                                 self._data_context.responses[idx].message, self._data_context.board,
-                                                 self._data_context.key))
+                self._scene.add_effect(NGCreator(self._screen, self._add_word_ng,
+                                                 self._data_context.responses[idx].message))
+
+    def _add_word_ng(self, value, use_reg, hide, scope_idx):
+        if scope_idx == 0:
+            self._data_context.add_word_ng(value, use_reg, hide, None, None)
+        elif scope_idx == 1:
+            self._data_context.add_word_ng(value, use_reg, hide, self._data_context.board, None)
+        elif scope_idx == 2:
+            self._data_context.add_word_ng(value, use_reg, hide, self._data_context.board, self._data_context.key)
 
     def _update_bookmark(self):
         if self._data_context.bookmark is None:
