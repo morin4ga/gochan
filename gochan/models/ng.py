@@ -1,7 +1,6 @@
 import re
 import json
 
-from enum import Enum
 from typing import List, Optional, Union
 
 from gochan.config import NG_PATH
@@ -35,19 +34,21 @@ class NGItem:
 
 
 class NGName(NGItem):
-    def __init__(self, id: int, value: str, use_reg: bool, hide: bool,
+    def __init__(self, id: int, value: str, use_reg: bool, hide: bool, auto_ng_id: bool,
                  board: Optional[str] = None, key: Optional[str] = None):
         super().__init__(id, value, use_reg)
         self.hide = hide
+        self.auto_ng_id = auto_ng_id
         self.board = board
         self.key = key
 
 
 class NGWord(NGItem):
-    def __init__(self, id: int, value: str, use_reg: bool, hide: bool,
+    def __init__(self, id: int, value: str, use_reg: bool, hide: bool, auto_ng_id: bool,
                  board: Optional[str] = None, key: Optional[str] = None):
         super().__init__(id, value, use_reg)
         self.hide = hide
+        self.auto_ng_id = auto_ng_id
         self.board = board
         self.key = key
 
@@ -77,17 +78,17 @@ class NG:
         self.titles: List[NGTitle] = []
         self.on_collection_changed = EventHandler()
 
-    def add_ng_name(self, value: str, use_reg: bool, hide: bool,
+    def add_ng_name(self, value: str, use_reg: bool, hide: bool, auto_ng_id: bool,
                     board: Optional[str] = None, key: Optional[str] = None):
         self._last_id += 1
-        item = NGName(self._last_id, value, use_reg, hide, board, key)
+        item = NGName(self._last_id, value, use_reg, hide, auto_ng_id, board, key)
         self.names.append(item)
         self.on_collection_changed("names", "add", item)
 
-    def add_ng_word(self, value: str, use_reg: bool, hide: bool,
+    def add_ng_word(self, value: str, use_reg: bool, hide: bool, auto_ng_id: bool,
                     board: Optional[str] = None, key: Optional[str] = None):
         self._last_id += 1
-        item = NGWord(self._last_id, value, use_reg, hide, board, key)
+        item = NGWord(self._last_id, value, use_reg, hide, auto_ng_id, board, key)
         self.words.append(item)
         self.on_collection_changed("words", "add", item)
 
@@ -113,6 +114,8 @@ class NG:
                     item.use_reg = values["use_reg"]
                 if "hide" in values:
                     item.hide = values["hide"]
+                if "auto_ng_id" in values:
+                    item.auto_ng_id = values["auto_ng_id"]
                 if "board" in values:
                     item.board = values["board"]
                 if "key" in values:
@@ -129,6 +132,8 @@ class NG:
                     item.use_reg = values["use_reg"]
                 if "hide" in values:
                     item.hide = values["hide"]
+                if "auto_ng_id" in values:
+                    item.auto_ng_id = values["auto_ng_id"]
                 if "board" in values:
                     item.board = values["board"]
                 if "key" in values:
@@ -211,6 +216,8 @@ class NG:
         return result
 
     def filter_responses(self, thread: Thread) -> List[Union[Response, NGResponse]]:
+        self._add_auto_ng_id(thread)
+
         result = []
 
         for r in thread.responses:
@@ -266,6 +273,7 @@ class NG:
             d["value"] = name.value
             d["use_reg"] = name.use_reg
             d["hide"] = name.hide
+            d["auto_ng_id"] = name.auto_ng_id
 
             if name.board is not None:
                 d["board"] = name.board
@@ -280,6 +288,7 @@ class NG:
             d["value"] = word.value
             d["use_reg"] = word.use_reg
             d["hide"] = word.hide
+            d["auto_ng_id"] = word.auto_ng_id
 
             if word.board is not None:
                 d["board"] = word.board
@@ -322,6 +331,32 @@ class NG:
         j = json.dumps(obj, ensure_ascii=False, indent=2)
         NG_PATH.write_text(j)
 
+    def _add_auto_ng_id(self, thread: Thread):
+        for r in thread.responses:
+            for n in self.names:
+                # Ignore ng when the response is out of ng's scope
+                if n.board is not None and n.board != thread.board:
+                    continue
+                if n.key is not None and n.key != thread.key:
+                    continue
+
+                if n.match(r.name) and n.auto_ng_id and r.id.startwith("ID:") and  \
+                        r.id not in [x.value for x in self.ids]:
+                    self._last_id += 1
+                    self.ids.append(NGId(self._last_id, r.id, False, n.hide, n.board, n.key))
+
+            for n in self.words:
+                # Ignore ng when the response is out of ng's scope
+                if n.board is not None and n.board != thread.board:
+                    continue
+                if n.key is not None and n.key != thread.key:
+                    continue
+
+                if n.match(r.message) and n.auto_ng_id and r.id.startswith("ID:") \
+                        and r.id not in [x.value for x in self.ids]:
+                    self._last_id += 1
+                    self.ids.append(NGId(self._last_id, r.id, False, n.hide, n.board, n.key))
+
 
 ng = NG()
 
@@ -337,18 +372,20 @@ if NG_PATH.is_file():
                 value = item["value"]
                 use_reg = item["use_reg"]
                 hide = item["hide"]
+                auto_ng_id = item["auto_ng_id"]
                 board = item.get("board")
                 key = item.get("key")
-                ng.add_ng_name(value, use_reg, hide, board, key)
+                ng.add_ng_name(value, use_reg, hide, auto_ng_id, board, key)
 
         if "words" in d:
             for item in d["words"]:
                 value = item["value"]
                 use_reg = item["use_reg"]
                 hide = item["hide"]
+                auto_ng_id = item["auto_ng_id"]
                 board = item.get("board")
                 key = item.get("key")
-                ng.add_ng_word(value, use_reg, hide, board, key)
+                ng.add_ng_word(value, use_reg, hide, auto_ng_id, board, key)
 
         if "ids" in d:
             for item in d["ids"]:
