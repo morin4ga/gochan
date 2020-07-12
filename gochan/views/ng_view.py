@@ -120,13 +120,7 @@ class NGView(Frame):
         if idx == 0:
             self._open_ng_editor()
         elif idx == 1:
-            def on_close_del_dialog(idx):
-                if idx == 0:
-                    self._data_context.delete_ng(self._selected_item.id)
-
-            self._scene.add_effect(PopUpDialog(self._screen, "Really want to delete it?",
-                                               ["Delete", "Cancel"], on_close=on_close_del_dialog,
-                                               theme="user_theme"))
+            self._data_context.delete_ng(self._selected_item.id)
 
     def _open_ng_editor(self):
         if self._selected_item is not None:
