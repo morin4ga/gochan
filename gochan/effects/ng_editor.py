@@ -30,6 +30,10 @@ class NGEditor(Frame):
         self._hide_chk = CheckBox("")
         self._hide_chk.value = default_values.get("hide") if default_values.get("hide") is not None else False
 
+        self._auto_ng_id_chk = CheckBox("")
+        self._auto_ng_id_chk.value = default_values.get(
+            "auto_ng_id") if default_values.get("auto_ng_id") is not None else False
+
         self._value_text = TextBox(Widget.FILL_COLUMN, as_string=True)
         self._value_text.value = default_values.get("value") if default_values.get("value") is not None else ""
 
@@ -76,6 +80,16 @@ class NGEditor(Frame):
         self.add_layout(layout)
         layout.add_widget(Divider())
 
+        layout = Layout([10, 3, 87])
+        self.add_layout(layout)
+        layout.add_widget(Label("auto_ng_id"), 0)
+        layout.add_widget(VerticalDivider(), 1)
+        layout.add_widget(self._auto_ng_id_chk, 2)
+
+        layout = Layout([100])
+        self.add_layout(layout)
+        layout.add_widget(Divider())
+
         layout = Layout([10, 3, 87], fill_frame=True)
         self.add_layout(layout)
         layout.add_widget(Label("value"), 0)
@@ -106,6 +120,7 @@ class NGEditor(Frame):
         key = self._key_text.value
         use_reg = self._use_reg_chk.value
         hide = self._hide_chk.value
+        auto_ng_id = self._auto_ng_id_chk.value
         value = self._value_text.value
 
         board = None if board == "" else board
@@ -116,6 +131,7 @@ class NGEditor(Frame):
             "key": key,
             "use_reg": use_reg,
             "hide": hide,
+            "auto_ng_id": auto_ng_id,
             "value": value
         }
 

@@ -250,13 +250,14 @@ class ThreadView(Frame):
                 self._scene.add_effect(NGCreator(self._screen, self._add_ng_name,
                                                  self._data_context.responses[idx].name))
 
-    def _add_ng_name(self, value, use_reg, hide, scope_idx):
+    def _add_ng_name(self, value, use_reg, hide, auto_ng_id, scope_idx):
         if scope_idx == 0:
-            self._data_context.add_ng_name(value, use_reg, hide, None, None)
+            self._data_context.add_ng_name(value, use_reg, hide, auto_ng_id, None, None)
         elif scope_idx == 1:
-            self._data_context.add_ng_name(value, use_reg, hide, self._data_context.board, None)
+            self._data_context.add_ng_name(value, use_reg, hide, auto_ng_id, self._data_context.board, None)
         elif scope_idx == 2:
-            self._data_context.add_ng_name(value, use_reg, hide, self._data_context.board, self._data_context.key)
+            self._data_context.add_ng_name(value, use_reg, hide, auto_ng_id,
+                                           self._data_context.board, self._data_context.key)
 
     def _open_ngeditor_id(self, number: str):
         if number.isdecimal():
@@ -285,13 +286,14 @@ class ThreadView(Frame):
                 self._scene.add_effect(NGCreator(self._screen, self._add_ng_word,
                                                  self._data_context.responses[idx].message))
 
-    def _add_ng_word(self, value, use_reg, hide, scope_idx):
+    def _add_ng_word(self, value, use_reg, hide, auto_ng_id, scope_idx):
         if scope_idx == 0:
-            self._data_context.add_ng_word(value, use_reg, hide, None, None)
+            self._data_context.add_ng_word(value, use_reg, hide, auto_ng_id, None, None)
         elif scope_idx == 1:
-            self._data_context.add_ng_word(value, use_reg, hide, self._data_context.board, None)
+            self._data_context.add_ng_word(value, use_reg, hide, auto_ng_id, self._data_context.board, None)
         elif scope_idx == 2:
-            self._data_context.add_ng_word(value, use_reg, hide, self._data_context.board, self._data_context.key)
+            self._data_context.add_ng_word(value, use_reg, hide, auto_ng_id,
+                                           self._data_context.board, self._data_context.key)
 
     def _update_bookmark(self):
         if self._data_context.bookmark is None:

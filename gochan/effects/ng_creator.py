@@ -8,7 +8,7 @@ class NGCreator(Frame):
         """
         Parameters
         ----------
-        on_close : (value: str, use_reg: bool, hide: bool, scope_idx: int) -> None
+        on_close : (value: str, use_reg: bool, hide: bool, auto_ng_id: bool, scope_idx: int) -> None
                    scope_idx : 0 - 全ての板
                                1 - この板のみ
                                2 - このスレのみ
@@ -32,6 +32,8 @@ class NGCreator(Frame):
         self._use_reg_chk = CheckBox("")
 
         self._hide_chk = CheckBox("")
+
+        self._auto_ng_id_chk = CheckBox("")
 
         self._value_box = TextBox(Widget.FILL_COLUMN, as_string=True)
         self._value_box.value = default_value
@@ -69,6 +71,16 @@ class NGCreator(Frame):
         self.add_layout(layout)
         layout.add_widget(Divider())
 
+        layout = Layout([10, 3, 87])
+        self.add_layout(layout)
+        layout.add_widget(Label("auto_ng_id"), 0)
+        layout.add_widget(VerticalDivider(), 1)
+        layout.add_widget(self._auto_ng_id_chk, 2)
+
+        layout = Layout([100])
+        self.add_layout(layout)
+        layout.add_widget(Divider())
+
         layout = Layout([10, 3, 87], fill_frame=True)
         self.add_layout(layout)
         layout.add_widget(Label("value"), 0)
@@ -96,10 +108,11 @@ class NGCreator(Frame):
         use_reg = self._use_reg_chk.value
         hide = self._hide_chk.value
         value = self._value_box.value
+        auto_ng_id = self._auto_ng_id_chk.value
 
         if value != "":
             self.disappaer()
-            self._on_close(value, use_reg, hide, scope_idx)
+            self._on_close(value, use_reg, hide, auto_ng_id, scope_idx)
         else:
             self._scene.add_effect(PopUpDialog(self._screen, "valueが空です", ["Close"]))
 

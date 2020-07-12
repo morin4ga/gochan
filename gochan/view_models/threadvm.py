@@ -79,14 +79,14 @@ class ThreadVM:
 
         return None
 
-    def add_ng_name(self, value, use_reg, hide, board, key):
-        self._app_context.ng.add_ng_name(value, use_reg, hide, board, key)
+    def add_ng_name(self, value, use_reg, hide, auto_ng_id, board, key):
+        self._app_context.ng.add_ng_name(value, use_reg, hide, auto_ng_id, board, key)
 
     def add_ng_id(self, value, use_reg, hide, board, key):
         self._app_context.ng.add_ng_id(value, use_reg, hide, board, key)
 
-    def add_ng_word(self, value, use_reg, hide, board, key):
-        self._app_context.ng.add_ng_word(value, use_reg, hide, board, key)
+    def add_ng_word(self, value, use_reg, hide, auto_ng_id, board, key):
+        self._app_context.ng.add_ng_word(value, use_reg, hide, auto_ng_id, board, key)
 
     def _app_context_changed(self, property_name: str):
         if property_name == "thread":

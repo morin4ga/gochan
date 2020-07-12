@@ -33,6 +33,7 @@ class NGView(Frame):
         self._label2 = Label("")
         self._label3 = Label("")
         self._label4 = Label("")
+        self._label5 = Label("")
 
         self._form = None
 
@@ -44,6 +45,7 @@ class NGView(Frame):
         layout.add_widget(self._label2, 0)
         layout.add_widget(self._label3, 0)
         layout.add_widget(self._label4, 0)
+        layout.add_widget(self._label5, 0)
         layout.add_widget(VerticalDivider(), 1)
         layout.add_widget(self._ng_list, 2)
         self.fix()
@@ -85,6 +87,7 @@ class NGView(Frame):
             self._label2.text = ""
             self._label3.text = ""
             self._label4.text = ""
+            self._label5.text = ""
             return
 
         self._selected_item = self._selected_list[idx]
@@ -96,12 +99,18 @@ class NGView(Frame):
             self._label2.text = "key: " + (self._selected_item.key if self._selected_item.key is not None else "")
             self._label3.text = "use_reg: " + str(self._selected_item.use_reg)
             self._label4.text = "hide: " + str(self._selected_item.hide)
+
+            if not isinstance(self._selected_item, NGId):
+                self._label5.text = "auto_ng_id: " + str(self._selected_item.auto_ng_id)
+            else:
+                self._label5.text = ""
         else:
             self._label1.text = "board: " + \
                 (self._selected_item.board if self._selected_item.board is not None else "")
             self._label2.text = "use_reg: " + str(self._selected_item.use_reg)
             self._label3.text = ""
             self._label4.text = ""
+            self._label5.text = ""
 
     def _on_select_ng(self):
         self._scene.add_effect(PopUpDialog(self._screen, "Choose manipulation", [
