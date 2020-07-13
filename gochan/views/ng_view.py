@@ -1,9 +1,11 @@
 from asciimatics.widgets import Frame, ListBox, Widget, Layout, VerticalDivider, Divider, Label, PopUpDialog
 from asciimatics.screen import Screen
+from asciimatics.event import KeyboardEvent
 from typing import List, Optional
 
 from gochan.view_models.ngvm import NGVM, NGItem, NGTitle, NGName, NGId, NGWord
 from gochan.effects import NGEditor, NGTitleEditor
+from gochan.keybinding import KEY_BINDINGS
 
 
 class NGView(Frame):
@@ -17,6 +19,8 @@ class NGView(Frame):
                          )
 
         self.set_theme("user_theme")
+
+        self._keybindings = KEY_BINDINGS["ng"]
 
         self._data_context = data_context
         self._data_context.on_property_changed = self._context_changed
@@ -49,6 +53,19 @@ class NGView(Frame):
         layout.add_widget(VerticalDivider(), 1)
         layout.add_widget(self._ng_list, 2)
         self.fix()
+
+    def process_event(self, event):
+        if isinstance(event, KeyboardEvent):
+            if event.key_code == self._keybindings["delete"]:
+                if self.focussed_widget == self._ng_list and self._selected_item is not None:
+                    self._data_context.delete_ng(self._selected_item.id)
+                return None
+            elif event.key_code == self._keybindings["edit"]:
+                if self.focussed_widget == self._ng_list and self._selected_item is not None:
+                    self._open_ng_editor()
+                return None
+
+        return super().process_event(event)
 
     def _context_changed(self, property_name: str):
         self._selected_list = None

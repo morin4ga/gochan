@@ -56,6 +56,10 @@ KEY_BINDINGS = {
         "ng_word": Key.W,
         "update": Key.U,
         "back": Key.B
+    },
+    "ng": {
+        "delete": Key.D,
+        "edit": Key.E
     }
 }
 
