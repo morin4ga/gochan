@@ -4,7 +4,7 @@ from asciimatics.event import KeyboardEvent
 from typing import List, Optional
 
 from gochan.view_models.ngvm import NGVM, NGItem, NGTitle, NGName, NGId, NGWord
-from gochan.effects import NGEditor, NGTitleEditor
+from gochan.effects import NGEditor
 from gochan.keybinding import KEY_BINDINGS
 
 
@@ -141,26 +141,53 @@ class NGView(Frame):
 
     def _open_ng_editor(self):
         if self._selected_item is not None:
-            if isinstance(self._selected_item, NGName) \
-                    or isinstance(self._selected_item, NGId) \
-                    or isinstance(self._selected_item, NGWord):
-                d = {}
-                d["value"] = self._selected_item.value
-                d["use_reg"] = self._selected_item.use_reg
-                d["hide"] = self._selected_item.hide
-                d["board"] = self._selected_item.board
-                d["key"] = self._selected_item.key
+            if isinstance(self._selected_item, NGName):
+                d = {
+                    "value": self._selected_item.value,
+                    "use_reg": self._selected_item.use_reg,
+                    "hide": self._selected_item.hide,
+                    "auto_ng_id": self._selected_item.auto_ng_id,
+                    "board": self._selected_item.board,
+                    "key": self._selected_item.key
+                }
 
                 self._scene.add_effect(NGEditor(self._screen, d,
-                                                lambda d: self._data_context.update_ng(self._selected_item.id, d)))
+                                                lambda d: self._data_context.update_ng(self._selected_item.id, d),
+                                                "name"))
+            elif isinstance(self._selected_item, NGWord):
+                d = {
+                    "value": self._selected_item.value,
+                    "use_reg": self._selected_item.use_reg,
+                    "hide": self._selected_item.hide,
+                    "auto_ng_id": self._selected_item.auto_ng_id,
+                    "board": self._selected_item.board,
+                    "key": self._selected_item.key
+                }
+
+                self._scene.add_effect(NGEditor(self._screen, d,
+                                                lambda d: self._data_context.update_ng(self._selected_item.id, d),
+                                                "word"))
+            elif isinstance(self._selected_item, NGId):
+                d = {
+                    "value": self._selected_item.value,
+                    "use_reg": self._selected_item.use_reg,
+                    "hide": self._selected_item.hide,
+                    "board": self._selected_item.board,
+                    "key": self._selected_item.key
+                }
+
+                self._scene.add_effect(NGEditor(self._screen, d,
+                                                lambda d: self._data_context.update_ng(self._selected_item.id, d),
+                                                "id"))
             elif isinstance(self._selected_item, NGTitle):
                 d = {}
                 d["value"] = self._selected_item.value
                 d["use_reg"] = self._selected_item.use_reg
                 d["board"] = self._selected_item.board
 
-                self._scene.add_effect(NGTitleEditor(self._screen, d,
-                                                     lambda d: self._data_context.update_ng(self._selected_item.id, d)))
+                self._scene.add_effect(NGEditor(self._screen, d,
+                                                lambda d: self._data_context.update_ng(self._selected_item.id, d),
+                                                "title"))
 
 
 def _to_options(from_: List[NGItem]):
