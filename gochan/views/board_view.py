@@ -5,7 +5,7 @@ from asciimatics.widgets import Button, Divider, Frame, Layout, Widget, Label
 
 from gochan.keybinding import KEY_BINDINGS
 from gochan.view_models import BoardVM
-from gochan.effects import CommandLine, NGTitleCreator
+from gochan.effects import CommandLine, NGCreator
 from gochan.widgets import MultiColumnListBoxK
 
 
@@ -144,7 +144,7 @@ class BoardView(Frame):
                     break
 
             if target is not None:
-                self._scene.add_effect(NGTitleCreator(self._screen, self._add_ng_title, target.title))
+                self._scene.add_effect(NGCreator(self._screen, self._add_ng_title, target.title, "title"))
 
     def _add_ng_title(self, value, use_reg, scope_idx):
         if scope_idx == 0:

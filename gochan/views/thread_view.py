@@ -248,7 +248,7 @@ class ThreadView(Frame):
                     and len(self._data_context.responses) > idx \
                     and idx >= 0:
                 self._scene.add_effect(NGCreator(self._screen, self._add_ng_name,
-                                                 self._data_context.responses[idx].name))
+                                                 self._data_context.responses[idx].name, "name"))
 
     def _add_ng_name(self, value, use_reg, hide, auto_ng_id, scope_idx):
         if scope_idx == 0:
@@ -266,7 +266,8 @@ class ThreadView(Frame):
             if self._data_context.responses is not None \
                     and len(self._data_context.responses) > idx \
                     and idx >= 0:
-                self._scene.add_effect(NGCreator(self._screen, self._add_ng_id, self._data_context.responses[idx].id))
+                self._scene.add_effect(NGCreator(self._screen, self._add_ng_id,
+                                                 self._data_context.responses[idx].id, "id"))
 
     def _add_ng_id(self, value, use_reg, hide, scope_idx):
         if scope_idx == 0:
@@ -284,7 +285,7 @@ class ThreadView(Frame):
                     and len(self._data_context.responses) > idx \
                     and idx >= 0:
                 self._scene.add_effect(NGCreator(self._screen, self._add_ng_word,
-                                                 self._data_context.responses[idx].message))
+                                                 self._data_context.responses[idx].message, "word"))
 
     def _add_ng_word(self, value, use_reg, hide, auto_ng_id, scope_idx):
         if scope_idx == 0:
