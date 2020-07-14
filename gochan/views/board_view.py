@@ -93,28 +93,28 @@ class BoardView(Frame):
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
             if event.key_code == self._keybindings["sort_1"]:
-                self._data_context.sort_thread("number")
+                self._data_context.sort_threads("number")
                 return None
             elif event.key_code == self._keybindings["dsort_1"]:
-                self._data_context.sort_thread("number", True)
+                self._data_context.sort_threads("number", True)
                 return None
             elif event.key_code == self._keybindings["sort_2"]:
-                self._data_context.sort_thread("title")
+                self._data_context.sort_threads("title")
                 return None
             elif event.key_code == self._keybindings["dsort_2"]:
-                self._data_context.sort_thread("title", True)
+                self._data_context.sort_threads("title", True)
                 return None
             elif event.key_code == self._keybindings["sort_3"]:
-                self._data_context.sort_thread("count")
+                self._data_context.sort_threads("count")
                 return None
             elif event.key_code == self._keybindings["dsort_3"]:
-                self._data_context.sort_thread("count", True)
+                self._data_context.sort_threads("count", True)
                 return None
             elif event.key_code == self._keybindings["sort_4"]:
-                self._data_context.sort_thread("speed")
+                self._data_context.sort_threads("speed")
                 return None
             elif event.key_code == self._keybindings["dsort_4"]:
-                self._data_context.sort_thread("speed", True)
+                self._data_context.sort_threads("speed", True)
                 return None
             elif event.key_code == self._keybindings["find"]:
                 self._scene.add_effect(CommandLine(self._screen, "find:", self._find))
@@ -133,7 +133,7 @@ class BoardView(Frame):
 
     def _find(self, word: str):
         if self._data_context.threads is not None:
-            self._data_context.sort_thread_by_word(word)
+            self._data_context.sort_threads_by_word(word)
 
     def _open_ngcreator(self, number: str):
         if number.isdecimal() and self._data_context.threads is not None:

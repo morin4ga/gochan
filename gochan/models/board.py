@@ -38,3 +38,19 @@ class Board:
                                              i, t["title"], t["count"], t["speed"]))
 
         self.on_property_changed("threads")
+
+    def sort_threads(self, key: str, reverse=False):
+        if key == "number":
+            self.threads.sort(key=lambda x: x.number, reverse=reverse)
+        elif key == "title":
+            self.threads.sort(key=lambda x: x.title, reverse=reverse)
+        elif key == "count":
+            self.threads.sort(key=lambda x: x.count, reverse=reverse)
+        elif key == "speed":
+            self.threads.sort(key=lambda x: x.speed, reverse=reverse)
+
+        self.on_property_changed("threads")
+
+    def sort_threads_by_word(self, word: str):
+        self.threads.sort(key=lambda x: (word not in x.title))
+        self.on_property_changed("threads")

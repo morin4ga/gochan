@@ -38,25 +38,13 @@ class BoardVM:
     def ng(self) -> NG:
         return self._app_context.ng
 
-    def sort_thread(self, key: str, reverse=False):
-        if self._board is None:
-            return
-
-        if key == "number":
-            self._board.threads.sort(key=lambda x: x.number, reverse=reverse)
-        elif key == "title":
-            self._board.threads.sort(key=lambda x: x.title, reverse=reverse)
-        elif key == "count":
-            self._board.threads.sort(key=lambda x: x.count, reverse=reverse)
-        elif key == "speed":
-            self._board.threads.sort(key=lambda x: x.speed, reverse=reverse)
-
-        self.on_property_changed("threads")
-
-    def sort_thread_by_word(self, word: str):
+    def sort_threads(self, key: str, reverse=False):
         if self._board is not None:
-            self._board.threads.sort(key=lambda x: (word not in x.title))
-            self.on_property_changed("threads")
+            self._board.sort_threads(key, reverse)
+
+    def sort_threads_by_word(self, word: str):
+        if self._board is not None:
+            self._board.sort_threads_by_word(word)
 
     def select_thread(self, idx: int):
         if self._board is not None\
