@@ -1,6 +1,6 @@
 from typing import Optional, List, Union
 
-from gochan.models import AppContext, ThreadHeader
+from gochan.models import AppContext, Thread
 from gochan.models.ng import NG
 from gochan.event_handler import EventHandler
 
@@ -22,7 +22,7 @@ class BoardVM:
         return self._board.board if self._board is not None else None
 
     @property
-    def threads(self) -> Optional[List[ThreadHeader]]:
+    def threads(self) -> Optional[List[Thread]]:
         return self._board.threads if self._board is not None else None
 
     @property
@@ -31,7 +31,7 @@ class BoardVM:
             if self._board is not None else None
 
     @property
-    def filtered_threads(self) -> Optional[List[Union[ThreadHeader, None]]]:
+    def filtered_threads(self) -> Optional[List[Union[Thread, None]]]:
         return self._filtered_threads
 
     @property

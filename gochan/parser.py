@@ -1,5 +1,4 @@
 import re
-import time
 
 from typing import List, Dict, Union
 from html import unescape
@@ -98,7 +97,6 @@ class BoardParser:
         txt = unescape(self._subject)
 
         threads = []
-        now = int(time.time())
         for (i, line) in enumerate(txt.split("\n"), 1):
             m = re.search(r"^(\d{10})\.dat<>(.*)\((\d{1,})\)$", line)
             if m is not None:
@@ -106,18 +104,8 @@ class BoardParser:
                 title = m.group(2).strip()
                 count = int(m.group(3).strip())
 
-                since = int(key)
-
-                diff = now - since
-
-                speed = 0
-
-                if diff > 0:
-                    res_per_s = count / diff
-                    speed = int(res_per_s * 60 * 60 * 24)
-
                 threads.append(
-                    {"key": key, "title": title, "count": count, "speed": speed}
+                    {"key": key, "title": title, "count": count}
                 )
 
         return threads

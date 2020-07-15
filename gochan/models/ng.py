@@ -5,7 +5,7 @@ from typing import List, Optional, Union
 
 from gochan.config import NG_PATH
 from gochan.event_handler import EventHandler
-from gochan.models import Board, ThreadHeader, Thread, Response
+from gochan.models import Board, Thread, Response
 
 
 class BreakException(Exception):
@@ -195,7 +195,7 @@ class NG:
                 self.on_collection_changed("titles", "delete", n)
                 return
 
-    def filter_threads(self, board: Board) -> List[Union[ThreadHeader, None]]:
+    def filter_threads(self, board: Board) -> List[Union[Thread, None]]:
         result = []
 
         for h in board.threads:

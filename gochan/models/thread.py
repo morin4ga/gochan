@@ -1,8 +1,9 @@
 import re
+import time
 
 from typing import List, Dict, Union
 
-from gochan.client import get_thread_h, get_responses_after, post_response
+from gochan.client import get_responses_after, post_response
 from gochan.parser import ThreadParserH
 from gochan.event_handler import EventHandler
 
@@ -35,19 +36,38 @@ class Response:
 
 
 class Thread:
-    def __init__(self, server: str, board: str, key: str):
+    def __init__(self, server: str, board: str, key: str,
+                 number: int = 0, title: str = None, count: int = 0):
         super().__init__()
 
         self.server = server
         self.board = board
         self.key = key
-        self.title: str = None
-        self.responses: List[Response] = None
+        self.number = number
+        self.title = title
+        self._count = count
+        self._speed = calc_speed(key, count)
+        self.responses: List[Response] = []
         self._is_pastlog: bool = False
         self.links = []
         self._bookmark = 0
         self.on_property_changed = EventHandler()
         self.on_collection_changed = EventHandler()
+
+    @property
+    def count(self) -> int:
+        return self._count
+
+    @count.setter
+    def count(self, value: int):
+        self._count = value
+        self.on_property_changed("count")
+        self._speed = calc_speed(self.key, self.count)
+        self.on_property_changed("speed")
+
+    @property
+    def speed(self) -> int:
+        return self._speed
 
     @property
     def is_pastlog(self) -> bool:
@@ -82,29 +102,30 @@ class Thread:
         return t
 
     def update(self):
-        # If this instance has not initialized yet
-        if self.responses is None:
-            html = get_thread_h(self.server, self.board, self.key)
-            parser = ThreadParserH(html)
+        html = get_responses_after(self.server, self.board, self.key, len(self.responses))
+        parser = ThreadParserH(html)
 
+        self.is_pastlog = parser.is_pastlog()
+        self.on_property_changed("is_pastlog")
+
+        if self.title is None:
             self.title = parser.title()
             self.on_property_changed("title")
-            self.is_pastlog = parser.is_pastlog()
-            self.on_property_changed("is_pastlog")
 
-            self.responses = []
+        # If responses has not initialtzed yet
+        if len(self.responses) == 0:
             self._add_response(parser.responses())
             self.on_collection_changed("responses", "add", self.responses[0:])
         else:
-            html = get_responses_after(self.server, self.board, self.key, len(self.responses))
-            parser = ThreadParserH(html)
+            # Add new responses
+            rs = parser.responses()
 
-            new = parser.responses()
-
-            if len(new) > 1:
+            if len(rs) > 1:
                 start = len(self.responses)
-                self._add_response(new[1:])
+                self._add_response(rs[1:])
                 self.on_collection_changed("responses", "add", self.responses[start:])
+
+        self.count = len(self.responses)
 
     def post(self, name: str, mail: str, message: str) -> str:
         return post_response(self.server, self.board, self.key, name, mail, message)
@@ -131,3 +152,16 @@ class Thread:
 
             for link in re.finditer(r'(https?://.*?)(?=$|\n| )', r["msg"]):
                 self.links.append(link.group(1))
+
+
+def calc_speed(key: str, count: int) -> int:
+    now = int(time.time())
+    since = int(key)
+
+    diff = now - since
+
+    if diff > 0:
+        res_per_s = count / diff
+        return int(res_per_s * 60 * 60 * 24)
+    else:
+        return 0

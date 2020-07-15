@@ -3,19 +3,7 @@ from typing import List
 from gochan.client import get_board
 from gochan.parser import BoardParser
 from gochan.event_handler import EventHandler
-
-
-class ThreadHeader:
-    def __init__(self, server: str, board: str, key: str, number: int, title: str, count: int, speed: int):
-        super().__init__()
-
-        self.server = server
-        self.board = board
-        self.key = key
-        self.number = number
-        self.title = title
-        self.count = count
-        self.speed = speed
+from gochan.models.thread import Thread
 
 
 class Board:
@@ -24,7 +12,7 @@ class Board:
 
         self.server = server
         self.board = board
-        self.threads: List[ThreadHeader] = None
+        self.threads: List[Thread] = None
         self.on_property_changed = EventHandler()
 
     def update(self):
@@ -34,8 +22,8 @@ class Board:
         self.threads = []
 
         for i, t in enumerate(parser.threads(), 1):
-            self.threads.append(ThreadHeader(self.server, self.board, t["key"],
-                                             i, t["title"], t["count"], t["speed"]))
+            self.threads.append(Thread(self.server, self.board, t["key"],
+                                       i, t["title"], t["count"]))
 
         self.on_property_changed("threads")
 
