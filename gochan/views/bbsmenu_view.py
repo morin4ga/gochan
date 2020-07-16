@@ -5,6 +5,7 @@ from asciimatics.widgets import Frame, Layout, Widget
 from gochan.keybinding import KEY_BINDINGS
 from gochan.view_models import BbsmenuVM
 from gochan.widgets import ListBoxK
+from gochan.event_handler import PropertyChangedEventArgs
 
 
 class BbsmenuView(Frame):
@@ -52,10 +53,10 @@ class BbsmenuView(Frame):
 
         self.fix()
 
-    def _data_context_changed(self, property_name: str):
-        if property_name == "categories":
+    def _data_context_changed(self, e: PropertyChangedEventArgs):
+        if e.property_name == "categories":
             self._update_cat_options()
-        elif property_name == "selected_category":
+        elif e.property_name == "selected_category":
             self._update_board_options()
 
     def _update_cat_options(self):

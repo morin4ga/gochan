@@ -4,7 +4,7 @@ import json
 from typing import List, Optional, Union
 
 from gochan.config import NG_PATH
-from gochan.event_handler import EventHandler
+from gochan.event_handler import CollectionChangedEventHandler, CollectionChangedEventArgs, CollectionChangedEventKind
 from gochan.models import Board, Thread, Response
 
 
@@ -76,34 +76,37 @@ class NG:
         self.words: List[NGWord] = []
         self.ids: List[NGId] = []
         self.titles: List[NGTitle] = []
-        self.on_collection_changed = EventHandler()
+        self.on_collection_changed = CollectionChangedEventHandler()
 
     def add_ng_name(self, value: str, use_reg: bool, hide: bool, auto_ng_id: bool,
                     board: Optional[str] = None, key: Optional[str] = None):
         self._last_id += 1
         item = NGName(self._last_id, value, use_reg, hide, auto_ng_id, board, key)
         self.names.append(item)
-        self.on_collection_changed("names", "add", item)
+        self.on_collection_changed.invoke(CollectionChangedEventArgs(
+            self, "names", CollectionChangedEventKind.ADD, item))
 
     def add_ng_word(self, value: str, use_reg: bool, hide: bool, auto_ng_id: bool,
                     board: Optional[str] = None, key: Optional[str] = None):
         self._last_id += 1
         item = NGWord(self._last_id, value, use_reg, hide, auto_ng_id, board, key)
         self.words.append(item)
-        self.on_collection_changed("words", "add", item)
+        self.on_collection_changed.invoke(CollectionChangedEventArgs(
+            self, "words", CollectionChangedEventKind.ADD, item))
 
     def add_ng_id(self, value: str, use_reg: bool, hide: bool,
                   board: Optional[str] = None, key: Optional[str] = None):
         self._last_id += 1
         item = NGId(self._last_id, value, use_reg, hide, board, key)
         self.ids.append(item)
-        self.on_collection_changed("ids", "add", item)
+        self.on_collection_changed.invoke(CollectionChangedEventArgs(self, "ids", CollectionChangedEventKind.ADD, item))
 
     def add_ng_title(self, value: str, use_reg: bool, board: Optional[str] = None):
         self._last_id += 1
         item = NGTitle(self._last_id, value, use_reg, board)
         self.titles.append(item)
-        self.on_collection_changed("titles", "add", item)
+        self.on_collection_changed.invoke(CollectionChangedEventArgs(
+            self, "titles", CollectionChangedEventKind.ADD, item))
 
     def update_ng(self, id: int, values):
         for item in self.names:
@@ -121,7 +124,8 @@ class NG:
                 if "key" in values:
                     item.key = values["key"]
 
-                self.on_collection_changed("names", "change", item)
+                self.on_collection_changed.invoke(CollectionChangedEventArgs(
+                    self, "names", CollectionChangedEventKind.CHANGE, item))
                 return
 
         for item in self.words:
@@ -139,7 +143,8 @@ class NG:
                 if "key" in values:
                     item.key = values["key"]
 
-                self.on_collection_changed("words", "change", item)
+                self.on_collection_changed.invoke(CollectionChangedEventArgs(
+                    self, "words", CollectionChangedEventKind.CHANGE, item))
                 return
 
         for item in self.ids:
@@ -155,7 +160,8 @@ class NG:
                 if "key" in values:
                     item.key = values["key"]
 
-                self.on_collection_changed("ids", "change", item)
+                self.on_collection_changed.invoke(CollectionChangedEventArgs(
+                    self, "ids", CollectionChangedEventKind.CHANGE, item))
                 return
 
         for item in self.titles:
@@ -167,32 +173,37 @@ class NG:
                 if "board" in values:
                     item.board = values["board"]
 
-                self.on_collection_changed("titles", "change", item)
+                self.on_collection_changed.invoke(CollectionChangedEventArgs(
+                    self, "titles", CollectionChangedEventKind.CHANGE, item))
                 return
 
     def delete_ng(self, id: int):
         for n in self.names:
             if n.id == id:
                 self.names.remove(n)
-                self.on_collection_changed("names", "delete", n)
+                self.on_collection_changed.invoke(CollectionChangedEventArgs(
+                    self, "names", CollectionChangedEventKind.DELETE, n))
                 return
 
         for n in self.ids:
             if n.id == id:
                 self.ids.remove(n)
-                self.on_collection_changed("ids", "delete", n)
+                self.on_collection_changed.invoke(CollectionChangedEventArgs(
+                    self, "ids", CollectionChangedEventKind.DELETE, n))
                 return
 
         for n in self.words:
             if n.id == id:
                 self.words.remove(n)
-                self.on_collection_changed("words", "delete", n)
+                self.on_collection_changed.invoke(CollectionChangedEventArgs(
+                    self, "words", CollectionChangedEventKind.DELETE, n))
                 return
 
         for n in self.titles:
             if n.id == id:
                 self.titles.remove(n)
-                self.on_collection_changed("titles", "delete", n)
+                self.on_collection_changed.invoke(CollectionChangedEventArgs(
+                    self, "titles", CollectionChangedEventKind.DELETE, n))
                 return
 
     def filter_threads(self, board: Board) -> List[Union[Thread, None]]:

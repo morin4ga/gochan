@@ -2,7 +2,7 @@ from typing import Optional, List, Union
 
 from gochan.models import AppContext, Thread
 from gochan.models.ng import NG
-from gochan.event_handler import EventHandler
+from gochan.event_handler import PropertyChangedEventArgs, PropertyChangedEventHandler, CollectionChangedEventArgs
 
 
 class BoardVM:
@@ -15,7 +15,7 @@ class BoardVM:
 
         self._app_context.on_property_changed.add(self._app_context_changed)
         self._app_context.ng.on_collection_changed.add(self._ng_changed)
-        self.on_property_changed = EventHandler()
+        self.on_property_changed = PropertyChangedEventHandler()
 
     @property
     def board(self) -> Optional[str]:
@@ -60,8 +60,8 @@ class BoardVM:
     def add_ng_title(self, value, use_reg, board):
         self._app_context.ng.add_ng_title(value, use_reg, board)
 
-    def _app_context_changed(self, property_name: str):
-        if property_name == "board":
+    def _app_context_changed(self, e: PropertyChangedEventArgs):
+        if e.property_name == "board":
             if self._board is not None:
                 self._board.on_property_changed.remove(self._board_changed)
 
@@ -70,19 +70,19 @@ class BoardVM:
 
             self._filtered_threads = self._app_context.ng.filter_threads(self._board)
 
-            self.on_property_changed("threads")
-            self.on_property_changed("filtered_threads")
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "filtered_threads"))
 
-    def _board_changed(self, property_name):
-        if property_name == "threads":
+    def _board_changed(self, e: PropertyChangedEventArgs):
+        if e.property_name == "threads":
             self._filtered_threads = self._app_context.ng.filter_threads(self._board)
 
-            self.on_property_changed("threads")
-            self.on_property_changed("filtered_threads")
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "filtered_threads"))
 
-    def _ng_changed(self, property_name, kind, *args):
+    def _ng_changed(self, e: CollectionChangedEventArgs):
         if self._board is not None:
             self._filtered_threads = self._app_context.ng.filter_threads(self._board)
 
-        self.on_property_changed("ng")
-        self.on_property_changed("filtered_threads")
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "ng"))
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "filtered_threads"))

@@ -8,6 +8,7 @@ from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, PopUpDialog
 
 from gochan.view_models import ImageVM
+from gochan.event_handler import PropertyChangedEventArgs
 
 
 class ImageView(Frame):
@@ -34,20 +35,20 @@ class ImageView(Frame):
 
         return super().process_event(event)
 
-    def _context_changed(self, property_name: str):
-        if property_name == "image":
+    def _context_changed(self, e: PropertyChangedEventArgs):
+        if e.property_name == "image":
             if self._image is not None:
                 self._scene.remove_effect(self._image)
                 self._image = None
 
             if isinstance(self._data_context.image, HTTPError):
-                e: HTTPError = self._data_context.image
-                msg = str(e.code) + "\n" + e.reason
+                err: HTTPError = self._data_context.image
+                msg = str(err.code) + "\n" + err.reason
                 self._scene.add_effect(PopUpDialog(self._screen, msg,
                                                    ["Close"], on_close=self._back, theme="user_theme"))
             elif isinstance(self._data_context.image, URLError):
-                e: URLError = self._data_context.image
-                self._scene.add_effect(PopUpDialog(self._screen, str(e.reason),
+                err: URLError = self._data_context.image
+                self._scene.add_effect(PopUpDialog(self._screen, str(err.reason),
                                                    ["Close"], on_close=self._back, theme="user_theme"))
             else:
                 self._image = Print(self.screen, ColourImageFile(

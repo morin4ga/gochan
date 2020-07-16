@@ -5,7 +5,8 @@ from typing import List, Dict, Union
 
 from gochan.client import get_responses_after, post_response
 from gochan.parser import ThreadParserH
-from gochan.event_handler import EventHandler
+from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs, CollectionChangedEventHandler, \
+    CollectionChangedEventArgs, CollectionChangedEventKind
 
 
 class Response:
@@ -51,8 +52,8 @@ class Thread:
         self._is_pastlog: bool = False
         self.links = []
         self._bookmark = 0
-        self.on_property_changed = EventHandler()
-        self.on_collection_changed = EventHandler()
+        self.on_property_changed = PropertyChangedEventHandler()
+        self.on_collection_changed = CollectionChangedEventHandler()
 
     @property
     def count(self) -> int:
@@ -61,9 +62,9 @@ class Thread:
     @count.setter
     def count(self, value: int):
         self._count = value
-        self.on_property_changed("count")
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "count"))
         self._speed = calc_speed(self.key, self.count)
-        self.on_property_changed("speed")
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "speed"))
 
     @property
     def speed(self) -> int:
@@ -76,7 +77,7 @@ class Thread:
     @is_pastlog.setter
     def is_pastlog(self, value: bool):
         self._is_pastlog = value
-        self.on_property_changed("is_pastlog")
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "is_pastlog"))
 
     @property
     def bookmark(self) -> int:
@@ -85,7 +86,7 @@ class Thread:
     @bookmark.setter
     def bookmark(self, value: int):
         self._bookmark = value
-        self.on_property_changed("bookmark")
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "bookmark"))
 
     @staticmethod
     def restore(dict) -> "Thread":
@@ -106,16 +107,17 @@ class Thread:
         parser = ThreadParserH(html)
 
         self.is_pastlog = parser.is_pastlog()
-        self.on_property_changed("is_pastlog")
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "is_pastlog"))
 
         if self.title is None:
             self.title = parser.title()
-            self.on_property_changed("title")
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "title"))
 
         # If responses has not initialtzed yet
         if len(self.responses) == 0:
             self._add_response(parser.responses())
-            self.on_collection_changed("responses", "add", self.responses[0:])
+            self.on_collection_changed.invoke(CollectionChangedEventArgs(
+                self, "responses", CollectionChangedEventKind.EXTEND, self.responses[0:]))
         else:
             # Add new responses
             rs = parser.responses()
@@ -123,7 +125,8 @@ class Thread:
             if len(rs) > 1:
                 start = len(self.responses)
                 self._add_response(rs[1:])
-                self.on_collection_changed("responses", "add", self.responses[start:])
+                self.on_collection_changed.invoke(CollectionChangedEventArgs(
+                    self, "responses", CollectionChangedEventKind.EXTEND, self.responses[start:]))
 
         self.count = len(self.responses)
 

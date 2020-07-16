@@ -1,8 +1,9 @@
-from typing import List, Optional, Any, Union
+from typing import List, Optional, Union
 
 from gochan.models import Response, AppContext
 from gochan.models.ng import NG, NGResponse
-from gochan.event_handler import EventHandler
+from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs, CollectionChangedEventHandler, \
+    CollectionChangedEventArgs
 
 
 class ThreadVM:
@@ -12,8 +13,8 @@ class ThreadVM:
         self._app_context = app_context
         self._thread = app_context.thread
         self._filtered_responses = None
-        self.on_property_changed = EventHandler()
-        self.on_collection_changed = EventHandler()
+        self.on_property_changed = PropertyChangedEventHandler()
+        self.on_collection_changed = CollectionChangedEventHandler()
 
         app_context.on_property_changed.add(self._app_context_changed)
         app_context.ng.on_collection_changed.add(self._ng_changed)
@@ -88,8 +89,8 @@ class ThreadVM:
     def add_ng_word(self, value, use_reg, hide, auto_ng_id, board, key):
         self._app_context.ng.add_ng_word(value, use_reg, hide, auto_ng_id, board, key)
 
-    def _app_context_changed(self, property_name: str):
-        if property_name == "thread":
+    def _app_context_changed(self, e: PropertyChangedEventArgs):
+        if e.property_name == "thread":
             if self._thread is not None:
                 self._thread.on_property_changed.remove(self._thread_property_changed)
                 self._thread.on_collection_changed.remove(self._thread_collection_changed)
@@ -100,30 +101,31 @@ class ThreadVM:
 
             self._filtered_responses = self._app_context.ng.filter_responses(self._thread)
 
-            self.on_property_changed("server")
-            self.on_property_changed("board")
-            self.on_property_changed("key")
-            self.on_property_changed("title")
-            self.on_property_changed("is_pastlog")
-            self.on_property_changed("responses")
-            self.on_property_changed("links")
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "server"))
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "board"))
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "key"))
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "title"))
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "is_pastlog"))
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "responses"))
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "links"))
 
-    def _thread_property_changed(self, property_name: str):
-        if property_name == "responses":
+    def _thread_property_changed(self, e: PropertyChangedEventArgs):
+        if e.property_name == "responses":
             self._filtered_responses = self._app_context.ng.filter_responses(self._thread)
-            self.on_property_changed("responses")
-            self.on_property_changed("filtered_responses")
-        elif property_name == "bookmark":
-            self.on_property_changed("bookmark")
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "responses"))
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "filtered_responses"))
+        elif e.property_name == "bookmark":
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "bookmark"))
 
-    def _thread_collection_changed(self, property_name: str, kind: str, item: Any):
-        if property_name == "responses":
+    def _thread_collection_changed(self, e: CollectionChangedEventArgs):
+        if e.property_name == "responses":
             self._filtered_responses = self._app_context.ng.filter_responses(self._thread)
-            self.on_collection_changed(property_name, kind, item)
-            self.on_property_changed("filtered_responses")
+            self.on_collection_changed.invoke(self, e.property_name, e.kind, e.item)
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "filtered_responses"))
 
-    def _ng_changed(self, property_name: str, type: str, *arg):
+    def _ng_changed(self, e: CollectionChangedEventArgs):
         if self._thread is not None:
             self._filtered_responses = self._app_context.ng.filter_responses(self._thread)
-            self.on_property_changed("filtered_responses")
-        self.on_property_changed("ng")
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "filtered_responses"))
+
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "ng"))

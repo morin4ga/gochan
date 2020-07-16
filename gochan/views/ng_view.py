@@ -6,6 +6,7 @@ from typing import List, Optional
 from gochan.view_models.ngvm import NGVM, NGItem, NGTitle, NGName, NGId, NGWord
 from gochan.effects import NGEditor
 from gochan.keybinding import KEY_BINDINGS
+from gochan.event_handler import PropertyChangedEventArgs
 
 
 class NGView(Frame):
@@ -67,7 +68,7 @@ class NGView(Frame):
 
         return super().process_event(event)
 
-    def _context_changed(self, property_name: str):
+    def _context_changed(self, e: PropertyChangedEventArgs):
         self._selected_list = None
         self._selected_item = None
         self._kind_list.value = 0

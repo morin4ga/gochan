@@ -2,7 +2,7 @@ from typing import List
 
 from gochan.models import AppContext
 from gochan.models.ng import NGName, NGWord, NGId, NGTitle, NGItem  # noqa: F401
-from gochan.event_handler import EventHandler
+from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs, CollectionChangedEventArgs
 
 
 class NGVM:
@@ -10,7 +10,7 @@ class NGVM:
         super().__init__()
         self._app_context = app_context
         self._app_context.ng.on_collection_changed.add(self._ng_changed)
-        self.on_property_changed = EventHandler()
+        self.on_property_changed = PropertyChangedEventHandler()
 
     @property
     def names(self) -> List[NGName]:
@@ -34,5 +34,5 @@ class NGVM:
     def delete_ng(self, id):
         self._app_context.ng.delete_ng(id)
 
-    def _ng_changed(self, property_name: str, type: str, item):
-        self.on_property_changed(property_name)
+    def _ng_changed(self, e: CollectionChangedEventArgs):
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, e.property_name))

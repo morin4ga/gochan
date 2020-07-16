@@ -1,5 +1,5 @@
 import re
-from typing import List, Any
+from typing import List
 
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
@@ -13,6 +13,7 @@ from gochan.view_models import ThreadVM
 from gochan.effects import CommandLine, NGCreator, PostForm
 from gochan.widgets import Buffer, Cell, RichText
 from gochan.models.ng import NGResponse
+from gochan.event_handler import PropertyChangedEventArgs, CollectionChangedEventArgs
 
 link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
 
@@ -69,13 +70,13 @@ class ThreadView(Frame):
 
         self.fix()
 
-    def _data_context_changed(self, property_name: str):
-        if property_name == "responses" or property_name == "bookmark" or property_name == "ng":
+    def _data_context_changed(self, e: PropertyChangedEventArgs):
+        if e.property_name == "responses" or e.property_name == "bookmark" or e.property_name == "ng":
             if self._data_context.responses is not None:
                 self._update_buffer()
 
         # If responses is changed, update title and scroll to top of unread responses
-        if property_name == "responses":
+        if e.property_name == "responses":
             self._title_label.text = self._data_context.title + " (" + str(len(self._data_context.responses)) + ")"
 
             bookmark = self._data_context.bookmark
@@ -90,8 +91,8 @@ class ThreadView(Frame):
             else:
                 self._rtext.reset_offset()
 
-    def _collection_changed(self, property_name: str, kind: str, item: Any):
-        if property_name == "responses":
+    def _collection_changed(self, e: CollectionChangedEventArgs):
+        if e.property_name == "responses":
             self._update_buffer()
             self._title_label.text = self._data_context.title + " (" + str(len(self._data_context.responses)) + ")"
 

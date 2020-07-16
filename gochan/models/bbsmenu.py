@@ -1,7 +1,7 @@
 from typing import List
 
 from gochan.client import get_bbsmenu
-from gochan.event_handler import EventHandler
+from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs
 from gochan.parser import BbsmenuParser
 
 
@@ -28,7 +28,7 @@ class Bbsmenu:
 
         self.categories = None
         self.dns = {}
-        self.on_property_changed = EventHandler()
+        self.on_property_changed = PropertyChangedEventHandler()
 
     def update(self):
         html = get_bbsmenu()
@@ -43,4 +43,4 @@ class Bbsmenu:
 
             self.categories.append(Category(c["name"], boards))
 
-        self.on_property_changed("categories")
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "categories"))

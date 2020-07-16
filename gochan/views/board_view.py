@@ -7,6 +7,7 @@ from gochan.keybinding import KEY_BINDINGS
 from gochan.view_models import BoardVM
 from gochan.effects import CommandLine, NGCreator
 from gochan.widgets import MultiColumnListBoxK
+from gochan.event_handler import PropertyChangedEventArgs
 
 
 class BoardView(Frame):
@@ -57,11 +58,11 @@ class BoardView(Frame):
         self.fix()
         self._on_pick()
 
-    def _data_context_changed(self, property_name: str):
-        if property_name == "threads":
+    def _data_context_changed(self, e: PropertyChangedEventArgs):
+        if e.property_name == "threads":
             self._update_options()
             self._title_label.text = self._data_context.name + " (" + str(len(self._data_context.threads)) + ")"
-        elif property_name == "ng":
+        elif e.property_name == "ng":
             self._update_options()
 
     def _back_btn_clicked(self):

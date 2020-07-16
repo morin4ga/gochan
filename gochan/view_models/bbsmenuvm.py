@@ -1,7 +1,7 @@
 from typing import Optional, List
 
 from gochan.models import AppContext, Category
-from gochan.event_handler import EventHandler
+from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs
 
 
 class BbsmenuVM:
@@ -10,7 +10,7 @@ class BbsmenuVM:
         self._app_context = app_context
         self._bbsmenu = app_context.bbsmenu
         self.selected_category: Optional[Category] = None
-        self.on_property_changed = EventHandler()
+        self.on_property_changed = PropertyChangedEventHandler()
 
         self._app_context.on_property_changed.add(self._app_context_changed)
 
@@ -22,7 +22,7 @@ class BbsmenuVM:
         if self._bbsmenu is not None and idx < len(self._bbsmenu.categories)\
                 and idx >= 0:
             self.selected_category = self._bbsmenu.categories[idx]
-            self.on_property_changed("selected_category")
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "selected_category"))
 
     def select_board(self, idx: int):
         if self.selected_category is not None and idx < len(self.selected_category.boards) and idx >= 0:
@@ -33,16 +33,16 @@ class BbsmenuVM:
         if self._bbsmenu is not None:
             self._bbsmenu.update()
 
-    def _app_context_changed(self, property_name: str):
-        if property_name == "bbsmenu":
+    def _app_context_changed(self, e: PropertyChangedEventArgs):
+        if e.property_name == "bbsmenu":
             if self._bbsmenu is not None:
                 self._bbsmenu.on_property_changed.remove(self._bbsmenu_changed)
 
             self._bbsmenu = self._app_context.bbsmenu
             self._bbsmenu.on_property_changed.add(self._bbsmenu_changed)
 
-            self.on_property_changed("categories")
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "categories"))
 
-    def _bbsmenu_changed(self, property_name: str):
-        if property_name == "categories":
-            self.on_property_changed("categories")
+    def _bbsmenu_changed(self, e: PropertyChangedEventArgs):
+        if e.property_name == "categories":
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "categories"))

@@ -5,7 +5,7 @@ import pickle
 from typing import Optional, Union
 from urllib.request import HTTPError, URLError
 
-from gochan.event_handler import EventHandler
+from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs
 from gochan.models.bbsmenu import Bbsmenu
 from gochan.models.board import Board
 from gochan.models.thread import Thread
@@ -24,17 +24,17 @@ class AppContext:
         self.image: Optional[Union[str, HTTPError, URLError]] = None
         self.ng: NG = ng
 
-        self.on_property_changed = EventHandler()
+        self.on_property_changed = PropertyChangedEventHandler()
 
     def set_bbsmenu(self):
         self.bbsmenu = Bbsmenu()
         self.bbsmenu.update()
-        self.on_property_changed("bbsmenu")
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "bbsmenu"))
 
     def set_board(self, server: str, board: str):
         self.board = Board(server, board)
         self.board.update()
-        self.on_property_changed("board")
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "board"))
 
     def set_thread(self, server: str, board: str, key: str):
         if SAVE_THREAD_LOG:
@@ -45,12 +45,12 @@ class AppContext:
                 d = pickle.loads(data)
                 self.thread = Thread.restore(d)
                 self.thread.update()
-                self.on_property_changed("thread")
+                self.on_property_changed.invoke(PropertyChangedEventArgs(self, "thread"))
                 return
 
         self.thread = Thread(server, board, key)
         self.thread.update()
-        self.on_property_changed("thread")
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "thread"))
 
     def save_thread(self):
         if self.thread is not None:
@@ -82,4 +82,4 @@ class AppContext:
                 self.image = f.name
                 f.close()
 
-        self.on_property_changed("image")
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "image"))
