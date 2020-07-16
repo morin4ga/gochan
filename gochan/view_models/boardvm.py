@@ -51,7 +51,7 @@ class BoardVM:
                 and idx < len(self._board.threads)\
                 and idx >= 0:
             thread = self._board.threads[idx]
-            self._app_context.set_thread(thread.server, thread.board, thread.key)
+            self._app_context.set_thread(thread)
 
     def update(self):
         if self._board is not None:
