@@ -27,17 +27,25 @@ class Board:
 
         for i, t in enumerate(parser.threads(), 1):
             try:
+                # If the thread is exist, reuse the instance
                 for thread in self.threads:
                     if t["key"] == thread.key:
                         thread.count = t["count"]
                         thread.number = i
                         new_threads.append(thread)
+                        self.threads.remove(thread)
                         raise BreakException()
 
-                new_threads.append(Thread(self.server, self.board, t["key"],
-                                          i, t["title"], t["count"]))
+                new_thread = Thread(self.server, self.board, t["key"],
+                                    i, t["title"], t["count"])
+                new_thread.on_property_changed.add(self._thread_property_changed)
+                new_threads.append(new_thread)
             except BreakException:
                 pass
+
+        # Remove event from threads disappeared from board
+        for lost_thread in self.threads:
+            lost_thread.on_property_changed.remove(self._thread_property_changed)
 
         self.threads = new_threads
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
@@ -57,3 +65,7 @@ class Board:
     def sort_threads_by_word(self, word: str):
         self.threads.sort(key=lambda x: (word not in x.title))
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
+
+    def _thread_property_changed(self, e: PropertyChangedEventArgs):
+        if e.property_name == "bookmark":
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
