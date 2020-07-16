@@ -6,25 +6,40 @@ from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEve
 from gochan.models.thread import Thread
 
 
+class BreakException(Exception):
+    pass
+
+
 class Board:
     def __init__(self, server: str, board: str):
         super().__init__()
 
         self.server = server
         self.board = board
-        self.threads: List[Thread] = None
+        self.threads: List[Thread] = []
         self.on_property_changed = PropertyChangedEventHandler()
 
     def update(self):
         s = get_board(self.server, self.board)
         parser = BoardParser(s)
 
-        self.threads = []
+        new_threads = []
 
         for i, t in enumerate(parser.threads(), 1):
-            self.threads.append(Thread(self.server, self.board, t["key"],
-                                       i, t["title"], t["count"]))
+            try:
+                for thread in self.threads:
+                    if t["key"] == thread.key:
+                        thread.count = t["count"]
+                        thread.number = i
+                        new_threads.append(thread)
+                        raise BreakException()
 
+                new_threads.append(Thread(self.server, self.board, t["key"],
+                                          i, t["title"], t["count"]))
+            except BreakException:
+                pass
+
+        self.threads = new_threads
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
 
     def sort_threads(self, key: str, reverse=False):
