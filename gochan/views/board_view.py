@@ -31,10 +31,10 @@ class BoardView(Frame):
 
         self._thread_list = MultiColumnListBoxK(
             Widget.FILL_FRAME,
-            ["<4%", "<82%", "<6%", "<8"],
+            ["<4%", "<76%", "<6%", "<6%", "<8"],
             [],
             self._keybindings,
-            titles=["番号", "|タイトル", " |レス", " |勢い"],
+            titles=["番号", "|タイトル", " |レス", " |未読", " |勢い"],
             name="thread_list",
             add_scroll_bar=True,
             on_change=self._on_pick,
@@ -85,7 +85,9 @@ class BoardView(Frame):
 
     def _update_options(self):
         if self._data_context.threads is not None:
-            self._thread_list.options = [([str(x.number), "|" + x.title, " |" + str(x.count), " |" + str(x.speed)], i)
+            self._thread_list.options = [([str(x.number), "|" + x.title, " |" + str(x.count),
+                                           " |" + (str(x.count - x.bookmark) if x.bookmark != 0 else ""),
+                                           " |" + str(x.speed)], i)
                                          for i, x in enumerate(self._data_context.filtered_threads)
                                          if x is not None]
         else:
