@@ -120,7 +120,7 @@ class ThreadVM:
     def _thread_collection_changed(self, e: CollectionChangedEventArgs):
         if e.property_name == "responses":
             self._filtered_responses = self._app_context.ng.filter_responses(self._thread)
-            self.on_collection_changed.invoke(self, e.property_name, e.kind, e.item)
+            self.on_collection_changed.invoke(CollectionChangedEventArgs(self, e.property_name, e.kind, e.item))
             self.on_property_changed.invoke(PropertyChangedEventArgs(self, "filtered_responses"))
 
     def _ng_changed(self, e: CollectionChangedEventArgs):
