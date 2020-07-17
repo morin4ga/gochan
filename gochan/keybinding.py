@@ -28,14 +28,15 @@ KEY_BINDINGS = {
         "select_top": Key.Ctrl.HOME,
         "select_bottom": Key.Ctrl.END,
         "select": Key.ENTER,
-        "sort_1": Key.Q,
-        "dsort_1": Key.Shift.Q,
-        "sort_2": Key.W,
-        "dsort_2": Key.Shift.W,
-        "sort_3": Key.E,
-        "dsort_3": Key.Shift.E,
-        "sort_4": Key.R,
-        "dsort_4": Key.Shift.R,
+        "num_sort": Key.Q,
+        "num_des_sort": Key.Shift.Q,
+        "title_sort": Key.W,
+        "title_des_sort": Key.Shift.W,
+        "count_sort": Key.E,
+        "count_des_sort": Key.Shift.E,
+        "unread_sort": Key.R,
+        "speed_sort": Key.T,
+        "speed_des_sort": Key.Shift.T,
         "find": Key.F,
         "ng_title": Key.N,
         "update": Key.U,
@@ -109,22 +110,24 @@ if KEYBINDINGS_PATH.is_file():
             KEY_BINDINGS["board"]["select_bottom"] = parse_key(keybindings["board"]["select_bottom"])
         if "select" in keybindings["board"]:
             KEY_BINDINGS["board"]["select"] = parse_key(keybindings["board"]["select"])
-        if "sort_1" in keybindings["board"]:
-            KEY_BINDINGS["board"]["sort_1"] = parse_key(keybindings["board"]["sort_1"])
-        if "dsort_1" in keybindings["board"]:
-            KEY_BINDINGS["board"]["dsort_1"] = parse_key(keybindings["board"]["dsort_1"])
-        if "sort_2" in keybindings["board"]:
-            KEY_BINDINGS["board"]["sort_2"] = parse_key(keybindings["board"]["sort_2"])
-        if "dsort_2" in keybindings["board"]:
-            KEY_BINDINGS["board"]["dsort_2"] = parse_key(keybindings["board"]["dsort_2"])
-        if "sort_3" in keybindings["board"]:
-            KEY_BINDINGS["board"]["sort_3"] = parse_key(keybindings["board"]["sort_3"])
-        if "dsort_3" in keybindings["board"]:
-            KEY_BINDINGS["board"]["dsort_3"] = parse_key(keybindings["board"]["dsort_3"])
-        if "sort_4" in keybindings["board"]:
-            KEY_BINDINGS["board"]["sort_4"] = parse_key(keybindings["board"]["sort_4"])
-        if "dsort_4" in keybindings["board"]:
-            KEY_BINDINGS["board"]["dsort_4"] = parse_key(keybindings["board"]["dsort_4"])
+        if "num_sort" in keybindings["board"]:
+            KEY_BINDINGS["board"]["num_sort"] = parse_key(keybindings["board"]["num_sort"])
+        if "num_des_sort" in keybindings["board"]:
+            KEY_BINDINGS["board"]["num_des_sort"] = parse_key(keybindings["board"]["num_des_sort"])
+        if "title_sort" in keybindings["board"]:
+            KEY_BINDINGS["board"]["title_sort"] = parse_key(keybindings["board"]["title_sort"])
+        if "title_des_sort" in keybindings["board"]:
+            KEY_BINDINGS["board"]["title_des_sort"] = parse_key(keybindings["board"]["title_des_sort"])
+        if "count_sort" in keybindings["board"]:
+            KEY_BINDINGS["board"]["count_sort"] = parse_key(keybindings["board"]["count_sort"])
+        if "count_des_sort" in keybindings["board"]:
+            KEY_BINDINGS["board"]["count_des_sort"] = parse_key(keybindings["board"]["count_des_sort"])
+        if "unread_sort" in keybindings["board"]:
+            KEY_BINDINGS["board"]["unread_sort"] = parse_key(keybindings["board"]["unread_sort"])
+        if "speed_sort" in keybindings["board"]:
+            KEY_BINDINGS["board"]["speed_sort"] = parse_key(keybindings["board"]["speed_sort"])
+        if "speed_des_sort" in keybindings["board"]:
+            KEY_BINDINGS["board"]["speed_des_sort"] = parse_key(keybindings["board"]["speed_des_sort"])
         if "find" in keybindings["board"]:
             KEY_BINDINGS["board"]["find"] = parse_key(keybindings["board"]["find"])
         if "ng_title" in keybindings["board"]:

@@ -69,6 +69,8 @@ class Board:
             self.threads.sort(key=lambda x: x.title, reverse=reverse)
         elif key == "count":
             self.threads.sort(key=lambda x: x.count, reverse=reverse)
+        elif key == "unread":
+            self.threads.sort(key=lambda x: x.count - x.bookmark if x.bookmark != 0 else -1, reverse=True)
         elif key == "speed":
             self.threads.sort(key=lambda x: x.speed, reverse=reverse)
 

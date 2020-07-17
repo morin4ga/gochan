@@ -95,28 +95,31 @@ class BoardView(Frame):
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
-            if event.key_code == self._keybindings["sort_1"]:
+            if event.key_code == self._keybindings["num_sort"]:
                 self._data_context.sort_threads("number")
                 return None
-            elif event.key_code == self._keybindings["dsort_1"]:
+            elif event.key_code == self._keybindings["num_des_sort"]:
                 self._data_context.sort_threads("number", True)
                 return None
-            elif event.key_code == self._keybindings["sort_2"]:
+            elif event.key_code == self._keybindings["title_sort"]:
                 self._data_context.sort_threads("title")
                 return None
-            elif event.key_code == self._keybindings["dsort_2"]:
+            elif event.key_code == self._keybindings["title_des_sort"]:
                 self._data_context.sort_threads("title", True)
                 return None
-            elif event.key_code == self._keybindings["sort_3"]:
+            elif event.key_code == self._keybindings["count_sort"]:
                 self._data_context.sort_threads("count")
                 return None
-            elif event.key_code == self._keybindings["dsort_3"]:
+            elif event.key_code == self._keybindings["count_des_sort"]:
                 self._data_context.sort_threads("count", True)
                 return None
-            elif event.key_code == self._keybindings["sort_4"]:
+            elif event.key_code == self._keybindings["unread_sort"]:
+                self._data_context.sort_threads("unread")
+                return None
+            elif event.key_code == self._keybindings["speed_sort"]:
                 self._data_context.sort_threads("speed")
                 return None
-            elif event.key_code == self._keybindings["dsort_4"]:
+            elif event.key_code == self._keybindings["speed_des_sort"]:
                 self._data_context.sort_threads("speed", True)
                 return None
             elif event.key_code == self._keybindings["find"]:
