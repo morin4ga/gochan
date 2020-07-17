@@ -44,19 +44,6 @@ class AppContext:
         self.thread.update()
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "thread"))
 
-        """
-        if SAVE_THREAD_LOG:
-            self.save_thread()
-
-            if thread_log.contains(board + "-" + key):
-                data = thread_log.get(board + "-" + key)
-                d = pickle.loads(data)
-                self.thread = Thread.restore(d)
-                self.thread.update()
-                self.on_property_changed.invoke(PropertyChangedEventArgs(self, "thread"))
-                return
-        """
-
     def save_thread(self):
         if self.thread is not None:
             data = pickle.dumps(self.thread.to_dict())

@@ -1,9 +1,12 @@
+import pickle
 from typing import List
 
 from gochan.client import get_board
 from gochan.parser import BoardParser
 from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs
 from gochan.models.thread import Thread
+from gochan.storage import thread_log
+from gochan.config import SAVE_THREAD_LOG
 
 
 class BreakException(Exception):
@@ -35,6 +38,15 @@ class Board:
                         new_threads.append(thread)
                         self.threads.remove(thread)
                         raise BreakException()
+
+                if SAVE_THREAD_LOG and thread_log.contains(self.board + "-" + t["key"]):
+                    data = thread_log.get(self.board + "-" + t["key"])
+                    d = pickle.loads(data)
+                    thread = Thread.restore(d)
+                    thread.count = t["count"]
+                    thread.number = i
+                    new_threads.append(thread)
+                    raise BreakException()
 
                 new_thread = Thread(self.server, self.board, t["key"],
                                     i, t["title"], t["count"])
