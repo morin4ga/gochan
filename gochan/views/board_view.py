@@ -88,7 +88,7 @@ class BoardView(Frame):
             self._thread_list.options = [([str(x.number), "|" + x.title, " |" + str(x.count),
                                            " |" + (str(x.count - x.bookmark) if x.bookmark != 0 else ""),
                                            " |" + str(x.speed)], i)
-                                         for i, x in enumerate(self._data_context.filtered_threads)]
+                                         for i, x in enumerate(self._data_context.threads)]
         else:
             self._thread_list.options = []
 

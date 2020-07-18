@@ -1,4 +1,4 @@
-from typing import Optional, List, Union
+from typing import Optional, List
 
 from gochan.models import AppContext, Thread
 from gochan.models.ng import NG
@@ -11,7 +11,9 @@ class BoardVM:
 
         self._app_context = app_context
         self._board = app_context.board
-        self._filtered_threads = None
+        self._sort_by = "number"
+        self._reverse_sort = False
+        self._search_word = None
 
         self._app_context.on_property_changed.add(self._app_context_changed)
         self._app_context.ng.on_collection_changed.add(self._ng_changed)
@@ -23,7 +25,23 @@ class BoardVM:
 
     @property
     def threads(self) -> Optional[List[Thread]]:
-        return self._board.threads if self._board is not None else None
+        threads = self._app_context.ng.filter_threads(self._board)
+
+        if self._sort_by == "number":
+            threads.sort(key=lambda x: x.number, reverse=self._reverse_sort)
+        elif self._sort_by == "title":
+            threads.sort(key=lambda x: x.title, reverse=self._reverse_sort)
+        elif self._sort_by == "count":
+            threads.sort(key=lambda x: x.count, reverse=self._reverse_sort)
+        elif self._sort_by == "unread":
+            threads.sort(key=lambda x: x.count - x.bookmark if x.bookmark != 0 else -1, reverse=True)
+        elif self._sort_by == "speed":
+            threads.sort(key=lambda x: x.speed, reverse=self._reverse_sort)
+
+        if self._search_word is not None:
+            threads.sort(key=lambda x: (self._search_word not in x.title))
+
+        return threads
 
     @property
     def name(self) -> Optional[str]:
@@ -31,20 +49,18 @@ class BoardVM:
             if self._board is not None else None
 
     @property
-    def filtered_threads(self) -> Optional[List[Union[Thread, None]]]:
-        return self._filtered_threads
-
-    @property
     def ng(self) -> NG:
         return self._app_context.ng
 
-    def sort_threads(self, key: str, reverse=False):
-        if self._board is not None:
-            self._board.sort_threads(key, reverse)
+    def sort_threads(self, sort_by: str, reverse_sort: bool = False):
+        self._sort_by = sort_by
+        self._reverse_sort = reverse_sort
+        self._search_word = None
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
 
     def sort_threads_by_word(self, word: str):
-        if self._board is not None:
-            self._board.sort_threads_by_word(word)
+        self._search_word = word
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
 
     def select_thread(self, idx: int):
         if self._board is not None\
@@ -68,21 +84,14 @@ class BoardVM:
             self._board = self._app_context.board
             self._board.on_property_changed.add(self._board_changed)
 
-            self._filtered_threads = self._app_context.ng.filter_threads(self._board)
-
             self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
-            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "filtered_threads"))
 
     def _board_changed(self, e: PropertyChangedEventArgs):
         if e.property_name == "threads":
-            self._filtered_threads = self._app_context.ng.filter_threads(self._board)
-
+            self._search_word = None
             self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
-            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "filtered_threads"))
 
     def _ng_changed(self, e: CollectionChangedEventArgs):
-        if self._board is not None:
-            self._filtered_threads = self._app_context.ng.filter_threads(self._board)
-
+        self._search_word = None
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "ng"))
-        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "filtered_threads"))
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
