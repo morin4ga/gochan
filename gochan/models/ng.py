@@ -206,7 +206,7 @@ class NG:
                     self, "titles", CollectionChangedEventKind.DELETE, n))
                 return
 
-    def filter_threads(self, board: Board) -> List[Union[Thread, None]]:
+    def filter_threads(self, board: Board) -> List[Thread]:
         result = []
 
         for h in board.threads:
@@ -217,7 +217,6 @@ class NG:
                         continue
 
                     if n.match(h.title):
-                        result.append(None)
                         raise BreakException()
 
                 result.append(h)
