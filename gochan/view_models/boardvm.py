@@ -1,7 +1,6 @@
 from typing import Optional, List
 
 from gochan.models import AppContext, Thread
-from gochan.models.ng import NG
 from gochan.event_handler import PropertyChangedEventArgs, PropertyChangedEventHandler, CollectionChangedEventArgs
 
 
@@ -50,10 +49,6 @@ class BoardVM:
         return self._app_context.bbsmenu.dns[self._board.board] \
             if self._board is not None else None
 
-    @property
-    def ng(self) -> NG:
-        return self._app_context.ng
-
     def sort_threads(self, sort_by: str, reverse_sort: bool = False):
         self._sort_by = sort_by
         self._reverse_sort = reverse_sort
@@ -95,5 +90,4 @@ class BoardVM:
 
     def _ng_changed(self, e: CollectionChangedEventArgs):
         self._search_word = None
-        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "ng"))
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
