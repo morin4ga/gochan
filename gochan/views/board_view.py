@@ -24,6 +24,7 @@ class BoardView(Frame):
 
         self._data_context: BoardVM = data_context
         self._data_context.on_property_changed.add(self._data_context_changed)
+        self._threads = None
 
         self._keybindings = KEY_BINDINGS["board"]
 
@@ -60,10 +61,9 @@ class BoardView(Frame):
 
     def _data_context_changed(self, e: PropertyChangedEventArgs):
         if e.property_name == "threads":
+            self._threads = self._data_context.threads
             self._update_options()
             self._title_label.text = self._data_context.name + " (" + str(len(self._data_context.threads)) + ")"
-        elif e.property_name == "ng":
-            self._update_options()
 
     def _back_btn_clicked(self):
         raise NextScene("Bbsmenu")
@@ -79,8 +79,8 @@ class BoardView(Frame):
             return
 
         self.save()
-        index = self.data['thread_list']
-        self._data_context.select_thread(index)
+        index = self._thread_list.value
+        self._data_context.set_thread(self._threads[index])
         raise NextScene("Thread")
 
     def _update_options(self):

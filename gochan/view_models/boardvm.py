@@ -68,12 +68,8 @@ class BoardVM:
         self._unread_sort = not self._unread_sort
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
 
-    def select_thread(self, idx: int):
-        if self._board is not None\
-                and idx < len(self._board.threads)\
-                and idx >= 0:
-            thread = self._board.threads[idx]
-            self._app_context.set_thread(thread)
+    def set_thread(self, thread: Thread):
+        self._app_context.set_thread(thread)
 
     def update(self):
         if self._board is not None:
