@@ -19,6 +19,8 @@ BROWSER_PATH = None
 USER_AGENT = "Mozilla/5.0"
 COOKIE = "yuki=akari"
 
+DEFAULT_SORT = "number"
+
 conf_file = Path("~/.gochan/conf.json").expanduser()
 
 if conf_file.is_file():
@@ -38,3 +40,5 @@ if conf_file.is_file():
         USER_AGENT = conf["user_agent"]
     if "cookie" in conf:
         COOKIE = conf["cookie"]
+    if "default_sort" in conf:
+        DEFAULT_SORT = conf["default_sort"]

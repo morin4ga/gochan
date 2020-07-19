@@ -2,6 +2,7 @@ from typing import Optional, List
 
 from gochan.models import AppContext, Thread
 from gochan.event_handler import PropertyChangedEventArgs, PropertyChangedEventHandler, CollectionChangedEventArgs
+from gochan.config import DEFAULT_SORT
 
 
 class BoardVM:
@@ -10,8 +11,18 @@ class BoardVM:
 
         self._app_context = app_context
         self._board = app_context.board
-        self._sort_by = "number"
-        self._reverse_sort = False
+
+        if "number" in DEFAULT_SORT:
+            self._sort_by = "number"
+        elif "title" in DEFAULT_SORT:
+            self._sort_by = "title"
+        elif "count" in DEFAULT_SORT:
+            self._sort_by = "count"
+        elif "speed" in DEFAULT_SORT:
+            self._sort_by = "speed"
+
+        self._reverse_sort = DEFAULT_SORT.startswith("!")
+
         self._unread_sort = False
         self._search_word = None
 
