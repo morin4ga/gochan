@@ -13,6 +13,7 @@ class BoardVM:
         self._board = app_context.board
         self._sort_by = "number"
         self._reverse_sort = False
+        self._unread_sort = False
         self._search_word = None
 
         self._app_context.on_property_changed.add(self._app_context_changed)
@@ -33,10 +34,11 @@ class BoardVM:
             threads.sort(key=lambda x: x.title, reverse=self._reverse_sort)
         elif self._sort_by == "count":
             threads.sort(key=lambda x: x.count, reverse=self._reverse_sort)
-        elif self._sort_by == "unread":
-            threads.sort(key=lambda x: x.count - x.bookmark if x.bookmark != 0 else -1, reverse=True)
         elif self._sort_by == "speed":
             threads.sort(key=lambda x: x.speed, reverse=self._reverse_sort)
+
+        if self._unread_sort:
+            threads.sort(key=lambda x: (2 if x.count - x.bookmark > 0 else 1) if x.bookmark != 0 else 0, reverse=True)
 
         if self._search_word is not None:
             threads.sort(key=lambda x: (self._search_word not in x.title))
@@ -60,6 +62,10 @@ class BoardVM:
 
     def sort_threads_by_word(self, word: str):
         self._search_word = word
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
+
+    def switch_unread_sort(self):
+        self._unread_sort = not self._unread_sort
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
 
     def select_thread(self, idx: int):
