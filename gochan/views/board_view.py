@@ -32,10 +32,10 @@ class BoardView(Frame):
 
         self._thread_list = MultiColumnListBoxK(
             Widget.FILL_FRAME,
-            ["<4%", "<76%", "<6%", "<6%", "<8"],
+            ["<4%", "<70%", "<6%", "<6%", "<8", "<6"],
             [],
             self._keybindings,
-            titles=["番号", "|タイトル", " |レス", " |未読", " |勢い"],
+            titles=["番号", "|タイトル", " |レス", " |未読", " |勢い", " |状態"],
             name="thread_list",
             add_scroll_bar=True,
             on_change=self._on_pick,
@@ -85,10 +85,27 @@ class BoardView(Frame):
 
     def _update_options(self):
         if self._data_context.threads is not None:
-            self._thread_list.options = [([str(x.number), "|" + x.title, " |" + str(x.count),
-                                           " |" + (str(x.count - x.bookmark) if x.bookmark != 0 else ""),
-                                           " |" + str(x.speed)], i)
-                                         for i, x in enumerate(self._data_context.threads)]
+            options = []
+
+            for i, t in enumerate(self._data_context.threads):
+                num = str(t.number)
+                title = "|" + t.title
+                count = " |" + str(t.count)
+                unread = " |" + (str(t.count - t.bookmark) if t.bookmark != 0 else "")
+                speed = " |" + str(t.speed)
+                state = " |"
+
+                if t.bookmark != 0:
+                    if t.count - t.bookmark != 0:
+                        state += "➕"
+                    else:
+                        state += "➖"
+                elif t.is_new:
+                    state += "❗️"
+
+                options.append(([num, title, count, unread, speed, state], i))
+
+            self._thread_list.options = options
         else:
             self._thread_list.options = []
 
