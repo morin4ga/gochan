@@ -34,7 +34,7 @@ KEY_BINDINGS = {
         "title_des_sort": Key.Shift.W,
         "count_sort": Key.E,
         "count_des_sort": Key.Shift.E,
-        "unread_sort": Key.R,
+        "active_sort": Key.R,
         "speed_sort": Key.T,
         "speed_des_sort": Key.Shift.T,
         "find": Key.F,
@@ -122,7 +122,7 @@ if KEYBINDINGS_PATH.is_file():
             KEY_BINDINGS["board"]["count_sort"] = parse_key(keybindings["board"]["count_sort"])
         if "count_des_sort" in keybindings["board"]:
             KEY_BINDINGS["board"]["count_des_sort"] = parse_key(keybindings["board"]["count_des_sort"])
-        if "unread_sort" in keybindings["board"]:
+        if "active_sort" in keybindings["board"]:
             KEY_BINDINGS["board"]["unread_sort"] = parse_key(keybindings["board"]["unread_sort"])
         if "speed_sort" in keybindings["board"]:
             KEY_BINDINGS["board"]["speed_sort"] = parse_key(keybindings["board"]["speed_sort"])

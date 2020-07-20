@@ -112,8 +112,8 @@ class BoardView(Frame):
             elif event.key_code == self._keybindings["count_des_sort"]:
                 self._data_context.sort_threads("count", True)
                 return None
-            elif event.key_code == self._keybindings["unread_sort"]:
-                self._data_context.switch_unread_sort()
+            elif event.key_code == self._keybindings["active_sort"]:
+                self._data_context.switch_active_sort()
                 return None
             elif event.key_code == self._keybindings["speed_sort"]:
                 self._data_context.sort_threads("speed")
