@@ -1,12 +1,12 @@
 import json
 from pathlib import Path
 
+APP_DIR = Path("~/.gochan").expanduser()
 
-KEYBINDINGS_PATH = Path("~/.gochan/keybindings.json").expanduser()
-CACHE_PATH = Path("~/.gochan/cache").expanduser()
-LOG_PATH = Path("~/.gochan/log").expanduser()
-NG_PATH = Path("~/.gochan/ng.json").expanduser()
-THEME_PATH = Path("~/.gochan/theme.json").expanduser()
+KEYBINDINGS_PATH = APP_DIR / "keybindings.json"
+LOG_PATH = APP_DIR / "log"
+NG_PATH = APP_DIR / "ng.json"
+THEME_PATH = APP_DIR / "theme.json"
 
 USE_IMAGE_CACHE = True
 MAX_IMAGE_CACHE = 5
@@ -21,7 +21,7 @@ COOKIE = "yuki=akari"
 
 DEFAULT_SORT = "number"
 
-conf_file = Path("~/.gochan/conf.json").expanduser()
+conf_file = APP_DIR / "conf.json"
 
 if conf_file.is_file():
     conf = json.loads(conf_file.read_text())
