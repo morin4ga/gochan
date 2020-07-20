@@ -46,6 +46,7 @@ class Thread:
         self.key = key
         self.number = number
         self.title = title
+        self.is_new = True
         self._count = count
         self._speed = calc_speed(key, count)
         self.responses: List[Response] = []

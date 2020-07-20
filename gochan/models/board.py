@@ -45,6 +45,7 @@ class Board:
                     thread = Thread.restore(d)
                     thread.count = t["count"]
                     thread.number = i
+                    thread.is_new = False
                     new_threads.append(thread)
                     raise BreakException()
 
