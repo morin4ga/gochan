@@ -35,6 +35,7 @@ class Board:
                     if t["key"] == thread.key:
                         thread.count = t["count"]
                         thread.number = i
+                        thread.is_new = False
                         new_threads.append(thread)
                         self.threads.remove(thread)
                         raise BreakException()
