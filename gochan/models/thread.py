@@ -1,5 +1,4 @@
 import re
-import time
 
 from typing import List, Dict, Union
 
@@ -37,39 +36,19 @@ class Response:
 
 
 class Thread:
-    def __init__(self, server: str, board: str, key: str,
-                 number: int = 0, title: str = None, count: int = 0):
+    def __init__(self, server: str, board: str, key: str):
         super().__init__()
 
         self.server = server
         self.board = board
         self.key = key
-        self.number = number
-        self.title = title
-        self.is_new = True
-        self._count = count
-        self._speed = calc_speed(key, count)
+        self.title = None
         self.responses: List[Response] = []
         self._is_pastlog: bool = False
         self.links = []
         self._bookmark = 0
         self.on_property_changed = PropertyChangedEventHandler()
         self.on_collection_changed = CollectionChangedEventHandler()
-
-    @property
-    def count(self) -> int:
-        return self._count
-
-    @count.setter
-    def count(self, value: int):
-        self._count = value
-        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "count"))
-        self._speed = calc_speed(self.key, self.count)
-        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "speed"))
-
-    @property
-    def speed(self) -> int:
-        return self._speed
 
     @property
     def is_pastlog(self) -> bool:
@@ -129,8 +108,6 @@ class Thread:
                 self.on_collection_changed.invoke(CollectionChangedEventArgs(
                     self, "responses", CollectionChangedEventKind.EXTEND, self.responses[start:]))
 
-        self.count = len(self.responses)
-
     def post(self, name: str, mail: str, message: str) -> str:
         return post_response(self.server, self.board, self.key, name, mail, message)
 
@@ -156,16 +133,3 @@ class Thread:
 
             for link in re.finditer(r'(https?://.*?)(?=$|\n| )', r["msg"]):
                 self.links.append(link.group(1))
-
-
-def calc_speed(key: str, count: int) -> int:
-    now = int(time.time())
-    since = int(key)
-
-    diff = now - since
-
-    if diff > 0:
-        res_per_s = count / diff
-        return int(res_per_s * 60 * 60 * 24)
-    else:
-        return 0

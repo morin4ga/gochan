@@ -91,17 +91,16 @@ class BoardView(Frame):
                 num = str(t.number)
                 title = "|" + t.title
                 count = " |" + str(t.count)
-                unread = " |" + (str(t.count - t.bookmark) if t.bookmark != 0 else "")
+                unread = " |" + str(t.unread)
                 speed = " |" + str(t.speed)
                 state = " |"
 
-                if t.bookmark != 0:
-                    if t.count - t.bookmark != 0:
-                        state += "➕"
-                    else:
-                        state += "➖"
-                elif t.is_new:
-                    state += "❗️"
+                if t.unread == t.count:
+                    pass
+                elif t.unread != 0:
+                    state += "➕"
+                elif t.unread == 0:
+                    state += "➖"
 
                 options.append(([num, title, count, unread, speed, state], i))
 

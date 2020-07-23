@@ -1,6 +1,6 @@
 from typing import Optional, List
 
-from gochan.models import AppContext, Thread
+from gochan.models import AppContext, ThreadHeader
 from gochan.event_handler import PropertyChangedEventArgs, PropertyChangedEventHandler, CollectionChangedEventArgs
 from gochan.config import DEFAULT_SORT
 
@@ -35,7 +35,7 @@ class BoardVM:
         return self._board.board if self._board is not None else None
 
     @property
-    def threads(self) -> Optional[List[Thread]]:
+    def threads(self) -> Optional[List[ThreadHeader]]:
         threads = self._app_context.ng.filter_threads(self._board)
 
         if self._sort_by == "number":
@@ -75,8 +75,8 @@ class BoardVM:
         self._active_sort = not self._active_sort
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
 
-    def set_thread(self, thread: Thread):
-        self._app_context.set_thread(thread)
+    def set_thread(self, header: ThreadHeader):
+        self._app_context.set_thread(self._board.server, self._board.board, header.key)
 
     def update(self):
         if self._board is not None:

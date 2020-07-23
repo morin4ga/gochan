@@ -36,11 +36,11 @@ class AppContext:
         self.board.update()
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "board"))
 
-    def set_thread(self, thread: Thread):
+    def set_thread(self, server: str, board: str, key: str):
         if SAVE_THREAD_LOG:
             self.save_thread()
 
-        self.thread = thread
+        self.thread = Thread(server, board, key)
         self.thread.update()
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "thread"))
 
