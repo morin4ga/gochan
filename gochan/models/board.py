@@ -49,7 +49,7 @@ class Board:
         self.threads = []
 
         for i, t in enumerate(parser.threads(), 1):
-            self.threads.append(ThreadHeader(t["key"], i, t["title"], t["count"], -1))
+            self.threads.append(ThreadHeader(t["key"], i, t["title"], t["count"]))
 
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
 
