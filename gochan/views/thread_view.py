@@ -81,7 +81,7 @@ class ThreadView(Frame):
 
             bookmark = self._data_context.bookmark
 
-            if bookmark != 0:
+            if bookmark is not None:
                 # if there are unread responses, then scroll to them
                 if len(self._anchors) > bookmark:
                     line = self._anchors[bookmark][0]
@@ -298,15 +298,12 @@ class ThreadView(Frame):
                                            self._data_context.board, self._data_context.key)
 
     def _update_bookmark(self):
-        if self._data_context.bookmark is None:
-            return
-
         displayed_end_line = self._rtext.scroll_offset + self._rtext._h
 
-        new_bookmark = self._data_context.bookmark
-
+        p = 0
         for number, (_, end) in enumerate(self._anchors, 1):
-            if displayed_end_line >= end and self._data_context.bookmark < number:
-                new_bookmark = number
+            if displayed_end_line >= end:
+                p = number
 
-        self._data_context.bookmark = new_bookmark
+        self._data_context.bookmark = max(
+            p, self._data_context.bookmark if self._data_context.bookmark is not None else 0)
