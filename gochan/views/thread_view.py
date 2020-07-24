@@ -157,12 +157,12 @@ class ThreadView(Frame):
         pass
 
     def _on_back_btn_pushed(self):
-        self._update_bookmark()
+        self._save_history()
         raise NextScene("Board")
 
     def _on_update_btn_pushed(self):
         self._data_context.update()
-        self._update_bookmark()
+        self._save_history()
         self.switch_focus(self._layouts[0], 0, 0)
 
     def _on_write_btn_pushed(self):
@@ -195,10 +195,10 @@ class ThreadView(Frame):
                 return None
             elif event.key_code == self._keybindings["update"]:
                 self._data_context.update()
-                self._update_bookmark()
+                self._save_history()
                 return None
             elif event.key_code == self._keybindings["back"]:
-                self._update_bookmark()
+                self._save_history()
                 raise NextScene("Board")
 
         return super().process_event(event)
@@ -297,13 +297,14 @@ class ThreadView(Frame):
             self._data_context.add_ng_word(value, use_reg, hide, auto_ng_id,
                                            self._data_context.board, self._data_context.key)
 
-    def _update_bookmark(self):
+    def _save_history(self):
         displayed_end_line = self._rtext.scroll_offset + self._rtext._h
 
-        p = 0
+        new_bookmark = 0
         for number, (_, end) in enumerate(self._anchors, 1):
             if displayed_end_line >= end:
-                p = number
+                new_bookmark = number
 
-        self._data_context.bookmark = max(
-            p, self._data_context.bookmark if self._data_context.bookmark is not None else 0)
+        cur_bookmark = self._data_context.bookmark if self._data_context.bookmark is not None else 0
+
+        self._data_context.save_history(max(new_bookmark, cur_bookmark))

@@ -40,7 +40,7 @@ class BoardVM:
 
         self._app_context.on_property_changed.add(self._app_context_changed)
         self._app_context.ng.on_collection_changed.add(self._ng_changed)
-        self._app_context.bookmark.on_property_changed.add(self._bookmark_changed)
+        self._app_context.history.on_property_changed.add(self._history_changed)
         self.on_property_changed = PropertyChangedEventHandler()
 
     @property
@@ -87,9 +87,13 @@ class BoardVM:
         self._threads = []
 
         for t in self._app_context.ng.filter_threads(self._board.threads, self._board.board):
-            bookmark = self._app_context.bookmark.get(self._board.board, t.key)
-            unread = None if bookmark is None else t.count - bookmark
-            self._threads.append(ThreadHeaderVM(t.key, t.number, t.title, t.count, t.speed, unread))
+            history = self._app_context.history.get(self._board.board, t.key)
+
+            if history is not None:
+                unread = history.acquired_reses - history.bookmark
+                self._threads.append(ThreadHeaderVM(t.key, t.number, t.title, history.acquired_reses, t.speed, unread))
+            else:
+                self._threads.append(ThreadHeaderVM(t.key, t.number, t.title, t.count, t.speed, None))
 
         if self._sort_by == "number":
             self._threads.sort(key=lambda x: x.number, reverse=self._reverse_sort)
@@ -126,15 +130,15 @@ class BoardVM:
         self._search_word = None
         self._update_threads()
 
-    def _bookmark_changed(self, e: PropertyChangedEventArgs):
+    def _history_changed(self, e: PropertyChangedEventArgs):
         self._update_threads()
 
     def _active_sort_key(self, item: ThreadHeaderVM):
-        bookmark = self._app_context.bookmark.get(self._board.board, item.key)
+        history = self._app_context.history.get(self._board.board, item.key)
 
-        if bookmark is None:
+        if history is None:
             return 0
-        elif bookmark == item.count:
+        elif history.bookmark == item.count:
             return 1
         else:
             return 2
