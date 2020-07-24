@@ -11,6 +11,7 @@ from gochan.models.board import Board
 from gochan.models.thread import Thread
 from gochan.config import USE_IMAGE_CACHE, SAVE_THREAD_LOG
 from gochan.storage import image_cache, thread_log
+from gochan.models.bookmark import Bookmark
 from gochan.client import download_image
 from gochan.models.ng import ng, NG
 
@@ -23,6 +24,7 @@ class AppContext:
         self.thread: Optional[Thread] = None
         self.image: Optional[Union[str, HTTPError, URLError]] = None
         self.ng: NG = ng
+        self.bookmark = Bookmark()
 
         self.on_property_changed = PropertyChangedEventHandler()
 

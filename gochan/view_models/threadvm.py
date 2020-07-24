@@ -18,6 +18,7 @@ class ThreadVM:
 
         app_context.on_property_changed.add(self._app_context_changed)
         app_context.ng.on_collection_changed.add(self._ng_changed)
+        app_context.bookmark.on_property_changed.add(self._bookmark_changed)
 
     @property
     def server(self) -> Optional[str]:
@@ -49,12 +50,13 @@ class ThreadVM:
 
     @property
     def bookmark(self) -> Optional[int]:
-        return self._thread.bookmark if self._thread is not None else None
+        if self._thread is not None:
+            return self._app_context.bookmark.get(self._thread.board, self._thread.key)
 
     @bookmark.setter
     def bookmark(self, value):
         if self._thread is not None:
-            self._thread.bookmark = value
+            self._app_context.bookmark.save(self._thread.board, self._thread.key, value)
 
     @property
     def filtered_responses(self) -> Optional[List[Union[NGResponse, Response]]]:
@@ -114,8 +116,6 @@ class ThreadVM:
             self._filtered_responses = self._app_context.ng.filter_responses(self._thread)
             self.on_property_changed.invoke(PropertyChangedEventArgs(self, "responses"))
             self.on_property_changed.invoke(PropertyChangedEventArgs(self, "filtered_responses"))
-        elif e.property_name == "bookmark":
-            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "bookmark"))
 
     def _thread_collection_changed(self, e: CollectionChangedEventArgs):
         if e.property_name == "responses":
@@ -129,3 +129,6 @@ class ThreadVM:
             self.on_property_changed.invoke(PropertyChangedEventArgs(self, "filtered_responses"))
 
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "ng"))
+
+    def _bookmark_changed(self, e: PropertyChangedEventArgs):
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "bookmark"))
