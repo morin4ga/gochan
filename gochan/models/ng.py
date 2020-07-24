@@ -5,7 +5,7 @@ from typing import List, Optional, Union
 
 from gochan.config import NG_PATH
 from gochan.event_handler import CollectionChangedEventHandler, CollectionChangedEventArgs, CollectionChangedEventKind
-from gochan.models import Board, Thread, Response
+from gochan.models import ThreadHeader, Thread, Response
 
 
 class BreakException(Exception):
@@ -206,14 +206,14 @@ class NG:
                     self, "titles", CollectionChangedEventKind.DELETE, n))
                 return
 
-    def filter_threads(self, board: Board) -> List[Thread]:
+    def filter_threads(self, threads: List[ThreadHeader], board: str) -> List[ThreadHeader]:
         result = []
 
-        for h in board.threads:
+        for h in threads:
             try:
                 for n in self.titles:
                     # Ignore ng when the response is out of ng's scope
-                    if n.board is not None and n.board != h.board:
+                    if n.board is not None and n.board != board:
                         continue
 
                     if n.match(h.title):

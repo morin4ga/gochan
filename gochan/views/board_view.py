@@ -91,15 +91,15 @@ class BoardView(Frame):
                 num = str(t.number)
                 title = "|" + t.title
                 count = " |" + str(t.count)
-                unread = " |" + str(t.unread)
+                unread = " |" + (str(t.unread) if t.unread is not None else "")
                 speed = " |" + str(t.speed)
                 state = " |"
 
-                if t.unread == t.count:
+                if t.unread is None:
                     pass
                 elif t.unread != 0:
                     state += "➕"
-                elif t.unread == 0:
+                else:
                     state += "➖"
 
                 options.append(([num, title, count, unread, speed, state], i))
