@@ -101,8 +101,7 @@ class BoardVM:
             self._threads.sort(key=lambda x: x.speed, reverse=self._reverse_sort)
 
         if self._active_sort:
-            self._threads.sort(key=lambda x: (3 if x.count - x.bookmark > 0 else 2)
-                               if x.bookmark != 0 else (1 if x.is_new else 0), reverse=True)
+            self._threads.sort(key=self._active_sort_key, reverse=True)
 
         if self._search_word is not None:
             self._threads.sort(key=lambda x: (self._search_word not in x.title))
@@ -129,3 +128,13 @@ class BoardVM:
 
     def _bookmark_changed(self, e: PropertyChangedEventArgs):
         self._update_threads()
+
+    def _active_sort_key(self, item: ThreadHeaderVM):
+        bookmark = self._app_context.bookmark.get(self._board.board, item.key)
+
+        if bookmark is None:
+            return 0
+        elif bookmark == item.count:
+            return 1
+        else:
+            return 2
