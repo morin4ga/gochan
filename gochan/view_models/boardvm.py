@@ -90,8 +90,8 @@ class BoardVM:
             history = self._app_context.history.get(self._board.board, t.key)
 
             if history is not None:
-                unread = history.acquired_reses - history.bookmark
-                self._threads.append(ThreadHeaderVM(t.key, t.number, t.title, history.acquired_reses, t.speed, unread))
+                unread = history.retrieved_reses - history.bookmark
+                self._threads.append(ThreadHeaderVM(t.key, t.number, t.title, history.retrieved_reses, t.speed, unread))
             else:
                 self._threads.append(ThreadHeaderVM(t.key, t.number, t.title, t.count, t.speed, None))
 

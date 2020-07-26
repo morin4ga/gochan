@@ -7,12 +7,15 @@ KEYBINDINGS_PATH = APP_DIR / "keybindings.json"
 LOG_PATH = APP_DIR / "log"
 NG_PATH = APP_DIR / "ng.json"
 THEME_PATH = APP_DIR / "theme.json"
+HISTORY_PATH = APP_DIR / "history.json"
 
 USE_IMAGE_CACHE = True
 MAX_IMAGE_CACHE = 5
 
 SAVE_THREAD_LOG = True
 MAX_THREAD_LOG = 50
+
+MAX_HISTORY = 50
 
 BROWSER_PATH = None
 
