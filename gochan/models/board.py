@@ -24,12 +24,13 @@ def calc_speed(key: str, count: int) -> int:
 
 
 class ThreadHeader:
-    def __init__(self, key: str, number: int, title: str, count: int):
+    def __init__(self, key: str, number: int, title: str, count: int, is_new: bool):
         super().__init__()
         self.key = key
         self.number = number
         self.title = title
         self.count = count
+        self.is_new = is_new
         self.speed = calc_speed(key, count)
 
 
@@ -46,10 +47,22 @@ class Board:
         s = get_board(self.server, self.board)
         parser = BoardParser(s)
 
-        self.threads = []
+        new_threads = []
 
         for i, t in enumerate(parser.threads(), 1):
-            self.threads.append(ThreadHeader(t["key"], i, t["title"], t["count"]))
+            # If thread is new arrival
+            if t["key"] not in [x.key for x in self.threads]:
+                now = int(time.time())
+                key = int(t["key"])
+
+                # If the time since thread is created is less than 30 minutes from now
+                if now - 1800 < key:
+                    new_threads.append(ThreadHeader(t["key"], i, t["title"], t["count"], True))
+                    continue
+
+            new_threads.append(ThreadHeader(t["key"], i, t["title"], t["count"], False))
+
+        self.threads = new_threads
 
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
 

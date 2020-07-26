@@ -96,7 +96,9 @@ class BoardView(Frame):
                 state = " |"
 
                 if t.unread is None:
-                    pass
+                    if t.is_new:
+                        state += "❕"
+
                 elif t.unread != 0:
                     state += "➕"
                 else:

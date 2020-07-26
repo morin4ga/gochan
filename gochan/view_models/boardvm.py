@@ -6,12 +6,13 @@ from gochan.config import DEFAULT_SORT
 
 
 class ThreadHeaderVM:
-    def __init__(self, key: str, number: int, title: str, count: int, speed: int, unread: int):
+    def __init__(self, key: str, number: int, title: str, count: int, is_new: bool, speed: int, unread: int):
         super().__init__()
         self.key = key
         self.number = number
         self.title = title
         self.count = count
+        self.is_new = is_new
         self.speed = speed
         self.unread = unread
 
@@ -92,9 +93,9 @@ class BoardVM:
             if history is not None:
                 unread = max(t.count, history.retrieved_reses) - history.bookmark
                 self._threads.append(ThreadHeaderVM(t.key, t.number, t.title,
-                                                    max(t.count, history.retrieved_reses), t.speed, unread))
+                                                    max(t.count, history.retrieved_reses), t.is_new, t.speed, unread))
             else:
-                self._threads.append(ThreadHeaderVM(t.key, t.number, t.title, t.count, t.speed, None))
+                self._threads.append(ThreadHeaderVM(t.key, t.number, t.title, t.count, t.is_new, t.speed, None))
 
         if self._sort_by == "number":
             self._threads.sort(key=lambda x: x.number, reverse=self._reverse_sort)
@@ -135,11 +136,13 @@ class BoardVM:
         self._update_threads()
 
     def _active_sort_key(self, item: ThreadHeaderVM):
-        history = self._app_context.history.get(self._board.board, item.key)
-
-        if history is None:
-            return 0
-        elif history.bookmark == item.count:
-            return 1
+        if item.unread is None:
+            if item.is_new:
+                return 1
+            else:
+                return 0
         else:
-            return 2
+            if item.unread == 0:
+                return 2
+            else:
+                return 3
