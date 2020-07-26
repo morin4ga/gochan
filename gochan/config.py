@@ -17,6 +17,8 @@ MAX_THREAD_LOG = 50
 
 MAX_HISTORY = 50
 
+NEW_THREAD_INTERVAL = 30
+
 BROWSER_PATH = None
 
 USER_AGENT = "Mozilla/5.0"
@@ -45,3 +47,5 @@ if conf_file.is_file():
         COOKIE = conf["cookie"]
     if "default_sort" in conf:
         DEFAULT_SORT = conf["default_sort"]
+    if "new_state_interval" in conf:
+        NEW_THREAD_INTERVAL = conf["new_thread_interval"]

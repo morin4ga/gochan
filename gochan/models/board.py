@@ -4,6 +4,7 @@ from typing import List
 from gochan.client import get_board
 from gochan.parser import BoardParser
 from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs
+from gochan.config import NEW_THREAD_INTERVAL
 
 
 class BreakException(Exception):
@@ -55,8 +56,8 @@ class Board:
                 now = int(time.time())
                 key = int(t["key"])
 
-                # If the time since thread is created is less than 30 minutes from now
-                if now - 1800 < key:
+                # If the time since thread is created is less than NEW_THREAD_INTERVAL minutes from now
+                if now - (NEW_THREAD_INTERVAL * 60) < key:
                     new_threads.append(ThreadHeader(t["key"], i, t["title"], t["count"], True))
                     continue
 
