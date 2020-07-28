@@ -1,4 +1,5 @@
 import time
+import json
 from typing import List
 
 from gochan.client import get_board
@@ -84,6 +85,35 @@ class Board:
     def sort_threads_by_word(self, word: str):
         self.threads.sort(key=lambda x: (word not in x.title))
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "threads"))
+
+    def serialize(self) -> str:
+        d = {}
+        d["server"] = self.server
+        d["board"] = self.board
+        d["threads"] = []
+
+        for t in self.threads:
+            d["threads"].append({
+                "number": t.number,
+                "title": t.title,
+                "count": t.count,
+                "speed": t.speed,
+                "key": t.key,
+                "is_new": t.is_new
+            })
+
+        return json.dumps(d)
+
+    @staticmethod
+    def deserialize(s: str):
+        obj = json.loads(s)
+
+        b = Board(obj["server"], obj["board"])
+
+        for t in obj["threads"]:
+            b.threads.append(ThreadHeader(t["key"], t["number"], t["title"], t["count"], t["is_new"]))
+
+        return b
 
     def _thread_property_changed(self, e: PropertyChangedEventArgs):
         if e.property_name == "bookmark":

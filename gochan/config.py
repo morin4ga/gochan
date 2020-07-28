@@ -15,6 +15,9 @@ MAX_IMAGE_CACHE = 5
 SAVE_THREAD_LOG = True
 MAX_THREAD_LOG = 50
 
+USE_BOARD_LOG = True
+MAX_BOARD_LOG = 50
+
 MAX_HISTORY = 50
 
 NEW_THREAD_INTERVAL = 30
@@ -41,6 +44,10 @@ if conf_file.is_file():
         SAVE_THREAD_LOG = conf["use_thread_log"]
     if "max_thread_log" in conf:
         MAX_THREAD_LOG = conf["max_thread_log"]
+    if "use_board_log" in conf:
+        USE_BOARD_LOG = conf["use_board_log"]
+    if "max_board_log" in conf:
+        MAX_BOARD_LOG = conf["max_board_log"]
     if "user_agent" in conf:
         USER_AGENT = conf["user_agent"]
     if "cookie" in conf:

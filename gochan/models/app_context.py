@@ -9,8 +9,8 @@ from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEve
 from gochan.models.bbsmenu import Bbsmenu
 from gochan.models.board import Board
 from gochan.models.thread import Thread
-from gochan.config import USE_IMAGE_CACHE, SAVE_THREAD_LOG
-from gochan.storage import image_cache, thread_log
+from gochan.config import USE_IMAGE_CACHE, SAVE_THREAD_LOG, USE_BOARD_LOG
+from gochan.storage import image_cache, thread_log, board_log
 from gochan.models.history import history
 from gochan.client import download_image
 from gochan.models.ng import ng, NG
@@ -34,6 +34,16 @@ class AppContext:
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "bbsmenu"))
 
     def set_board(self, server: str, board: str):
+        if USE_BOARD_LOG:
+            self.save_board()
+
+            if board_log.contains(server + board):
+                s = board_log.get(server + board)
+                self.board = Board.deserialize(s)
+                self.board.update()
+                self.on_property_changed.invoke(PropertyChangedEventArgs(self, "board"))
+                return
+
         self.board = Board(server, board)
         self.board.update()
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "board"))
@@ -46,10 +56,25 @@ class AppContext:
         self.thread.update()
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "thread"))
 
+    def save_board(self):
+        if self.board is not None:
+            s = self.board.serialize()
+            board_log.store(self.board.server + self.board.board, s.encode())
+
     def save_thread(self):
         if self.thread is not None:
             data = pickle.dumps(self.thread.to_dict())
             thread_log.store(self.thread.board + "-" + self.thread.key, data)
+
+    def save_context(self):
+        if USE_BOARD_LOG:
+            self.save_board()
+
+        if SAVE_THREAD_LOG:
+            self.save_thread()
+
+        self.ng.save()
+        self.history.serialize()
 
     def set_image(self, url: str):
         if USE_IMAGE_CACHE:

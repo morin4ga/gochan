@@ -62,9 +62,7 @@ def main():
     while True:
         try:
             Screen.wrapper(demo, catch_interrupt=True, arguments=[last_scene, app_context])
-            app_context.save_thread()
-            app_context.ng.save()
-            app_context.history.serialize()
+            app_context.save_context()
             sys.exit(0)
         except ResizeScreenError as e:
             last_scene = e.scene

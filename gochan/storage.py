@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from gochan.config import MAX_IMAGE_CACHE, LOG_PATH, MAX_THREAD_LOG
+from gochan.config import MAX_IMAGE_CACHE, LOG_PATH, MAX_THREAD_LOG, MAX_BOARD_LOG
 
 
 class Storage:
@@ -36,3 +36,4 @@ class Storage:
 
 image_cache = Storage(LOG_PATH / "images", MAX_IMAGE_CACHE)
 thread_log = Storage(LOG_PATH / "threads", MAX_THREAD_LOG)
+board_log = Storage(LOG_PATH / "boards", MAX_BOARD_LOG)
