@@ -49,8 +49,8 @@ class AppContext:
         if USE_BOARD_LOG:
             self.save_board()
 
-            if board_log.contains(server + board):
-                s = board_log.get(server + board)
+            if board_log.contains(board):
+                s = board_log.get(board)
                 self.board = Board.deserialize(s)
                 self.board.update()
                 self.on_property_changed.invoke(PropertyChangedEventArgs(self, "board"))
@@ -78,7 +78,7 @@ class AppContext:
     def save_board(self):
         if self.board is not None:
             s = self.board.serialize()
-            board_log.store(self.board.server + self.board.board, s.encode())
+            board_log.store(self.board.board, s.encode())
 
     def save_thread(self):
         if self.thread is not None:
