@@ -9,11 +9,11 @@ from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEve
 from gochan.models.bbsmenu import Bbsmenu
 from gochan.models.board import Board
 from gochan.models.thread import Thread
-from gochan.config import USE_IMAGE_CACHE, SAVE_THREAD_LOG, USE_BOARD_LOG, HISTORY_PATH, MAX_HISTORY
+from gochan.config import USE_IMAGE_CACHE, SAVE_THREAD_LOG, USE_BOARD_LOG, HISTORY_PATH, MAX_HISTORY, NG_PATH
 from gochan.storage import image_cache, thread_log, board_log
 from gochan.models.history import History
 from gochan.client import download_image
-from gochan.models.ng import ng, NG
+from gochan.models.ng import NG
 
 
 class AppContext:
@@ -23,7 +23,15 @@ class AppContext:
         self.board: Optional[Board] = None
         self.thread: Optional[Thread] = None
         self.image: Optional[Union[str, HTTPError, URLError]] = None
-        self.ng: NG = ng
+
+        self.ng: NG = NG()
+
+        if NG_PATH.is_file():
+            s = NG_PATH.read_text()
+
+            # Ensure it's not empty
+            if len(s.replace(" ", "")) != 0:
+                self.ng.deserialize(s)
 
         self.history = History(MAX_HISTORY)
 
@@ -78,7 +86,8 @@ class AppContext:
         if SAVE_THREAD_LOG:
             self.save_thread()
 
-        self.ng.save()
+        s = self.ng.serialize()
+        NG_PATH.write_text(s)
 
         s = self.history.serialize()
         HISTORY_PATH.write_text(s)

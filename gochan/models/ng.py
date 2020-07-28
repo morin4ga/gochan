@@ -3,7 +3,6 @@ import json
 
 from typing import List, Optional, Union
 
-from gochan.config import NG_PATH
 from gochan.event_handler import CollectionChangedEventHandler, CollectionChangedEventArgs, CollectionChangedEventKind
 from gochan.models import ThreadHeader, Thread, Response
 
@@ -272,7 +271,7 @@ class NG:
 
         return result
 
-    def save(self):
+    def serialize(self):
         names = []
         words = []
         ids = []
@@ -338,8 +337,46 @@ class NG:
         obj["ids"] = ids
         obj["titles"] = titles
 
-        j = json.dumps(obj, ensure_ascii=False, indent=2)
-        NG_PATH.write_text(j)
+        return json.dumps(obj, ensure_ascii=False, indent=2)
+
+    def deserialize(self, s: str):
+        d = json.loads(s)
+
+        if "names" in d:
+            for item in d["names"]:
+                value = item["value"]
+                use_reg = item["use_reg"]
+                hide = item["hide"]
+                auto_ng_id = item["auto_ng_id"]
+                board = item.get("board")
+                key = item.get("key")
+                self.add_ng_name(value, use_reg, hide, auto_ng_id, board, key)
+
+        if "words" in d:
+            for item in d["words"]:
+                value = item["value"]
+                use_reg = item["use_reg"]
+                hide = item["hide"]
+                auto_ng_id = item["auto_ng_id"]
+                board = item.get("board")
+                key = item.get("key")
+                self.add_ng_word(value, use_reg, hide, auto_ng_id, board, key)
+
+        if "ids" in d:
+            for item in d["ids"]:
+                value = item["value"]
+                use_reg = item["use_reg"]
+                hide = item["hide"]
+                board = item.get("board")
+                key = item.get("key")
+                self.add_ng_id(value, use_reg, hide, board, key)
+
+        if "titles" in d:
+            for item in d["titles"]:
+                value = item["value"]
+                use_reg = item["use_reg"]
+                board = item.get("board")
+                self.add_ng_title(value, use_reg, board)
 
     def _add_auto_ng_id(self, thread: Thread):
         for r in thread.responses:
@@ -366,49 +403,3 @@ class NG:
                         and r.id not in [x.value for x in self.ids]:
                     self._last_id += 1
                     self.ids.append(NGId(self._last_id, r.id, False, n.hide, n.board, n.key))
-
-
-ng = NG()
-
-if NG_PATH.is_file():
-    text = NG_PATH.read_text()
-
-    # Ensure it's not empty
-    if len(text.replace(" ", "")) != 0:
-        d = json.loads(text)
-
-        if "names" in d:
-            for item in d["names"]:
-                value = item["value"]
-                use_reg = item["use_reg"]
-                hide = item["hide"]
-                auto_ng_id = item["auto_ng_id"]
-                board = item.get("board")
-                key = item.get("key")
-                ng.add_ng_name(value, use_reg, hide, auto_ng_id, board, key)
-
-        if "words" in d:
-            for item in d["words"]:
-                value = item["value"]
-                use_reg = item["use_reg"]
-                hide = item["hide"]
-                auto_ng_id = item["auto_ng_id"]
-                board = item.get("board")
-                key = item.get("key")
-                ng.add_ng_word(value, use_reg, hide, auto_ng_id, board, key)
-
-        if "ids" in d:
-            for item in d["ids"]:
-                value = item["value"]
-                use_reg = item["use_reg"]
-                hide = item["hide"]
-                board = item.get("board")
-                key = item.get("key")
-                ng.add_ng_id(value, use_reg, hide, board, key)
-
-        if "titles" in d:
-            for item in d["titles"]:
-                value = item["value"]
-                use_reg = item["use_reg"]
-                board = item.get("board")
-                ng.add_ng_title(value, use_reg, board)
