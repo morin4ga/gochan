@@ -1,4 +1,5 @@
 import re
+import json
 
 from typing import List, Dict, Union
 
@@ -19,21 +20,6 @@ class Response:
         self.id = id
         self.message = message
 
-    @staticmethod
-    def restore(dict) -> "Response":
-        return Response(dict["number"], dict["name"], dict["mail"], dict["date"], dict["id"], dict["message"])
-
-    def to_dict(self):
-        d = {}
-        d["number"] = self.number
-        d["name"] = self.name
-        d["mail"] = self.mail
-        d["date"] = self.date
-        d["id"] = self.id
-        d["message"] = self.message
-
-        return d
-
 
 class Thread:
     def __init__(self, server: str, board: str, key: str):
@@ -46,7 +32,6 @@ class Thread:
         self.responses: List[Response] = []
         self._is_pastlog: bool = False
         self.links = []
-        self._bookmark = 0
         self.on_property_changed = PropertyChangedEventHandler()
         self.on_collection_changed = CollectionChangedEventHandler()
 
@@ -68,17 +53,39 @@ class Thread:
         self._bookmark = value
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "bookmark"))
 
+    def serialize(self) -> str:
+        d = {}
+        d["server"] = self.server
+        d["board"] = self.board
+        d["key"] = self.key
+        d["title"] = self.key
+        d["is_pastlog"] = self.is_pastlog
+        d["responses"] = []
+
+        for r in self.responses:
+            d2 = {}
+            d2["number"] = r.number
+            d2["name"] = r.name
+            d2["mail"] = r.mail
+            d2["date"] = r.date
+            d2["id"] = r.id
+            d2["message"] = r.message
+
+            d["responses"].append(d2)
+
+        return json.dumps(d, ensure_ascii=False)
+
     @staticmethod
-    def restore(dict) -> "Thread":
-        t = Thread(dict["server"], dict["board"], dict["key"])
-        t.title = dict["title"]
-        t.links = dict["links"]
-        t.is_pastlog = dict["is_pastlog"]
-        t.bookmark = dict["bookmark"]
+    def deserialize(s: str) -> "Thread":
+        d = json.loads(s)
+
+        t = Thread(d["server"], d["board"], d["key"])
+        t.title = d["title"]
+        t.is_pastlog = d["is_pastlog"]
         t.responses = []
 
-        for r in dict["responses"]:
-            t.responses.append(Response.restore(r))
+        for r in d["responses"]:
+            t.add_response(r)
 
         return t
 
@@ -95,7 +102,7 @@ class Thread:
 
         # If responses has not initialtzed yet
         if len(self.responses) == 0:
-            self._add_response(parser.responses())
+            self.add_response(parser.responses())
             self.on_collection_changed.invoke(CollectionChangedEventArgs(
                 self, "responses", CollectionChangedEventKind.EXTEND, self.responses[0:]))
         else:
@@ -104,30 +111,14 @@ class Thread:
 
             if len(rs) > 1:
                 start = len(self.responses)
-                self._add_response(rs[1:])
+                self.add_response(rs[1:])
                 self.on_collection_changed.invoke(CollectionChangedEventArgs(
                     self, "responses", CollectionChangedEventKind.EXTEND, self.responses[start:]))
 
     def post(self, name: str, mail: str, message: str) -> str:
         return post_response(self.server, self.board, self.key, name, mail, message)
 
-    def to_dict(self):
-        d = {}
-        d["server"] = self.server
-        d["board"] = self.board
-        d["key"] = self.key
-        d["title"] = self.title
-        d["is_pastlog"] = self.is_pastlog
-        d["links"] = self.links
-        d["bookmark"] = self.bookmark
-        d["responses"] = []
-
-        for r in self.responses:
-            d["responses"].append(r.to_dict())
-
-        return d
-
-    def _add_response(self, rs: List[Dict[str, Union[int, str]]]):
+    def add_response(self, rs: List[Dict[str, Union[int, str]]]):
         for r in rs:
             self.responses.append(Response(r["num"], r["name"], r["mail"], r["date"], r["id"], r["msg"]))
 

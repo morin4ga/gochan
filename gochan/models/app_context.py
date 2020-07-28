@@ -1,6 +1,5 @@
 import re
 import tempfile
-import pickle
 
 from typing import Optional, Union
 from urllib.request import HTTPError, URLError
@@ -65,6 +64,13 @@ class AppContext:
         if SAVE_THREAD_LOG:
             self.save_thread()
 
+            if thread_log.contains(board + key):
+                s = thread_log.get(board + key)
+                self.thread = Thread.deserialize(s)
+                self.thread.update()
+                self.on_property_changed(self, "thread")
+                return
+
         self.thread = Thread(server, board, key)
         self.thread.update()
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "thread"))
@@ -76,8 +82,8 @@ class AppContext:
 
     def save_thread(self):
         if self.thread is not None:
-            data = pickle.dumps(self.thread.to_dict())
-            thread_log.store(self.thread.board + "-" + self.thread.key, data)
+            s = self.thread.serialize()
+            thread_log.store(self.thread.board + self.thread.key, s.encode())
 
     def save_context(self):
         if USE_BOARD_LOG:
