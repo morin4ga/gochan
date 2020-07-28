@@ -9,9 +9,9 @@ from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEve
 from gochan.models.bbsmenu import Bbsmenu
 from gochan.models.board import Board
 from gochan.models.thread import Thread
-from gochan.config import USE_IMAGE_CACHE, SAVE_THREAD_LOG, USE_BOARD_LOG
+from gochan.config import USE_IMAGE_CACHE, SAVE_THREAD_LOG, USE_BOARD_LOG, HISTORY_PATH, MAX_HISTORY
 from gochan.storage import image_cache, thread_log, board_log
-from gochan.models.history import history
+from gochan.models.history import History
 from gochan.client import download_image
 from gochan.models.ng import ng, NG
 
@@ -24,7 +24,12 @@ class AppContext:
         self.thread: Optional[Thread] = None
         self.image: Optional[Union[str, HTTPError, URLError]] = None
         self.ng: NG = ng
-        self.history = history
+
+        self.history = History(MAX_HISTORY)
+
+        if HISTORY_PATH.is_file():
+            s = HISTORY_PATH.read_text()
+            self.history.deserialize(s)
 
         self.on_property_changed = PropertyChangedEventHandler()
 
@@ -74,7 +79,9 @@ class AppContext:
             self.save_thread()
 
         self.ng.save()
-        self.history.serialize()
+
+        s = self.history.serialize()
+        HISTORY_PATH.write_text(s)
 
     def set_image(self, url: str):
         if USE_IMAGE_CACHE:

@@ -1,7 +1,6 @@
 import json
 from typing import Optional
 from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs
-from gochan.config import HISTORY_PATH, MAX_HISTORY
 
 
 class ThreadHistory:
@@ -12,39 +11,36 @@ class ThreadHistory:
 
 
 class History:
-    def __init__(self):
+    def __init__(self, max_history: int):
         super().__init__()
         self._dict = {}
+        self._max_history = max_history
         self.on_property_changed = PropertyChangedEventHandler()
 
     def get(self, board: str, key: str) -> Optional[ThreadHistory]:
         return self._dict.get(board + key)
 
     def save(self, board: str, key: str, bookmark: int, retrieved_reses: int):
-        while MAX_HISTORY <= len(self._dict):
+        while self._max_history <= len(self._dict):
             self._dict.popitem()
 
         self._dict[board + key] = ThreadHistory(bookmark, retrieved_reses)
 
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "self"))
 
-    def serialize(self):
+    def serialize(self) -> str:
         d = {}
 
         for k, v in self._dict.items():
             d[k] = {"bookmark": v.bookmark, "retrieved_reses": v.retrieved_reses}
 
-        s = json.dumps(d)
-        HISTORY_PATH.write_text(s)
+        return json.dumps(d)
 
-    def deserialize(self, d):
-        for k, v in d.items():
+    def deserialize(self, s: str):
+        obj = json.loads(s)
+
+        for k, v in obj.items():
+            if len(self._dict) >= self._max_history:
+                break
+
             self._dict[k] = ThreadHistory(v["bookmark"], v["retrieved_reses"])
-
-
-history = History()
-
-if HISTORY_PATH.is_file():
-    b = HISTORY_PATH.read_text()
-    d = json.loads(b)
-    history.deserialize(d)
