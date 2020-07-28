@@ -68,7 +68,7 @@ class AppContext:
                 s = thread_log.get(board + key)
                 self.thread = Thread.deserialize(s)
                 self.thread.update()
-                self.on_property_changed(self, "thread")
+                self.on_property_changed.invoke(PropertyChangedEventArgs(self, "thread"))
                 return
 
         self.thread = Thread(server, board, key)

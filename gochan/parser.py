@@ -130,7 +130,7 @@ class ThreadParserH:
         """
         Returns
         -------
-        [{num, mail, name, date, id, mgs}]
+        [{number, mail, name, date, id, message}]
         """
         re_res = re.compile(
             r'<div class="post" id="(?P<num>\d+)".*?"name"><b>(<a href="mailto:(?P<mail>.*?)">)?(?P<name>.*?)(</a>)?'
@@ -159,7 +159,7 @@ class ThreadParserH:
             msg = unescape(msg)
 
             responses.append({
-                "num": number, "name": name, "mail": mail, "date": date, "id": id, "msg": msg
+                "number": number, "name": name, "mail": mail, "date": date, "id": id, "message": msg
             })
 
         return responses
@@ -192,7 +192,7 @@ class ThreadParserD:
         """
         Returns
         -------
-        [{num, mail, name, date, id, mgs}]
+        [{number, mail, name, date, id, message}]
         """
 
         re_res = re.compile(r"(.*?)<>(.*?)<>(.*? .*?) (.*?)<> (.*?) <>.*")
@@ -221,7 +221,7 @@ class ThreadParserD:
             msg = unescape(msg)
 
             responses.append({
-                "num": i, "name": name, "mail": mail, "date": date, "id": id, "msg": msg
+                "number": i, "name": name, "mail": mail, "date": date, "id": id, "message": msg
             })
 
         return responses

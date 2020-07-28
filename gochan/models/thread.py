@@ -82,10 +82,7 @@ class Thread:
         t = Thread(d["server"], d["board"], d["key"])
         t.title = d["title"]
         t.is_pastlog = d["is_pastlog"]
-        t.responses = []
-
-        for r in d["responses"]:
-            t.add_response(r)
+        t.add_response(d["responses"])
 
         return t
 
@@ -120,7 +117,7 @@ class Thread:
 
     def add_response(self, rs: List[Dict[str, Union[int, str]]]):
         for r in rs:
-            self.responses.append(Response(r["num"], r["name"], r["mail"], r["date"], r["id"], r["msg"]))
+            self.responses.append(Response(r["number"], r["name"], r["mail"], r["date"], r["id"], r["message"]))
 
-            for link in re.finditer(r'(https?://.*?)(?=$|\n| )', r["msg"]):
+            for link in re.finditer(r'(https?://.*?)(?=$|\n| )', r["message"]):
                 self.links.append(link.group(1))
