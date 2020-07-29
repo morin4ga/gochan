@@ -44,15 +44,6 @@ class Thread:
         self._is_pastlog = value
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "is_pastlog"))
 
-    @property
-    def bookmark(self) -> int:
-        return self._bookmark
-
-    @bookmark.setter
-    def bookmark(self, value: int):
-        self._bookmark = value
-        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "bookmark"))
-
     def serialize(self) -> str:
         d = {}
         d["server"] = self.server
