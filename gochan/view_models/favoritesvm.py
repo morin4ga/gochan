@@ -28,5 +28,11 @@ class FavoritesVM:
     def lower_order(self, item: Union[FavoriteThread, FavoriteBoard]):
         self._app_context.favorites.lower_order(item)
 
+    def open_thread(self, item: FavoriteThread):
+        self._app_context.set_thread(item.server, item.board, item.key)
+
+    def open_board(self, item: FavoriteBoard):
+        self._app_context.set_thread(item.server, item.board)
+
     def _context_changed(self, e: PropertyChangedEventArgs):
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "list"))
