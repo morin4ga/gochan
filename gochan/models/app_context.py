@@ -13,6 +13,7 @@ from gochan.storage import image_cache, thread_log, board_log
 from gochan.models.history import History
 from gochan.client import download_image
 from gochan.models.ng import NG
+from gochan.models.favorites import Favorites
 
 
 class AppContext:
@@ -37,6 +38,8 @@ class AppContext:
         if HISTORY_PATH.is_file():
             s = HISTORY_PATH.read_text()
             self.history.deserialize(s)
+
+        self.favorites = Favorites()
 
         self.on_property_changed = PropertyChangedEventHandler()
 
