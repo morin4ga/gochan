@@ -8,9 +8,10 @@ from asciimatics.widgets import THEMES
 
 from gochan.keybinding import KEY_BINDINGS
 from gochan.key import KeyLogger
-from gochan.views import BbsmenuView, BoardView, ImageView, ThreadView, NGView
+from gochan.views import BbsmenuView, BoardView, ImageView, ThreadView, NGView, FavoritesView
 from gochan.models import AppContext
 from gochan.view_models import BbsmenuVM, BoardVM, ThreadVM, ImageVM, NGVM
+from gochan.view_models.favoritesvm import FavoritesVM
 from gochan.theme import THEME
 
 
@@ -28,6 +29,8 @@ def global_shortcuts(event):
             raise NextScene("Thread")
         elif c == KEY_BINDINGS["global"]["ng_view"]:
             raise NextScene("NG")
+        elif c == KEY_BINDINGS["global"]["favorites_view"]:
+            raise NextScene("Favorites")
 
 
 def demo(screen: Screen, scene: Scene, app_context: AppContext):
@@ -36,6 +39,7 @@ def demo(screen: Screen, scene: Scene, app_context: AppContext):
     thread_view = ThreadView(screen, ThreadVM(app_context))
     image_view = ImageView(screen, ImageVM(app_context))
     ng_view = NGView(screen, NGVM(app_context))
+    favorites_view = FavoritesView(screen, FavoritesVM(app_context))
     keylog = KeyLogger(screen)  # noqa: F841
 
     app_context.set_bbsmenu()
@@ -46,7 +50,8 @@ def demo(screen: Screen, scene: Scene, app_context: AppContext):
         Scene([board_view], -1, name="Board"),
         Scene([thread_view], -1, name="Thread"),
         Scene([image_view], -1, name="Image"),
-        Scene([ng_view], -1, name="NG")
+        Scene([ng_view], -1, name="NG"),
+        Scene([favorites_view], -1, name="Favorites")
     ]
 
     screen.play(scenes, stop_on_resize=True, start_scene=scene, unhandled_input=global_shortcuts, allow_int=True)
