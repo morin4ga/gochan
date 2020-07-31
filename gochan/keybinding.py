@@ -9,7 +9,8 @@ KEY_BINDINGS = {
         "bbsmenu_view": Key.Ctrl.H,
         "board_view": Key.Ctrl.J,
         "thread_view": Key.Ctrl.K,
-        "ng_view": Key.Ctrl.L
+        "ng_view": Key.Ctrl.L,
+        "favorites_view": Key.Ctrl.N
     },
     "bbsmenu": {
         "select_up": Key.UP,
@@ -78,6 +79,8 @@ if KEYBINDINGS_PATH.is_file():
             KEY_BINDINGS["global"]["thread_view"] = parse_key(keybindings["global"]["thread_view"])
         if "ng_view" in keybindings["global"]:
             KEY_BINDINGS["global"]["ng_view"] = parse_key(keybindings["global"]["ng_view"])
+        if "favorites_view" in keybindings["global"]:
+            KEY_BINDINGS["global"]["favorites_view"] = parse_key(keybindings["global"]["favorites_view"])
 
     if "bbsmenu" in keybindings:
         if "select_up" in keybindings["bbsmenu"]:
