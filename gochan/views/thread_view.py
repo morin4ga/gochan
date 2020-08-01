@@ -233,7 +233,7 @@ class ThreadView(Frame):
 
                 if re.match(r'.*\.(jpg|png|jpeg|gif)', link) is not None:
                     self._data_context.set_image(link)
-                    self._update_bookmark()
+                    self._save_history()
                     raise NextScene("Image")
 
     def _go_to(self, cmd: str):
