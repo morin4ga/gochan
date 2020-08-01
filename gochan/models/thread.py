@@ -49,7 +49,7 @@ class Thread:
         d["server"] = self.server
         d["board"] = self.board
         d["key"] = self.key
-        d["title"] = self.key
+        d["title"] = self.title
         d["is_pastlog"] = self.is_pastlog
         d["responses"] = []
 
