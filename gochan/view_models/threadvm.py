@@ -2,6 +2,7 @@ from typing import List, Optional, Union
 
 from gochan.models import Response, AppContext
 from gochan.models.ng import NG, NGResponse
+from gochan.models.favorites import FavoriteThread
 from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs, CollectionChangedEventHandler, \
     CollectionChangedEventArgs
 
@@ -89,6 +90,19 @@ class ThreadVM:
 
     def save_history(self, bookmark: int):
         self._app_context.history.save(self._thread.board, self._thread.key, bookmark, len(self._thread.responses))
+
+    def favorite(self):
+        if self._app_context.thread is not None:
+            target = self._app_context.thread
+
+            # Check if the thread has already been registered
+            for f in self._app_context.favorites.list:
+                if isinstance(f, FavoriteThread) and f.key == target.key and f.board == target.board:
+                    return
+
+            self._app_context.favorites.add(FavoriteThread(
+                self._app_context.thread.title, self._app_context.thread.server,
+                self._app_context.thread.board, self._app_context.thread.key))
 
     def _app_context_changed(self, e: PropertyChangedEventArgs):
         if e.property_name == "thread":

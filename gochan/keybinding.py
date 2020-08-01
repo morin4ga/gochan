@@ -57,7 +57,8 @@ KEY_BINDINGS = {
         "ng_id": Key.I,
         "ng_word": Key.W,
         "update": Key.U,
-        "back": Key.B
+        "back": Key.B,
+        "favorite": Key.F
     },
     "ng": {
         "delete": Key.D,
@@ -169,3 +170,5 @@ if KEYBINDINGS_PATH.is_file():
             KEY_BINDINGS["thread"]["updete"] = parse_key(keybindings["thread"]["update"])
         if "back" in keybindings["thread"]:
             KEY_BINDINGS["thread"]["back"] = parse_key(keybindings["thread"]["back"])
+        if "favorite" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["favorite"] = parse_key(keybindings["thread"]["favorite"])

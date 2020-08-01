@@ -200,6 +200,8 @@ class ThreadView(Frame):
             elif event.key_code == self._keybindings["back"]:
                 self._save_history()
                 raise NextScene("Board")
+            elif event.key_code == self._keybindings["favorite"]:
+                self._data_context.favorite()
 
         return super().process_event(event)
 
