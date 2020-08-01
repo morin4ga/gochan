@@ -17,6 +17,8 @@ class FavoritesView(Frame):
                          can_scroll=False,
                          )
 
+        self.set_theme("user_theme")
+
         self._context = context
         self._context.on_property_changed.add(self._context_changed)
 
@@ -27,6 +29,8 @@ class FavoritesView(Frame):
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
         layout.add_widget(self._list_box)
+
+        self.fix()
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
