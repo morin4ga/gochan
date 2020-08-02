@@ -3,6 +3,7 @@ from typing import Optional, List
 from gochan.models import AppContext, ThreadHeader
 from gochan.event_handler import PropertyChangedEventArgs, PropertyChangedEventHandler, CollectionChangedEventArgs
 from gochan.config import DEFAULT_SORT
+from gochan.models.favorites import FavoriteBoard
 
 
 class ThreadHeaderVM:
@@ -80,6 +81,19 @@ class BoardVM:
 
     def add_ng_title(self, value, use_reg, board):
         self._app_context.ng.add_ng_title(value, use_reg, board)
+
+    def favorite(self):
+        if self._app_context.board is not None:
+            target = self._app_context.board
+
+            # Check if the board has already been registered
+            for f in self._app_context.favorites.list:
+                if isinstance(f, FavoriteBoard) and f.board == target.board:
+                    return
+
+            board_name = self._app_context.bbsmenu.dns[target.board]
+
+            self._app_context.favorites.add(FavoriteBoard(board_name, target.server, target.board))
 
     def _update_threads(self):
         if self._board is None:

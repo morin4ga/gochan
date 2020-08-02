@@ -151,6 +151,9 @@ class BoardView(Frame):
             elif event.key_code == self._keybindings["back"]:
                 raise NextScene("Bbsmenu")
                 return None
+            elif event.key_code == self._keybindings["favorite"]:
+                self._data_context.favorite()
+                return None
 
         return super().process_event(event)
 

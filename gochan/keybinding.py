@@ -38,10 +38,11 @@ KEY_BINDINGS = {
         "active_sort": Key.R,
         "speed_sort": Key.T,
         "speed_des_sort": Key.Shift.T,
-        "find": Key.F,
+        "find": Key.Ctrl.F,
         "ng_title": Key.N,
         "update": Key.U,
-        "back": Key.B
+        "back": Key.B,
+        "favorite": Key.F
     },
     "thread": {
         "scroll_up": Key.UP,
@@ -140,6 +141,8 @@ if KEYBINDINGS_PATH.is_file():
             KEY_BINDINGS["board"]["update"] = parse_key(keybindings["board"]["update"])
         if "back" in keybindings["thread"]:
             KEY_BINDINGS["thread"]["back"] = parse_key(keybindings["thread"]["back"])
+        if "favorite" in keybindings["board"]:
+            KEY_BINDINGS["board"]["favorite"] = parse_key(keybindings["board"]["favorite"])
 
     if "thread" in keybindings:
         if "scroll_up" in keybindings["thread"]:
