@@ -22,8 +22,6 @@ class FavoritesView(Frame):
         self._context = context
         self._context.on_property_changed.add(self._context_changed)
 
-        self._selected_item = None
-        self._list = []
         self._list_box = ListBox(Widget.FILL_FRAME, [], on_select=self._on_select, on_change=self._on_changed)
 
         layout = Layout([100], fill_frame=True)
@@ -31,6 +29,10 @@ class FavoritesView(Frame):
         layout.add_widget(self._list_box)
 
         self.fix()
+
+        self._selected_item = None
+        self._list = self._context.list
+        self._update_list()
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):

@@ -8,6 +8,7 @@ LOG_PATH = APP_DIR / "log"
 NG_PATH = APP_DIR / "ng.json"
 THEME_PATH = APP_DIR / "theme.json"
 HISTORY_PATH = APP_DIR / "history.json"
+FAVORITES_PATH = APP_DIR / "favorites.json"
 
 USE_IMAGE_CACHE = True
 MAX_IMAGE_CACHE = 5

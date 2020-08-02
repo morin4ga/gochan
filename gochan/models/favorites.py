@@ -1,3 +1,4 @@
+import json
 from typing import Union
 
 from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs
@@ -55,3 +56,23 @@ class Favorites:
                     self.list[i+1] = x
                     self.list[i] = tmp
                     self.on_property_changed.invoke(PropertyChangedEventArgs(self, "list"))
+
+    def serialzie(self) -> str:
+        d = {"items": []}
+
+        for item in self.list:
+            if isinstance(item, FavoriteThread):
+                d["items"].append({"title": item.title, "server": item.server, "board": item.board, "key": item.key})
+            else:
+                d["items"].append({"name": item.name, "server": item.server, "board": item.board})
+
+        return json.dumps(d)
+
+    def deserialize(self, s: str):
+        d = json.loads(s)
+
+        for item in d["items"]:
+            if "title" in item:
+                self.list.append(FavoriteThread(item["title"], item["server"], item["board"], item["key"]))
+            else:
+                self.list.append(FavoriteBoard(item["name"], item["server"], item["board"]))
