@@ -139,8 +139,8 @@ if KEYBINDINGS_PATH.is_file():
             KEY_BINDINGS["board"]["ng_title"] = parse_key(keybindings["board"]["ng_title"])
         if "update" in keybindings["board"]:
             KEY_BINDINGS["board"]["update"] = parse_key(keybindings["board"]["update"])
-        if "back" in keybindings["thread"]:
-            KEY_BINDINGS["thread"]["back"] = parse_key(keybindings["thread"]["back"])
+        if "back" in keybindings["board"]:
+            KEY_BINDINGS["board"]["back"] = parse_key(keybindings["board"]["back"])
         if "favorite" in keybindings["board"]:
             KEY_BINDINGS["board"]["favorite"] = parse_key(keybindings["board"]["favorite"])
 

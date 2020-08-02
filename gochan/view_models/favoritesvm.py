@@ -32,7 +32,7 @@ class FavoritesVM:
         self._app_context.set_thread(item.server, item.board, item.key)
 
     def open_board(self, item: FavoriteBoard):
-        self._app_context.set_thread(item.server, item.board)
+        self._app_context.set_board(item.server, item.board)
 
     def _context_changed(self, e: PropertyChangedEventArgs):
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "list"))
