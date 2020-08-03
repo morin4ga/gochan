@@ -1,5 +1,6 @@
 from typing import Union
-from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs
+from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs,\
+    OrderChangedEventHandler, OrderChangedEventArg
 from gochan.models import AppContext
 from gochan.models.favorites import FavoriteThread, FavoriteBoard
 
@@ -9,8 +10,10 @@ class FavoritesVM:
         super().__init__()
         self._app_context = app_context
         self._app_context.favorites.on_property_changed.add(self._context_changed)
+        self._app_context.favorites.on_order_changed.add(self._order_changed)
 
         self.on_property_changed = PropertyChangedEventHandler()
+        self.on_order_changed = OrderChangedEventHandler()
 
     @property
     def list(self):
@@ -36,3 +39,6 @@ class FavoritesVM:
 
     def _context_changed(self, e: PropertyChangedEventArgs):
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "list"))
+
+    def _order_changed(self, e: OrderChangedEventArg):
+        self.on_order_changed.invoke(e)

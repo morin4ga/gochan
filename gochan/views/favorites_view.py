@@ -3,7 +3,7 @@ from asciimatics.screen import Screen
 from asciimatics.exceptions import NextScene
 from asciimatics.event import KeyboardEvent
 
-from gochan.event_handler import PropertyChangedEventArgs
+from gochan.event_handler import PropertyChangedEventArgs, OrderChangedEventArg
 from gochan.view_models.favoritesvm import FavoritesVM, FavoriteThread
 
 
@@ -21,6 +21,7 @@ class FavoritesView(Frame):
 
         self._context = context
         self._context.on_property_changed.add(self._context_changed)
+        self._context.on_order_changed.add(self._order_changed)
 
         self._list_box = ListBox(Widget.FILL_FRAME, [], on_select=self._on_select, on_change=self._on_changed)
 
@@ -77,3 +78,8 @@ class FavoritesView(Frame):
         self._list = self._context.list
         self._selected_item = None
         self._update_list()
+
+    def _order_changed(self, e: OrderChangedEventArg):
+        self._selected_item = None
+        self._update_list()
+        self._list_box.value = e.new_index

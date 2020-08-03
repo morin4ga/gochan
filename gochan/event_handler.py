@@ -51,3 +51,18 @@ class CollectionChangedEventHandler(EventHandler):
     def invoke(self, args: CollectionChangedEventArgs):
         for h in self._handlers:
             h(args)
+
+
+class OrderChangedEventArg:
+    def __init__(self, sender, property_name: str, item, new_index: int):
+        super().__init__()
+        self.sender = sender
+        self.property_name = property_name
+        self.item = item
+        self.new_index = new_index
+
+
+class OrderChangedEventHandler(EventHandler):
+    def invoke(self, args: OrderChangedEventArg):
+        for h in self._handlers:
+            h(args)

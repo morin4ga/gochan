@@ -1,7 +1,8 @@
 import json
 from typing import Union
 
-from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs
+from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs,\
+    OrderChangedEventHandler, OrderChangedEventArg
 
 
 class FavoriteThread:
@@ -26,6 +27,7 @@ class Favorites:
         super().__init__()
         self.list = []
         self.on_property_changed = PropertyChangedEventHandler()
+        self.on_order_changed = OrderChangedEventHandler()
 
     def add(self, item: Union[FavoriteThread, FavoriteBoard]):
         self.list.append(item)
@@ -44,7 +46,8 @@ class Favorites:
                     tmp = self.list[i-1]
                     self.list[i-1] = x
                     self.list[i] = tmp
-                    self.on_property_changed.invoke(PropertyChangedEventArgs(self, "list"))
+                    self.on_order_changed.invoke(OrderChangedEventArg(self, "list", x, i-1))
+                    return
 
     def lower_order(self, item: Union[FavoriteThread, FavoriteBoard]):
         for i, x in enumerate(self.list):
@@ -55,7 +58,8 @@ class Favorites:
                     tmp = self.list[i+1]
                     self.list[i+1] = x
                     self.list[i] = tmp
-                    self.on_property_changed.invoke(PropertyChangedEventArgs(self, "list"))
+                    self.on_order_changed.invoke(OrderChangedEventArg(self, "list", x, i+1))
+                    return
 
     def serialzie(self) -> str:
         d = {"items": []}
