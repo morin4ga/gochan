@@ -45,6 +45,10 @@ class FavoritesView(Frame):
                 if self._selected_item is not None:
                     self._context.lower_order(self._selected_item)
                 return None
+            elif event.key_code == ord("r"):
+                if self._selected_item is not None:
+                    self._context.remove(self._selected_item)
+                return None
 
         return super().process_event(event)
 
