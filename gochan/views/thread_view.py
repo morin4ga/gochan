@@ -71,30 +71,42 @@ class ThreadView(Frame):
         self.fix()
 
     def _data_context_changed(self, e: PropertyChangedEventArgs):
-        if e.property_name == "responses" or e.property_name == "bookmark" or e.property_name == "ng":
+        if e.property_name == "bookmark" or e.property_name == "ng":
             if self._data_context.responses is not None:
                 self._update_buffer()
+        elif e.property_name == "responses":
+            # If responses is changed, update title and scroll to top of unread responses
 
-        # If responses is changed, update title and scroll to top of unread responses
-        if e.property_name == "responses":
-            self._title_label.text = self._data_context.title + " (" + str(len(self._data_context.responses)) + ")"
+            if self._data_context.responses is not None:
+                self._update_buffer()
+                self._update_title()
 
-            bookmark = self._data_context.bookmark
+                bookmark = self._data_context.bookmark
 
-            if bookmark is not None:
-                # if there are unread responses, then scroll to them
-                if len(self._anchors) > bookmark:
-                    line = self._anchors[bookmark][0]
-                    self._rtext.go_to(line)
+                if bookmark is not None:
+                    # if there are unread responses, then scroll to them
+                    if len(self._anchors) > bookmark:
+                        line = self._anchors[bookmark][0]
+                        self._rtext.go_to(line)
+                    else:
+                        self._rtext.go_to(self._anchors[bookmark - 1][0])
                 else:
-                    self._rtext.go_to(self._anchors[bookmark - 1][0])
-            else:
-                self._rtext.reset_offset()
+                    self._rtext.reset_offset()
+        elif e.property_name == "is_favorite":
+            self._update_title()
 
     def _collection_changed(self, e: CollectionChangedEventArgs):
         if e.property_name == "responses":
             self._update_buffer()
-            self._title_label.text = self._data_context.title + " (" + str(len(self._data_context.responses)) + ")"
+            self._update_title()
+
+    def _update_title(self):
+        title = self._data_context.title + " (" + str(len(self._data_context.responses)) + ")"
+
+        if self._data_context.is_favorite:
+            title += " ★"
+
+        self._title_label.text = title
 
     def _update_buffer(self):
         buf = Buffer(self._rtext.width)

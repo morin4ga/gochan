@@ -20,6 +20,7 @@ class ThreadVM:
         app_context.on_property_changed.add(self._app_context_changed)
         app_context.ng.on_collection_changed.add(self._ng_changed)
         app_context.history.on_property_changed.add(self._history_changed)
+        app_context.favorites.on_property_changed.add(self._favorites_changed)
 
     @property
     def server(self) -> Optional[str]:
@@ -54,6 +55,14 @@ class ThreadVM:
         if self._thread is not None:
             history = self._app_context.history.get(self._thread.board, self._thread.key)
             return history.bookmark if history is not None else None
+
+    @property
+    def is_favorite(self) -> Optional[bool]:
+        if self._thread is not None:
+            if self._thread.key in [x.key for x in self._app_context.favorites.list if isinstance(x, FavoriteThread)]:
+                return True
+            else:
+                return False
 
     @property
     def filtered_responses(self) -> Optional[List[Union[NGResponse, Response]]]:
@@ -145,3 +154,6 @@ class ThreadVM:
 
     def _history_changed(self, e: PropertyChangedEventArgs):
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "history"))
+
+    def _favorites_changed(self, e: PropertyChangedEventArgs):
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "is_favorite"))
