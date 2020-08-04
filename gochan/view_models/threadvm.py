@@ -51,6 +51,10 @@ class ThreadVM:
         return self._thread.links if self._thread is not None else None
 
     @property
+    def replies(self) -> Optional[List[str]]:
+        return self._thread.replies if self._thread is not None else None
+
+    @property
     def bookmark(self) -> Optional[int]:
         if self._thread is not None:
             history = self._app_context.history.get(self._thread.board, self._thread.key)

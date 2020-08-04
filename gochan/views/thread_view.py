@@ -131,9 +131,12 @@ class ThreadView(Frame):
 
             start = len(buf)
 
-            buf.push(str(r.number) + " ", THREAD_BRUSHES["normal"])
+            buf.push(str(r.number), THREAD_BRUSHES["normal"])
 
-            buf.push(r.name, THREAD_BRUSHES["name"])
+            if len(self._data_context.replies[r.number]) != 0:
+                buf.push("(" + str(len(self._data_context.replies[r.number])) + ")", THREAD_BRUSHES["normal"])
+
+            buf.push(" " + r.name, THREAD_BRUSHES["name"])
 
             buf.push(" " + r.date + " " + r.id, THREAD_BRUSHES["normal"])
 
