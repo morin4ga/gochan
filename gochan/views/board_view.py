@@ -63,7 +63,9 @@ class BoardView(Frame):
         if e.property_name == "threads":
             self._threads = self._data_context.threads
             self._update_options()
-            self._title_label.text = self._data_context.name + " (" + str(len(self._data_context.threads)) + ")"
+            self._update_title()
+        elif e.property_name == "is_favorite":
+            self._update_title()
 
     def _back_btn_clicked(self):
         raise NextScene("Bbsmenu")
@@ -82,6 +84,16 @@ class BoardView(Frame):
         index = self._thread_list.value
         self._data_context.set_thread(self._threads[index])
         raise NextScene("Thread")
+
+    def _update_title(self):
+        title = ""
+        if self._data_context.threads is not None:
+            title = self._data_context.name + " (" + str(len(self._data_context.threads)) + ")"
+
+        if self._data_context.is_favorite:
+            title += " ★"
+
+        self._title_label.text = title
 
     def _update_options(self):
         if self._data_context.threads is not None:

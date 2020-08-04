@@ -43,6 +43,7 @@ class BoardVM:
         self._app_context.on_property_changed.add(self._app_context_changed)
         self._app_context.ng.on_collection_changed.add(self._ng_changed)
         self._app_context.history.on_property_changed.add(self._history_changed)
+        self._app_context.favorites.on_property_changed.add(self.favorite_changed)
         self.on_property_changed = PropertyChangedEventHandler()
 
     @property
@@ -57,6 +58,14 @@ class BoardVM:
     def name(self) -> Optional[str]:
         return self._app_context.bbsmenu.dns[self._board.board] \
             if self._board is not None else None
+
+    @property
+    def is_favorite(self) -> Optional[bool]:
+        if self._board is not None:
+            if self._board.board in [x.board for x in self._app_context.favorites.list if isinstance(x, FavoriteBoard)]:
+                return True
+            else:
+                return False
 
     def sort_threads(self, sort_by: str, reverse_sort: bool = False):
         self._sort_by = sort_by
@@ -148,6 +157,9 @@ class BoardVM:
 
     def _history_changed(self, e: PropertyChangedEventArgs):
         self._update_threads()
+
+    def favorite_changed(self, e: PropertyChangedEventArgs):
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "is_favorite"))
 
     def _active_sort_key(self, item: ThreadHeaderVM):
         if item.unread is None:
