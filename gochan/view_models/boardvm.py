@@ -98,6 +98,7 @@ class BoardVM:
             # Check if the board has already been registered
             for f in self._app_context.favorites.list:
                 if isinstance(f, FavoriteBoard) and f.board == target.board:
+                    self._app_context.favorites.remove(f)
                     return
 
             board_name = self._app_context.bbsmenu.dns[target.board]
