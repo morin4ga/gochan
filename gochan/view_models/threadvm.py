@@ -107,6 +107,7 @@ class ThreadVM:
             # Check if the thread has already been registered
             for f in self._app_context.favorites.list:
                 if isinstance(f, FavoriteThread) and f.key == target.key and f.board == target.board:
+                    self._app_context.favorites.remove(f)
                     return
 
             self._app_context.favorites.add(FavoriteThread(
