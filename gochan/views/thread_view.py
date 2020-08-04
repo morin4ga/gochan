@@ -101,7 +101,9 @@ class ThreadView(Frame):
             self._update_title()
 
     def _update_title(self):
-        title = self._data_context.title + " (" + str(len(self._data_context.responses)) + ")"
+        title = ""
+        if self._data_context.title is not None and self._data_context.responses is not None:
+            title = self._data_context.title + " (" + str(len(self._data_context.responses)) + ")"
 
         if self._data_context.is_favorite:
             title += " ★"
