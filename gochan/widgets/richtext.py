@@ -1,3 +1,4 @@
+from logging import NOTSET
 from typing import Dict, List, Tuple
 
 from asciimatics.event import KeyboardEvent
@@ -70,8 +71,8 @@ class Buffer:
 
 
 class RichText(Widget):
-    def __init__(self, height, flush_cell: Cell, keybindings: Dict[str, int], **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, height, flush_cell: Cell, keybindings: Dict[str, int], name=None, **kwargs):
+        super().__init__(name, **kwargs)
         self._required_height = height
         self._scrl_offset = 0
         self._value = []

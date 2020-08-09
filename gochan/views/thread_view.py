@@ -11,8 +11,7 @@ from gochan.theme import THREAD_BRUSHES
 from gochan.keybinding import KEY_BINDINGS
 from gochan.view_models import ThreadVM
 from gochan.effects import CommandLine, NGCreator, PostForm
-from gochan.widgets import Buffer, Cell, RichText
-from gochan.models.ng import NGResponse
+from gochan.widgets import Cell, ResponsesViewer
 from gochan.event_handler import PropertyChangedEventArgs, CollectionChangedEventArgs
 
 link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
@@ -41,11 +40,10 @@ class ThreadView(Frame):
 
         self._title_label = Label("")
 
-        self._rtext = RichText(
+        self._responses_viewer = ResponsesViewer(
             Widget.FILL_FRAME,
             Cell(" ", THREAD_BRUSHES["normal"]),
             KEY_BINDINGS["thread"],
-            name="text_box",
         )
 
         self._back_button = Button("Back", on_click=self._on_back_btn_pushed)
@@ -59,7 +57,7 @@ class ThreadView(Frame):
 
         layout1 = Layout([100], fill_frame=True)
         self.add_layout(layout1)
-        layout1.add_widget(self._rtext)
+        layout1.add_widget(self._responses_viewer)
         layout1.add_widget(Divider())
 
         layout2 = Layout([33, 33, 34])
@@ -73,25 +71,16 @@ class ThreadView(Frame):
     def _data_context_changed(self, e: PropertyChangedEventArgs):
         if e.property_name == "bookmark" or e.property_name == "ng":
             if self._data_context.responses is not None:
-                self._update_buffer()
+                self._responses_viewer.set_data(self._data_context.filtered_responses,
+                                                self._data_context.replies, self._data_context.bookmark)
         elif e.property_name == "responses":
             # If responses is changed, update title and scroll to top of unread responses
 
             if self._data_context.responses is not None:
-                self._update_buffer()
+                self._responses_viewer.set_data(self._data_context.filtered_responses,
+                                                self._data_context.replies, self._data_context.bookmark)
                 self._update_title()
-
-                bookmark = self._data_context.bookmark
-
-                if bookmark is not None:
-                    # if there are unread responses, then scroll to them
-                    if len(self._anchors) > bookmark:
-                        line = self._anchors[bookmark][0]
-                        self._rtext.go_to(line)
-                    else:
-                        self._rtext.go_to(self._anchors[bookmark - 1][0])
-                else:
-                    self._rtext.reset_offset()
+                self._responses_viewer.scroll_to_bookmark()
         elif e.property_name == "is_favorite":
             self._update_title()
 
@@ -109,66 +98,6 @@ class ThreadView(Frame):
             title += " ★"
 
         self._title_label.text = title
-
-    def _update_buffer(self):
-        buf = Buffer(self._rtext.width)
-        self._anchors = []
-        link_idx = 0
-
-        for r in self._data_context.filtered_responses:
-            if isinstance(r, NGResponse):
-                if r.hide:
-                    self._anchors.append((len(buf), len(buf)))
-                    continue
-                else:
-                    start = len(buf)
-                    buf.push(str(r.origin.number) + " " + "あぼーん", THREAD_BRUSHES["normal"])
-                    buf.break_line(1)
-                    end = len(buf)
-                    self._anchors.append((start, end))
-                    buf.break_line(1)
-                    continue
-
-            start = len(buf)
-
-            buf.push(str(r.number), THREAD_BRUSHES["normal"])
-
-            if len(self._data_context.replies[r.number]) != 0:
-                buf.push("(" + str(len(self._data_context.replies[r.number])) + ")", THREAD_BRUSHES["normal"])
-
-            buf.push(" " + r.name, THREAD_BRUSHES["name"])
-
-            buf.push(" " + r.date + " " + r.id, THREAD_BRUSHES["normal"])
-
-            buf.break_line(2)
-
-            # Add index suffix so that user can select url easily
-            def _mark_link(match):
-                nonlocal link_idx
-                url = match.group(1)
-                repl = url + "(" + str(link_idx) + ")"
-                link_idx += 1
-                return repl
-
-            marked_msg = link_reg.sub(_mark_link, r.message)
-
-            for l in marked_msg.split("\n"):
-                buf.push(l, THREAD_BRUSHES["normal"])
-                buf.break_line(1)
-
-            end = len(buf)
-
-            self._anchors.append((start, end))
-
-            buf.break_line(1)
-
-            # don't render bookmark if bookmark points last response
-            if r.number == self._data_context.bookmark and \
-                    len(self._data_context.responses) != self._data_context.bookmark:
-                buf.push("─" * self._rtext.width, THREAD_BRUSHES["bookmark"])
-                buf.break_line(2)
-
-        self._rtext.value = buf
 
     def _on_load_(self):
         pass
@@ -255,10 +184,7 @@ class ThreadView(Frame):
 
     def _go_to(self, cmd: str):
         if cmd.isdecimal():
-            idx = int(cmd) - 1
-
-            if idx >= 0 and idx < len(self._anchors):
-                self._rtext.go_to(self._anchors[idx][0])
+            self._responses_viewer.jump_to(int(cmd))
 
     def _open_ngeditor_name(self, number: str):
         if number.isdecimal():
@@ -317,13 +243,7 @@ class ThreadView(Frame):
                                            self._data_context.board, self._data_context.key)
 
     def _save_history(self):
-        displayed_end_line = self._rtext.scroll_offset + self._rtext._h
-
-        new_bookmark = 0
-        for number, (_, end) in enumerate(self._anchors, 1):
-            if displayed_end_line >= end:
-                new_bookmark = number
-
         cur_bookmark = self._data_context.bookmark if self._data_context.bookmark is not None else 0
+        new_bookmark = self._responses_viewer.get_last_respones_displayed()
 
         self._data_context.save_history(max(new_bookmark, cur_bookmark))
