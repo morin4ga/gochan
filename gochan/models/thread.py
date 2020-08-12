@@ -2,7 +2,6 @@ import re
 import json
 
 from typing import List, Dict, Union
-from collections import defaultdict
 
 from gochan.client import get_responses_after, post_response
 from gochan.parser import ThreadParserH
@@ -33,7 +32,7 @@ class Thread:
         self.responses: List[Response] = []
         self._is_pastlog: bool = False
         self.links = []
-        self.replies = defaultdict(lambda: [])
+        self.replies = {}
         self.on_property_changed = PropertyChangedEventHandler()
         self.on_collection_changed = CollectionChangedEventHandler()
 
@@ -117,7 +116,10 @@ class Thread:
                 self.links.append(link.group(1))
 
             for reply in re.finditer(r'>>(\d{1,4})', r["message"]):
-                replies = self.replies[int(reply.group(1))]
+                key = int(reply.group(1))
 
-                if response not in replies:
-                    replies.append(response)
+                if key not in self.replies:
+                    self.replies[key] = []
+
+                if response not in self.replies[key]:
+                    self.replies[key].append(response)

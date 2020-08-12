@@ -32,7 +32,7 @@ def _convert_to_buffer(responses: List[Union[Response, NGResponse]], replies: Di
 
         buf.push(str(r.number), THREAD_BRUSHES["normal"])
 
-        if len(replies[r.number]) != 0:
+        if r.number in replies:
             buf.push("(" + str(len(replies[r.number])) + ")", THREAD_BRUSHES["normal"])
 
         buf.push(" " + r.name, THREAD_BRUSHES["name"])
