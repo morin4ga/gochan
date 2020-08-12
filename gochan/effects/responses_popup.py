@@ -4,11 +4,12 @@ from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, Layout
 from gochan.models import Response
 from gochan.widgets import ResponsesViewer, Cell
+from gochan.effects import CommandLine
 
 
 class ResponsesPopup(Frame):
     def __init__(self, screen: Screen, flush_cell: Cell, keybindings, responses: List[Response],
-                 replies: Dict[int, List[Response]]) -> None:
+                 replies: Dict[int, List[Response]], show_replies) -> None:
         super().__init__(screen,
                          screen.height,
                          screen.width,
@@ -20,6 +21,7 @@ class ResponsesPopup(Frame):
 
         self._responses = responses
         self._replies = replies
+        self._show_replies = show_replies
 
         self.set_theme("user_theme")
 
@@ -41,3 +43,6 @@ class ResponsesPopup(Frame):
         if isinstance(event, KeyboardEvent):
             if event.key_code == ord("q"):
                 self.disappear()
+            elif event.key_code == ord("r"):
+                self._scene.add_effect(CommandLine(self._screen, "show_replies:", self._show_replies))
+                return None
