@@ -1,3 +1,4 @@
+from gochan.effects.responses_popup import ResponsesPopup
 import re
 from typing import List
 
@@ -148,6 +149,9 @@ class ThreadView(Frame):
                 raise NextScene("Board")
             elif event.key_code == self._keybindings["favorite"]:
                 self._data_context.favorite()
+            elif event.key_code == ord("r"):
+                self._scene.add_effect(CommandLine(self._screen, "show_replies:", self._show_replies))
+                return None
 
         return super().process_event(event)
 
@@ -195,6 +199,14 @@ class ThreadView(Frame):
                     and idx >= 0:
                 self._scene.add_effect(NGCreator(self._screen, self._add_ng_name,
                                                  self._data_context.responses[idx].name, "name"))
+
+    def _show_replies(self, number: str):
+        if self._data_context.replies is not None and number.isdecimal():
+            number = int(number)
+            if number in self._data_context.replies:
+                replies = self._data_context.replies[number]
+                self._scene.add_effect(ResponsesPopup(self._screen, Cell(
+                    " ", THREAD_BRUSHES["normal"]), KEY_BINDINGS["thread"], replies, self._data_context.replies))
 
     def _add_ng_name(self, value, use_reg, hide, auto_ng_id, scope_idx):
         if scope_idx == 0:
