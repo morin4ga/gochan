@@ -3,14 +3,20 @@ from typing import Dict, List, Tuple, Union
 
 from gochan.models.ng import NGResponse
 from gochan.models.thread import Response
-from gochan.theme import THREAD_BRUSHES
-from gochan.widgets.richtext import Buffer, RichText
+from gochan.widgets.richtext import Brush, Buffer, RichText
 
 link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
 
 
+class ThreadBrushes:
+    def __init__(self, normal: Brush, name: Brush, bookmark: Brush) -> None:
+        self.normal = normal
+        self.name = name
+        self.bookmark = bookmark
+
+
 def _convert_to_buffer(responses: List[Union[Response, NGResponse]], replies: Dict[int, List[Response]],
-                       bookmark: int, width: int) -> Tuple[Buffer, Dict[int, Tuple[int, int]]]:
+                       bookmark: int, width: int, brushes: ThreadBrushes) -> Tuple[Buffer, Dict[int, Tuple[int, int]]]:
     buf = Buffer(width)
     anchors = {}
     link_idx = 0
@@ -22,7 +28,7 @@ def _convert_to_buffer(responses: List[Union[Response, NGResponse]], replies: Di
                 continue
             else:
                 start = len(buf)
-                buf.push(str(r.origin.number) + " " + "あぼーん", THREAD_BRUSHES["normal"])
+                buf.push(str(r.origin.number) + " " + "あぼーん", brushes.normal)
                 buf.break_line(1)
                 end = len(buf)
                 anchors[r.origin.number] = ((start, end))
@@ -31,14 +37,14 @@ def _convert_to_buffer(responses: List[Union[Response, NGResponse]], replies: Di
 
         start = len(buf)
 
-        buf.push(str(r.number), THREAD_BRUSHES["normal"])
+        buf.push(str(r.number), brushes.normal)
 
         if r.number in replies:
-            buf.push("(" + str(len(replies[r.number])) + ")", THREAD_BRUSHES["normal"])
+            buf.push("(" + str(len(replies[r.number])) + ")", brushes.normal)
 
-        buf.push(" " + r.name, THREAD_BRUSHES["name"])
+        buf.push(" " + r.name, brushes.name)
 
-        buf.push(" " + r.date + " " + r.id, THREAD_BRUSHES["normal"])
+        buf.push(" " + r.date + " " + r.id, brushes.normal)
 
         buf.break_line(2)
 
@@ -53,7 +59,7 @@ def _convert_to_buffer(responses: List[Union[Response, NGResponse]], replies: Di
         marked_msg = link_reg.sub(_mark_link, r.message)
 
         for l in marked_msg.split("\n"):
-            buf.push(l, THREAD_BRUSHES["normal"])
+            buf.push(l, brushes.normal)
             buf.break_line(1)
 
         end = len(buf)
@@ -65,21 +71,22 @@ def _convert_to_buffer(responses: List[Union[Response, NGResponse]], replies: Di
         # don't render bookmark if bookmark points last response
         if r.number == bookmark and \
                 len(responses) != bookmark:
-            buf.push("─" * width, THREAD_BRUSHES["bookmark"])
+            buf.push("─" * width, brushes.bookmark)
             buf.break_line(2)
 
     return (buf, anchors)
 
 
 class ResponsesViewer(RichText):
-    def __init__(self, height, flush_cell, keybindings, **kwargs):
-        super().__init__(height, flush_cell, keybindings, **kwargs)
+    def __init__(self, height, brushes: ThreadBrushes, keybindings, **kwargs):
+        super().__init__(height, brushes.normal, keybindings, **kwargs)
+        self._brushes = brushes
         self._bookmark = None
         self._anchors = None
 
     def set_data(self, responses: List[Response], replies: Dict[int, List[Response]], bookmark: int = None):
         self._bookmark = bookmark
-        (buffer, anchors) = _convert_to_buffer(responses, replies, bookmark, self.width)
+        (buffer, anchors) = _convert_to_buffer(responses, replies, bookmark, self.width, self._brushes)
         self._anchors = anchors
         self._value = buffer
 

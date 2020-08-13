@@ -4,6 +4,7 @@ from asciimatics.screen import Screen
 
 from gochan.config import THEME_PATH
 from gochan.widgets.richtext import Brush
+from gochan.widgets.responses_viewer import ThreadBrushes
 
 THEME = {
     "background": (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK),
@@ -27,11 +28,11 @@ THEME = {
     "focus_field": (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK),
     "selected_focus_field": (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_CYAN),
 }
-THREAD_BRUSHES = {
-    "normal": Brush(Screen.COLOUR_WHITE, Screen.COLOUR_BLACK, Screen.A_BOLD),
-    "name": Brush(Screen.COLOUR_GREEN, Screen.COLOUR_BLACK, Screen.A_BOLD),
-    "bookmark": Brush(Screen.COLOUR_BLUE, Screen.COLOUR_BLACK, Screen.A_BOLD)
-}
+
+THREAD_BRUSHES = ThreadBrushes(Brush(Screen.COLOUR_WHITE, Screen.COLOUR_BLACK, Screen.A_BOLD),
+                               Brush(Screen.COLOUR_GREEN, Screen.COLOUR_BLACK, Screen.A_BOLD),
+                               Brush(Screen.COLOUR_BLUE, Screen.COLOUR_BLACK, Screen.A_BOLD)
+                               )
 
 
 def to_intcolor(s: str) -> int:
@@ -125,10 +126,10 @@ if THEME_PATH.is_file():
     if "thread" in theme:
         if "normal" in theme["thread"]:
             fg, bg = theme["thread"]["normal"]
-            THREAD_BRUSHES["normal"] = Brush(to_intcolor(fg), to_intcolor(bg), Screen.A_BOLD)
+            THREAD_BRUSHES.normal = Brush(to_intcolor(fg), to_intcolor(bg), Screen.A_BOLD)
         elif "name" in theme["thread"]:
             fg, bg = theme["thread"]["name"]
-            THREAD_BRUSHES["name"] = Brush(to_intcolor(fg), to_intcolor(bg), Screen.A_BOLD)
+            THREAD_BRUSHES.name = Brush(to_intcolor(fg), to_intcolor(bg), Screen.A_BOLD)
         elif "bookmark" in theme["thread"]:
             fg, bg = theme["thread"]["bookmark"]
-            THREAD_BRUSHES["bookmark"] = Brush(to_intcolor(fg), to_intcolor(bg), Screen.A_BOLD)
+            THREAD_BRUSHES.bookmark = Brush(to_intcolor(fg), to_intcolor(bg), Screen.A_BOLD)

@@ -69,12 +69,12 @@ class Buffer:
 
 
 class RichText(Widget):
-    def __init__(self, height, flush_cell: Cell, keybindings: Dict[str, int], name=None, **kwargs):
+    def __init__(self, height, flush_brush: Brush, keybindings: Dict[str, int], name=None, **kwargs):
         super().__init__(name, **kwargs)
         self._required_height = height
         self._scrl_offset = 0
         self._value = []
-        self._fc = flush_cell
+        self._flush_brush = flush_brush
         self._keybindings = keybindings
 
     @property
@@ -84,10 +84,10 @@ class RichText(Widget):
     def update(self, frame_no):
         for i in range(self._h):
             self._frame.canvas.print_at(
-                self._fc.ch * self.width,
+                " " * self.width,
                 self._x,
                 self._y + i,
-                self._fc.brush.fg, self._fc.brush.att, self._fc.brush.bg)
+                self._flush_brush.fg, self._flush_brush.att, self._flush_brush.bg)
 
         max_x = self._w + self._x - 1
         max_y = self._h + self._y - 1

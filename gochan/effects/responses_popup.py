@@ -6,12 +6,11 @@ from asciimatics.widgets import Frame, Layout
 
 from gochan.effects.command_line import CommandLine
 from gochan.models.thread import Response
-from gochan.widgets.responses_viewer import ResponsesViewer
-from gochan.widgets.richtext import Cell
+from gochan.widgets.responses_viewer import ResponsesViewer, ThreadBrushes
 
 
 class ResponsesPopup(Frame):
-    def __init__(self, screen: Screen, flush_cell: Cell, keybindings, responses: List[Response],
+    def __init__(self, screen: Screen, brushes: ThreadBrushes, keybindings, responses: List[Response],
                  replies: Dict[int, List[Response]], show_replies, show_response) -> None:
         super().__init__(screen,
                          screen.height,
@@ -30,7 +29,7 @@ class ResponsesPopup(Frame):
         self.set_theme("user_theme")
 
         # Subtract 2 for the border
-        self._responses_viewer = ResponsesViewer(screen.height - 2, flush_cell, keybindings)
+        self._responses_viewer = ResponsesViewer(screen.height - 2, brushes, keybindings)
 
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
