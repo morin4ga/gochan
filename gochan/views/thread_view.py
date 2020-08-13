@@ -1,3 +1,4 @@
+from logging import NOTSET
 from gochan.effects.responses_popup import ResponsesPopup
 import re
 from typing import List
@@ -152,6 +153,9 @@ class ThreadView(Frame):
             elif event.key_code == ord("r"):
                 self._scene.add_effect(CommandLine(self._screen, "show_replies:", self._show_replies))
                 return None
+            elif event.key_code == ord("t"):
+                self._scene.add_effect(CommandLine(self._screen, "show_response:", self._show_respones))
+                return None
 
         return super().process_event(event)
 
@@ -207,6 +211,16 @@ class ThreadView(Frame):
                 replies = self._data_context.replies[number]
                 self._scene.add_effect(ResponsesPopup(self._screen, Cell(
                     " ", THREAD_BRUSHES["normal"]), KEY_BINDINGS["thread"], replies, self._data_context.replies,
+                    self._show_replies))
+
+    def _show_respones(self, number: str):
+        if self._data_context.responses is not None and number.isdecimal():
+            idx = int(number) - 1
+
+            if len(self._data_context.responses) > idx and idx >= 0:
+                respones = self._data_context.responses[idx]
+                self._scene.add_effect(ResponsesPopup(self._screen, Cell(
+                    " ", THREAD_BRUSHES["normal"]), KEY_BINDINGS["thread"], [respones], self._data_context.replies,
                     self._show_replies))
 
     def _add_ng_name(self, value, use_reg, hide, auto_ng_id, scope_idx):
