@@ -9,7 +9,7 @@ from gochan.effects import CommandLine
 
 class ResponsesPopup(Frame):
     def __init__(self, screen: Screen, flush_cell: Cell, keybindings, responses: List[Response],
-                 replies: Dict[int, List[Response]], show_replies) -> None:
+                 replies: Dict[int, List[Response]], show_replies, show_response) -> None:
         super().__init__(screen,
                          screen.height,
                          screen.width,
@@ -22,6 +22,7 @@ class ResponsesPopup(Frame):
         self._responses = responses
         self._replies = replies
         self._show_replies = show_replies
+        self._show_response = show_response
 
         self.set_theme("user_theme")
 
@@ -46,6 +47,9 @@ class ResponsesPopup(Frame):
                 return None
             elif event.key_code == ord("r"):
                 self._scene.add_effect(CommandLine(self._screen, "show_replies:", self._show_replies))
+                return None
+            elif event.key_code == ord("t"):
+                self._scene.add_effect(CommandLine(self._screen, "show_response:", self._show_response))
                 return None
 
         return super().process_event(event)

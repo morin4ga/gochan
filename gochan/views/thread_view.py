@@ -211,7 +211,7 @@ class ThreadView(Frame):
                 replies = self._data_context.replies[number]
                 self._scene.add_effect(ResponsesPopup(self._screen, Cell(
                     " ", THREAD_BRUSHES["normal"]), KEY_BINDINGS["thread"], replies, self._data_context.replies,
-                    self._show_replies))
+                    self._show_replies, self._show_respones))
 
     def _show_respones(self, number: str):
         if self._data_context.responses is not None and number.isdecimal():
@@ -221,7 +221,7 @@ class ThreadView(Frame):
                 respones = self._data_context.responses[idx]
                 self._scene.add_effect(ResponsesPopup(self._screen, Cell(
                     " ", THREAD_BRUSHES["normal"]), KEY_BINDINGS["thread"], [respones], self._data_context.replies,
-                    self._show_replies))
+                    self._show_replies, self._show_respones))
 
     def _add_ng_name(self, value, use_reg, hide, auto_ng_id, scope_idx):
         if scope_idx == 0:
