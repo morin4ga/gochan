@@ -43,6 +43,9 @@ class ResponsesPopup(Frame):
         if isinstance(event, KeyboardEvent):
             if event.key_code == ord("q"):
                 self.disappear()
+                return None
             elif event.key_code == ord("r"):
                 self._scene.add_effect(CommandLine(self._screen, "show_replies:", self._show_replies))
                 return None
+
+        return super().process_event(event)
