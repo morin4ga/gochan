@@ -1,7 +1,7 @@
 from typing import List
 
 from gochan.client import get_bbsmenu
-from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs
+from gochan.event_handler import PropertyChangedEventArgs, PropertyChangedEventHandler
 from gochan.parser import BbsmenuParser
 
 

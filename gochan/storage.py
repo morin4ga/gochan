@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from gochan.config import MAX_IMAGE_CACHE, LOG_PATH, MAX_THREAD_LOG, MAX_BOARD_LOG
+from gochan.config import LOG_PATH, MAX_BOARD_LOG, MAX_IMAGE_CACHE, MAX_THREAD_LOG
 
 
 class Storage:

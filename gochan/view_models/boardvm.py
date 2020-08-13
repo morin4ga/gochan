@@ -1,8 +1,9 @@
-from typing import Optional, List
+from typing import List, Optional
 
-from gochan.models import AppContext, ThreadHeader
-from gochan.event_handler import PropertyChangedEventArgs, PropertyChangedEventHandler, CollectionChangedEventArgs
 from gochan.config import DEFAULT_SORT
+from gochan.event_handler import CollectionChangedEventArgs, PropertyChangedEventArgs, PropertyChangedEventHandler
+from gochan.models.app_context import AppContext
+from gochan.models.board import ThreadHeader
 from gochan.models.favorites import FavoriteBoard
 
 

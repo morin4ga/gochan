@@ -1,10 +1,8 @@
-from logging import NOTSET
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 from asciimatics.event import KeyboardEvent
-from asciimatics.screen import Screen
 from asciimatics.widgets import Widget
-from wcwidth import wcswidth, wcwidth
+from wcwidth import wcwidth
 
 
 class Brush:

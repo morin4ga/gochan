@@ -1,13 +1,14 @@
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
-from asciimatics.widgets import Button, Divider, Frame, Layout, Widget, Label
+from asciimatics.widgets import Button, Divider, Frame, Label, Layout, Widget
 
-from gochan.keybinding import KEY_BINDINGS
-from gochan.view_models import BoardVM
-from gochan.effects import CommandLine, NGCreator
-from gochan.widgets import MultiColumnListBoxK
+from gochan.effects.command_line import CommandLine
+from gochan.effects.ng_creator import NGCreator
 from gochan.event_handler import PropertyChangedEventArgs
+from gochan.keybinding import KEY_BINDINGS
+from gochan.view_models.boardvm import BoardVM
+from gochan.widgets.multi_col_listk import MultiColumnListBoxK
 
 
 class BoardView(Frame):

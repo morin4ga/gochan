@@ -1,12 +1,11 @@
-import re
 import json
-
-from typing import List, Dict, Union
+import re
+from typing import Dict, List, Union
 
 from gochan.client import get_responses_after, post_response
+from gochan.event_handler import (CollectionChangedEventArgs, CollectionChangedEventHandler, CollectionChangedEventKind,
+                                  PropertyChangedEventArgs, PropertyChangedEventHandler)
 from gochan.parser import ThreadParserH
-from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs, CollectionChangedEventHandler, \
-    CollectionChangedEventArgs, CollectionChangedEventKind
 
 
 class Response:

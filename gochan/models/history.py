@@ -1,6 +1,7 @@
 import json
 from typing import Optional
-from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs
+
+from gochan.event_handler import PropertyChangedEventArgs, PropertyChangedEventHandler
 
 
 class ThreadHistory:

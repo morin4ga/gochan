@@ -1,12 +1,13 @@
-from asciimatics.widgets import Frame, ListBox, Widget, Layout, VerticalDivider, Divider, Label, PopUpDialog
-from asciimatics.screen import Screen
-from asciimatics.event import KeyboardEvent
 from typing import List, Optional
 
-from gochan.view_models.ngvm import NGVM, NGItem, NGTitle, NGName, NGId, NGWord
-from gochan.effects import NGEditor
-from gochan.keybinding import KEY_BINDINGS
+from asciimatics.event import KeyboardEvent
+from asciimatics.screen import Screen
+from asciimatics.widgets import Divider, Frame, Label, Layout, ListBox, PopUpDialog, VerticalDivider, Widget
+
+from gochan.effects.ng_editor import NGEditor
 from gochan.event_handler import PropertyChangedEventArgs
+from gochan.keybinding import KEY_BINDINGS
+from gochan.view_models.ngvm import NGVM, NGId, NGItem, NGName, NGTitle, NGWord
 
 
 class NGView(Frame):

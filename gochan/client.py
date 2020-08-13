@@ -1,9 +1,8 @@
 from typing import Union
-
 from urllib.parse import urlencode
-from urllib.request import Request, urlopen, URLError, HTTPError
+from urllib.request import HTTPError, Request, URLError, urlopen
 
-from gochan.config import USER_AGENT, COOKIE
+from gochan.config import COOKIE, USER_AGENT
 
 
 def get_bbsmenu() -> str:

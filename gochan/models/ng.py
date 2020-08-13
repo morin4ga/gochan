@@ -1,10 +1,10 @@
-import re
 import json
-
+import re
 from typing import List, Optional, Union
 
-from gochan.event_handler import CollectionChangedEventHandler, CollectionChangedEventArgs, CollectionChangedEventKind
-from gochan.models import ThreadHeader, Thread, Response
+from gochan.event_handler import CollectionChangedEventArgs, CollectionChangedEventHandler, CollectionChangedEventKind
+from gochan.models.board import ThreadHeader
+from gochan.models.thread import Response, Thread
 
 
 class BreakException(Exception):

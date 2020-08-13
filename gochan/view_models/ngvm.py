@@ -1,8 +1,8 @@
 from typing import List
 
-from gochan.models import AppContext
-from gochan.models.ng import NGName, NGWord, NGId, NGTitle, NGItem  # noqa: F401
-from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs, CollectionChangedEventArgs
+from gochan.event_handler import CollectionChangedEventArgs, PropertyChangedEventArgs, PropertyChangedEventHandler
+from gochan.models.app_context import AppContext
+from gochan.models.ng import NGId, NGItem, NGName, NGTitle, NGWord  # noqa: F401
 
 
 class NGVM:

@@ -1,9 +1,9 @@
-from asciimatics.widgets import Frame, ListBox, Widget, Layout
-from asciimatics.screen import Screen
-from asciimatics.exceptions import NextScene
 from asciimatics.event import KeyboardEvent
+from asciimatics.exceptions import NextScene
+from asciimatics.screen import Screen
+from asciimatics.widgets import Frame, Layout, ListBox, Widget
 
-from gochan.event_handler import PropertyChangedEventArgs, OrderChangedEventArg
+from gochan.event_handler import OrderChangedEventArg, PropertyChangedEventArgs
 from gochan.view_models.favoritesvm import FavoritesVM, FavoriteThread
 
 

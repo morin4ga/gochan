@@ -1,11 +1,11 @@
-import time
 import json
+import time
 from typing import List
 
 from gochan.client import get_board
-from gochan.parser import BoardParser
-from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs
 from gochan.config import NEW_THREAD_INTERVAL
+from gochan.event_handler import PropertyChangedEventArgs, PropertyChangedEventHandler
+from gochan.parser import BoardParser
 
 
 class BreakException(Exception):

@@ -1,6 +1,6 @@
 from asciimatics.screen import Screen
-from asciimatics.widgets import Frame, TextBox, CheckBox, Layout, Widget, Divider, Button, Label,\
-    VerticalDivider, RadioButtons, PopUpDialog
+from asciimatics.widgets import (Button, CheckBox, Divider, Frame, Label, Layout, PopUpDialog, RadioButtons, TextBox,
+                                 VerticalDivider, Widget)
 
 
 class NGCreator(Frame):

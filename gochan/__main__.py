@@ -1,18 +1,27 @@
 import sys
 
 from asciimatics.event import KeyboardEvent
-from asciimatics.exceptions import ResizeScreenError, StopApplication, NextScene
+from asciimatics.exceptions import NextScene, ResizeScreenError, StopApplication
 from asciimatics.scene import Scene
 from asciimatics.screen import Screen
 from asciimatics.widgets import THEMES
 
-from gochan.keybinding import KEY_BINDINGS
 from gochan.key import KeyLogger
-from gochan.views import BbsmenuView, BoardView, ImageView, ThreadView, NGView, FavoritesView
-from gochan.models import AppContext
-from gochan.view_models import BbsmenuVM, BoardVM, ThreadVM, ImageVM, NGVM
-from gochan.view_models.favoritesvm import FavoritesVM
+from gochan.keybinding import KEY_BINDINGS
+from gochan.models.app_context import AppContext
 from gochan.theme import THEME
+from gochan.view_models.bbsmenuvm import BbsmenuVM
+from gochan.view_models.boardvm import BoardVM
+from gochan.view_models.favoritesvm import FavoritesVM
+from gochan.view_models.imagevm import ImageVM
+from gochan.view_models.ngvm import NGVM
+from gochan.view_models.threadvm import ThreadVM
+from gochan.views.bbsmenu_view import BbsmenuView
+from gochan.views.board_view import BoardView
+from gochan.views.favorites_view import FavoritesView
+from gochan.views.image_view import ImageView
+from gochan.views.ng_view import NGView
+from gochan.views.thread_view import ThreadView
 
 
 def global_shortcuts(event):

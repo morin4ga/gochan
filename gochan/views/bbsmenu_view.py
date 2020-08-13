@@ -2,10 +2,10 @@ from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, Layout, Widget
 
-from gochan.keybinding import KEY_BINDINGS
-from gochan.view_models import BbsmenuVM
-from gochan.widgets import ListBoxK
 from gochan.event_handler import PropertyChangedEventArgs
+from gochan.keybinding import KEY_BINDINGS
+from gochan.view_models.bbsmenuvm import BbsmenuVM
+from gochan.widgets.list_boxk import ListBoxK
 
 
 class BbsmenuView(Frame):

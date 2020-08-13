@@ -1,7 +1,6 @@
 import re
-
-from typing import List, Dict, Union
 from html import unescape
+from typing import Dict, List, Union
 
 
 class CategoryParser():

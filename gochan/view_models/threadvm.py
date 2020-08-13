@@ -1,10 +1,11 @@
 from typing import List, Optional, Union
 
-from gochan.models import Response, AppContext
-from gochan.models.ng import NG, NGResponse
+from gochan.event_handler import (CollectionChangedEventArgs, CollectionChangedEventHandler, PropertyChangedEventArgs,
+                                  PropertyChangedEventHandler)
+from gochan.models.app_context import AppContext
 from gochan.models.favorites import FavoriteThread
-from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs, CollectionChangedEventHandler, \
-    CollectionChangedEventArgs
+from gochan.models.ng import NG, NGResponse
+from gochan.models.thread import Response
 
 
 class ThreadVM:

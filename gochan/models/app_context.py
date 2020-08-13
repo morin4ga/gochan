@@ -1,20 +1,19 @@
 import re
 import tempfile
-
 from typing import Optional, Union
 from urllib.request import HTTPError, URLError
 
-from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs
+from gochan.client import download_image
+from gochan.config import (FAVORITES_PATH, HISTORY_PATH, MAX_HISTORY, NG_PATH, SAVE_THREAD_LOG, USE_BOARD_LOG,
+                           USE_IMAGE_CACHE)
+from gochan.event_handler import PropertyChangedEventArgs, PropertyChangedEventHandler
 from gochan.models.bbsmenu import Bbsmenu
 from gochan.models.board import Board
-from gochan.models.thread import Thread
-from gochan.config import USE_IMAGE_CACHE, SAVE_THREAD_LOG, USE_BOARD_LOG, HISTORY_PATH, MAX_HISTORY,\
-    NG_PATH, FAVORITES_PATH
-from gochan.storage import image_cache, thread_log, board_log
-from gochan.models.history import History
-from gochan.client import download_image
-from gochan.models.ng import NG
 from gochan.models.favorites import Favorites
+from gochan.models.history import History
+from gochan.models.ng import NG
+from gochan.models.thread import Thread
+from gochan.storage import board_log, image_cache, thread_log
 
 
 class AppContext:

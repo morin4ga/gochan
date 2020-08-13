@@ -3,7 +3,7 @@ import json
 from asciimatics.screen import Screen
 
 from gochan.config import THEME_PATH
-from gochan.widgets import Brush
+from gochan.widgets.richtext import Brush
 
 THEME = {
     "background": (Screen.COLOUR_WHITE, Screen.A_BOLD, Screen.COLOUR_BLACK),

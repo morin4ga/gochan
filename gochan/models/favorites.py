@@ -1,8 +1,8 @@
 import json
 from typing import Union
 
-from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs,\
-    OrderChangedEventHandler, OrderChangedEventArg
+from gochan.event_handler import (OrderChangedEventArg, OrderChangedEventHandler, PropertyChangedEventArgs,
+                                  PropertyChangedEventHandler)
 
 
 class FavoriteThread:

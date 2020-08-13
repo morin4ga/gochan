@@ -1,6 +1,5 @@
 from asciimatics.screen import Screen
-from asciimatics.widgets import Frame, Text, TextBox, CheckBox, Layout, Widget, Divider, Button, Label,\
-    VerticalDivider
+from asciimatics.widgets import Button, CheckBox, Divider, Frame, Label, Layout, Text, TextBox, VerticalDivider, Widget
 
 
 class NGEditor(Frame):

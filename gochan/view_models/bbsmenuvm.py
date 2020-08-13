@@ -1,7 +1,8 @@
-from typing import Optional, List
+from typing import List, Optional
 
-from gochan.models import AppContext, Category
-from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs
+from gochan.event_handler import PropertyChangedEventArgs, PropertyChangedEventHandler
+from gochan.models.app_context import AppContext
+from gochan.models.bbsmenu import Category
 
 
 class BbsmenuVM:

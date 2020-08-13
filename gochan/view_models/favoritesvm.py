@@ -1,8 +1,9 @@
 from typing import Union
-from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs,\
-    OrderChangedEventHandler, OrderChangedEventArg
-from gochan.models import AppContext
-from gochan.models.favorites import FavoriteThread, FavoriteBoard
+
+from gochan.event_handler import (OrderChangedEventArg, OrderChangedEventHandler, PropertyChangedEventArgs,
+                                  PropertyChangedEventHandler)
+from gochan.models.app_context import AppContext
+from gochan.models.favorites import FavoriteBoard, FavoriteThread
 
 
 class FavoritesVM:

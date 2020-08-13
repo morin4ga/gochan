@@ -1,8 +1,8 @@
 from typing import Optional, Union
 from urllib.error import HTTPError, URLError
 
-from gochan.event_handler import PropertyChangedEventHandler, PropertyChangedEventArgs
-from gochan.models import AppContext
+from gochan.event_handler import PropertyChangedEventArgs, PropertyChangedEventHandler
+from gochan.models.app_context import AppContext
 
 
 class ImageVM:

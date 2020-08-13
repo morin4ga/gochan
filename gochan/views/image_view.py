@@ -7,8 +7,8 @@ from asciimatics.renderers import ColourImageFile
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, PopUpDialog
 
-from gochan.view_models import ImageVM
 from gochan.event_handler import PropertyChangedEventArgs
+from gochan.view_models.imagevm import ImageVM
 
 
 class ImageView(Frame):

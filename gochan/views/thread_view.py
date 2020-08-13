@@ -1,20 +1,22 @@
-from logging import NOTSET
-from gochan.effects.responses_popup import ResponsesPopup
 import re
 from typing import List
 
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
-from asciimatics.widgets import Button, Divider, Frame, Layout, Widget, Label, PopUpDialog
+from asciimatics.widgets import Button, Divider, Frame, Label, Layout, PopUpDialog, Widget
 
 from gochan.browser import open_link, open_links
-from gochan.theme import THREAD_BRUSHES
+from gochan.effects.command_line import CommandLine
+from gochan.effects.ng_creator import NGCreator
+from gochan.effects.post_form import PostForm
+from gochan.effects.responses_popup import ResponsesPopup
+from gochan.event_handler import CollectionChangedEventArgs, PropertyChangedEventArgs
 from gochan.keybinding import KEY_BINDINGS
-from gochan.view_models import ThreadVM
-from gochan.effects import CommandLine, NGCreator, PostForm
-from gochan.widgets import Cell, ResponsesViewer
-from gochan.event_handler import PropertyChangedEventArgs, CollectionChangedEventArgs
+from gochan.theme import THREAD_BRUSHES
+from gochan.view_models.threadvm import ThreadVM
+from gochan.widgets.responses_viewer import ResponsesViewer
+from gochan.widgets.richtext import Cell
 
 link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
 

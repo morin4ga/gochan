@@ -1,7 +1,6 @@
 from typing import Dict
 
 from asciimatics.event import KeyboardEvent
-from asciimatics.screen import Screen
 from asciimatics.widgets import MultiColumnListBox
 
 

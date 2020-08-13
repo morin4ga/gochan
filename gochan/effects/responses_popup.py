@@ -1,10 +1,13 @@
 from typing import Dict, List
+
 from asciimatics.event import KeyboardEvent
 from asciimatics.screen import Screen
 from asciimatics.widgets import Frame, Layout
-from gochan.models import Response
-from gochan.widgets import ResponsesViewer, Cell
-from gochan.effects import CommandLine
+
+from gochan.effects.command_line import CommandLine
+from gochan.models.thread import Response
+from gochan.widgets.responses_viewer import ResponsesViewer
+from gochan.widgets.richtext import Cell
 
 
 class ResponsesPopup(Frame):

@@ -1,9 +1,10 @@
 import re
-from typing import List, Tuple, Union,  Dict
-from gochan.models import Response
+from typing import Dict, List, Tuple, Union
+
 from gochan.models.ng import NGResponse
-from gochan.widgets import RichText, Buffer
+from gochan.models.thread import Response
 from gochan.theme import THREAD_BRUSHES
+from gochan.widgets.richtext import Buffer, RichText
 
 link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
 
@@ -17,7 +18,7 @@ def _convert_to_buffer(responses: List[Union[Response, NGResponse]], replies: Di
     for r in responses:
         if isinstance(r, NGResponse):
             if r.hide:
-                anchors[r.origin.number] = ((len(buf), len(buf)))
+                anchors[r.origin] = ((len(buf), len(buf)))
                 continue
             else:
                 start = len(buf)

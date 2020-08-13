@@ -1,7 +1,7 @@
 import json
 
 from gochan.config import KEYBINDINGS_PATH
-from gochan.key import parse_key, Key
+from gochan.key import Key, parse_key
 
 KEY_BINDINGS = {
     "global": {
