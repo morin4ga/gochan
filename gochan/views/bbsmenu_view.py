@@ -1,6 +1,6 @@
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
-from asciimatics.widgets import Frame, Layout, Widget
+from asciimatics.widgets import Button, Divider, Frame, Layout, Widget
 
 from gochan.event_handler import PropertyChangedEventArgs
 from gochan.keybinding import KEY_BINDINGS
@@ -17,7 +17,7 @@ class BbsmenuView(Frame):
                          can_scroll=False,
                          has_border=False,
                          title="Bbs Menu",
-                         )
+                         on_load=self._on_load)
 
         self.set_theme("user_theme")
 
@@ -45,6 +45,18 @@ class BbsmenuView(Frame):
             on_change=self._on_pick_b,
             on_select=self._on_select_b,
         )
+
+        layout = Layout([20, 20, 20, 20, 20])
+        self.add_layout(layout)
+        layout.add_widget(Button("Bbsmenu", None, disabled=True), 0)
+        layout.add_widget(Button("Board", self._to_board), 1)
+        layout.add_widget(Button("Thread", self._to_thread), 2)
+        layout.add_widget(Button("Favorite", self._to_favorites), 3)
+        layout.add_widget(Button("NG", self._to_ng), 4)
+
+        layout = Layout([100])
+        self.add_layout(layout)
+        layout.add_widget(Divider())
 
         layout = Layout([30, 70], fill_frame=True)
         self.add_layout(layout)
@@ -75,6 +87,9 @@ class BbsmenuView(Frame):
 
             self._board_list.options = opitons
 
+    def _on_load(self):
+        self.switch_focus(self._layouts[2], 0, 0)
+
     def _on_pick_c(self):
         self.save()
         index = self.data['cat_list']
@@ -82,7 +97,7 @@ class BbsmenuView(Frame):
             self._data_context.select_category(index)
 
     def _on_select_c(self):
-        self.switch_focus(self._layouts[0], 1, 0)
+        self.switch_focus(self._layouts[2], 1, 0)
 
     def _on_pick_b(self):
         pass
@@ -94,3 +109,15 @@ class BbsmenuView(Frame):
         if index is not None:
             self._data_context.select_board(index)
             raise NextScene("Board")
+
+    def _to_board(self):
+        raise NextScene("Board")
+
+    def _to_thread(self):
+        raise NextScene("Thread")
+
+    def _to_favorites(self):
+        raise NextScene("Favorites")
+
+    def _to_ng(self):
+        raise NextScene("NG")

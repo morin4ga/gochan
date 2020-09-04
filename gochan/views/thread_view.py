@@ -25,7 +25,7 @@ class ThreadView(Frame):
         super().__init__(screen,
                          screen.height,
                          screen.width,
-                         on_load=self._on_load_,
+                         on_load=self._on_load,
                          hover_focus=True,
                          can_scroll=False,
                          has_border=False
@@ -52,6 +52,18 @@ class ThreadView(Frame):
         self._back_button = Button("Back", on_click=self._on_back_btn_pushed)
         self._update_button = Button("Update", on_click=self._on_update_btn_pushed)
         self._write_button = Button("Write", on_click=self._on_write_btn_pushed)
+
+        layout = Layout([20, 20, 20, 20, 20])
+        self.add_layout(layout)
+        layout.add_widget(Button("Bbsmenu", self._to_bbsmenu), 0)
+        layout.add_widget(Button("Board", self._to_board), 1)
+        layout.add_widget(Button("Thread", None, disabled=True), 2)
+        layout.add_widget(Button("Favorite", self._to_favorites), 3)
+        layout.add_widget(Button("NG", self._to_ng), 4)
+
+        layout = Layout([100])
+        self.add_layout(layout)
+        layout.add_widget(Divider())
 
         layout = Layout([100])
         self.add_layout(layout)
@@ -102,8 +114,8 @@ class ThreadView(Frame):
 
         self._title_label.text = title
 
-    def _on_load_(self):
-        pass
+    def _on_load(self):
+        self.switch_focus(self._layouts[3], 0, 0)
 
     def _on_back_btn_pushed(self):
         self._save_history()
@@ -275,3 +287,15 @@ class ThreadView(Frame):
         new_bookmark = self._responses_viewer.get_last_respones_displayed()
 
         self._data_context.save_history(max(new_bookmark, cur_bookmark))
+
+    def _to_bbsmenu(self):
+        raise NextScene("Bbsmenu")
+
+    def _to_board(self):
+        raise NextScene("Board")
+
+    def _to_favorites(self):
+        raise NextScene("Favorites")
+
+    def _to_ng(self):
+        raise NextScene("NG")

@@ -1,7 +1,7 @@
 from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
-from asciimatics.widgets import Frame, Layout, ListBox, Widget
+from asciimatics.widgets import Frame, Layout, ListBox, Widget, Button, Divider
 
 from gochan.event_handler import OrderChangedEventArg, PropertyChangedEventArgs
 from gochan.view_models.favoritesvm import FavoritesVM, FavoriteThread
@@ -15,6 +15,7 @@ class FavoritesView(Frame):
                          has_border=False,
                          hover_focus=True,
                          can_scroll=False,
+                         on_load=self._on_load,
                          )
 
         self.set_theme("user_theme")
@@ -24,6 +25,18 @@ class FavoritesView(Frame):
         self._context.on_order_changed.add(self._order_changed)
 
         self._list_box = ListBox(Widget.FILL_FRAME, [], on_select=self._on_select, on_change=self._on_changed)
+
+        layout = Layout([20, 20, 20, 20, 20])
+        self.add_layout(layout)
+        layout.add_widget(Button("Bbsmenu", self._to_bbsmenu), 0)
+        layout.add_widget(Button("Board", self._to_board), 1)
+        layout.add_widget(Button("Thread", self._to_thread), 2)
+        layout.add_widget(Button("Favorite", None, disabled=True), 3)
+        layout.add_widget(Button("NG", self._to_ng), 4)
+
+        layout = Layout([100])
+        self.add_layout(layout)
+        layout.add_widget(Divider())
 
         layout = Layout([100], fill_frame=True)
         self.add_layout(layout)
@@ -63,6 +76,9 @@ class FavoritesView(Frame):
 
         self._list_box.options = options
 
+    def _on_load(self):
+        self.switch_focus(self._layouts[2], 0, 0)
+
     def _on_changed(self):
         idx = self._list_box.value
 
@@ -87,3 +103,15 @@ class FavoritesView(Frame):
         self._selected_item = None
         self._update_list()
         self._list_box.value = e.new_index
+
+    def _to_bbsmenu(self):
+        raise NextScene("Bbsmenu")
+
+    def _to_board(self):
+        raise NextScene("Board")
+
+    def _to_thread(self):
+        raise NextScene("Thread")
+
+    def _to_ng(self):
+        raise NextScene("NG")

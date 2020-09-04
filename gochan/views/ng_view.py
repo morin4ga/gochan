@@ -2,7 +2,8 @@ from typing import List, Optional
 
 from asciimatics.event import KeyboardEvent
 from asciimatics.screen import Screen
-from asciimatics.widgets import Divider, Frame, Label, Layout, ListBox, PopUpDialog, VerticalDivider, Widget
+from asciimatics.widgets import Divider, Frame, Label, Layout, ListBox, PopUpDialog, VerticalDivider, Widget, Button
+from asciimatics.exceptions import NextScene
 
 from gochan.effects.ng_editor import NGEditor
 from gochan.event_handler import PropertyChangedEventArgs
@@ -18,6 +19,7 @@ class NGView(Frame):
                          has_border=False,
                          hover_focus=True,
                          can_scroll=False,
+                         on_load=self._on_load,
                          )
 
         self.set_theme("user_theme")
@@ -42,6 +44,18 @@ class NGView(Frame):
         self._label5 = Label("")
 
         self._form = None
+
+        layout = Layout([20, 20, 20, 20, 20])
+        self.add_layout(layout)
+        layout.add_widget(Button("Bbsmenu", self._to_bbsmenu), 0)
+        layout.add_widget(Button("Board", self._to_board), 1)
+        layout.add_widget(Button("Thread", self._to_thread), 2)
+        layout.add_widget(Button("Favorite", self._to_favorites), 3)
+        layout.add_widget(Button("NG", None, disabled=True), 4)
+
+        layout = Layout([100])
+        self.add_layout(layout)
+        layout.add_widget(Divider())
 
         layout = Layout([20, 1, 79], fill_frame=True)
         self.add_layout(layout)
@@ -76,7 +90,10 @@ class NGView(Frame):
         self._ng_list.value = 0
 
         self._on_pick_kind()
-        self.switch_focus(self._layouts[0], 0, 0)
+        self.switch_focus(self._layouts[2], 0, 0)
+
+    def _on_load(self):
+        self.switch_focus(self._layouts[2], 0, 0)
 
     def _on_pick_kind(self):
         self.save()
@@ -190,6 +207,18 @@ class NGView(Frame):
                 self._scene.add_effect(NGEditor(self._screen, d,
                                                 lambda d: self._data_context.update_ng(self._selected_item.id, d),
                                                 "title"))
+
+    def _to_bbsmenu(self):
+        raise NextScene("Bbsmenu")
+
+    def _to_board(self):
+        raise NextScene("NG")
+
+    def _to_thread(self):
+        raise NextScene("Thread")
+
+    def _to_favorites(self):
+        raise NextScene("Favorites")
 
 
 def _to_options(from_: List[NGItem]):
