@@ -141,46 +141,46 @@ class BoardView(Frame):
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
-            if event.key_code == self._keybindings["num_sort"]:
+            if event.key_code == self._keybindings["num_sort"].value:
                 self._data_context.sort_threads("number")
                 return None
-            elif event.key_code == self._keybindings["num_des_sort"]:
+            elif event.key_code == self._keybindings["num_des_sort"].value:
                 self._data_context.sort_threads("number", True)
                 return None
-            elif event.key_code == self._keybindings["title_sort"]:
+            elif event.key_code == self._keybindings["title_sort"].value:
                 self._data_context.sort_threads("title")
                 return None
-            elif event.key_code == self._keybindings["title_des_sort"]:
+            elif event.key_code == self._keybindings["title_des_sort"].value:
                 self._data_context.sort_threads("title", True)
                 return None
-            elif event.key_code == self._keybindings["count_sort"]:
+            elif event.key_code == self._keybindings["count_sort"].value:
                 self._data_context.sort_threads("count")
                 return None
-            elif event.key_code == self._keybindings["count_des_sort"]:
+            elif event.key_code == self._keybindings["count_des_sort"].value:
                 self._data_context.sort_threads("count", True)
                 return None
-            elif event.key_code == self._keybindings["active_sort"]:
+            elif event.key_code == self._keybindings["active_sort"].value:
                 self._data_context.switch_active_sort()
                 return None
-            elif event.key_code == self._keybindings["speed_sort"]:
+            elif event.key_code == self._keybindings["speed_sort"].value:
                 self._data_context.sort_threads("speed")
                 return None
-            elif event.key_code == self._keybindings["speed_des_sort"]:
+            elif event.key_code == self._keybindings["speed_des_sort"].value:
                 self._data_context.sort_threads("speed", True)
                 return None
-            elif event.key_code == self._keybindings["find"]:
+            elif event.key_code == self._keybindings["find"].value:
                 self._scene.add_effect(CommandLine(self._screen, "find:", self._find))
                 return None
-            elif event.key_code == self._keybindings["ng_title"]:
+            elif event.key_code == self._keybindings["ng_title"].value:
                 self._scene.add_effect(CommandLine(self._screen, "ng:", self._open_ngcreator))
                 return None
-            elif event.key_code == self._keybindings["update"]:
+            elif event.key_code == self._keybindings["update"].value:
                 self._data_context.update()
                 return None
-            elif event.key_code == self._keybindings["back"]:
+            elif event.key_code == self._keybindings["back"].value:
                 raise NextScene("Bbsmenu")
                 return None
-            elif event.key_code == self._keybindings["favorite"]:
+            elif event.key_code == self._keybindings["favorite"].value:
                 self._data_context.favorite()
                 return None
 

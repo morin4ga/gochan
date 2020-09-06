@@ -1,3 +1,4 @@
+from gochan.key import Key
 from typing import Dict
 
 from asciimatics.event import KeyboardEvent
@@ -5,7 +6,7 @@ from asciimatics.widgets import ListBox
 
 
 class ListBoxK(ListBox):
-    def __init__(self, height, options, keybindings: Dict[str, int], centre=False, label=None, name=None,
+    def __init__(self, height, options, keybindings: Dict[str, Key], centre=False, label=None, name=None,
                  add_scroll_bar=False, on_change=None, on_select=None, validator=None):
         super().__init__(height, options, centre=centre, label=label, name=name,
                          add_scroll_bar=add_scroll_bar, on_change=on_change, on_select=on_select, validator=validator)
@@ -14,25 +15,25 @@ class ListBoxK(ListBox):
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
-            if event.key_code == self._keybindings["select_up"]:
+            if event.key_code == self._keybindings["select_up"].value:
                 self.select_up()
                 return None
-            elif event.key_code == self._keybindings["select_down"]:
+            elif event.key_code == self._keybindings["select_down"].value:
                 self.select_down()
                 return None
-            elif event.key_code == self._keybindings["page_up"]:
+            elif event.key_code == self._keybindings["page_up"].value:
                 self.page_up()
                 return None
-            elif event.key_code == self._keybindings["page_down"]:
+            elif event.key_code == self._keybindings["page_down"].value:
                 self.page_down()
                 return None
-            elif event.key_code == self._keybindings["select_top"]:
+            elif event.key_code == self._keybindings["select_top"].value:
                 self.select_top()
                 return None
-            elif event.key_code == self._keybindings["select_bottom"]:
+            elif event.key_code == self._keybindings["select_bottom"].value:
                 self.select_bottom()
                 return None
-            elif event.key_code == self._keybindings["select"]:
+            elif event.key_code == self._keybindings["select"].value:
                 self.select()
                 return None
 

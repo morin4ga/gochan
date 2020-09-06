@@ -1,3 +1,4 @@
+from gochan.key import Key
 from typing import Dict, List
 
 from asciimatics.event import KeyboardEvent
@@ -69,7 +70,7 @@ class Buffer:
 
 
 class RichText(Widget):
-    def __init__(self, height, flush_brush: Brush, keybindings: Dict[str, int], name=None, **kwargs):
+    def __init__(self, height, flush_brush: Brush, keybindings: Dict[str, Key], name=None, **kwargs):
         super().__init__(name, **kwargs)
         self._required_height = height
         self._scrl_offset = 0
@@ -115,22 +116,22 @@ class RichText(Widget):
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
-            if event.key_code == self._keybindings["scroll_down"]:
+            if event.key_code == self._keybindings["scroll_down"].value:
                 self.scroll_down()
                 return None
-            elif event.key_code == self._keybindings["scroll_up"]:
+            elif event.key_code == self._keybindings["scroll_up"].value:
                 self.scroll_up()
                 return None
-            elif event.key_code == self._keybindings["page_up"]:
+            elif event.key_code == self._keybindings["page_up"].value:
                 self.page_up()
                 return None
-            elif event.key_code == self._keybindings["page_down"]:
+            elif event.key_code == self._keybindings["page_down"].value:
                 self.page_down()
                 return None
-            elif event.key_code == self._keybindings["go_to_top"]:
+            elif event.key_code == self._keybindings["go_to_top"].value:
                 self.go_to_top()
                 return None
-            elif event.key_code == self._keybindings["go_to_bottom"]:
+            elif event.key_code == self._keybindings["go_to_bottom"].value:
                 self.go_to_bottom()
                 return None
 

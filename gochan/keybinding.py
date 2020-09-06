@@ -1,69 +1,69 @@
 import json
 
 from gochan.config import KEYBINDINGS_PATH
-from gochan.key import Key, parse_key
+from gochan.key import Keys, parse_key
 
 KEY_BINDINGS = {
     "global": {
-        "exit": Key.Ctrl.C,
-        "bbsmenu_view": Key.Ctrl.H,
-        "board_view": Key.Ctrl.J,
-        "thread_view": Key.Ctrl.K,
-        "ng_view": Key.Ctrl.L,
-        "favorites_view": Key.Ctrl.N
+        "exit": Keys.Ctrl.C,
+        "bbsmenu_view": Keys.Ctrl.H,
+        "board_view": Keys.Ctrl.J,
+        "thread_view": Keys.Ctrl.K,
+        "ng_view": Keys.Ctrl.L,
+        "favorites_view": Keys.Ctrl.N
     },
     "bbsmenu": {
-        "select_up": Key.UP,
-        "select_down": Key.DOWN,
-        "page_up": Key.PAGE_UP,
-        "page_down": Key.PAGE_DOWN,
-        "select_top": Key.Ctrl.HOME,
-        "select_bottom": Key.Ctrl.END,
-        "select": Key.ENTER,
+        "select_up": Keys.UP,
+        "select_down": Keys.DOWN,
+        "page_up": Keys.PAGE_UP,
+        "page_down": Keys.PAGE_DOWN,
+        "select_top": Keys.Ctrl.HOME,
+        "select_bottom": Keys.Ctrl.END,
+        "select": Keys.ENTER,
     },
     "board": {
-        "select_up": Key.UP,
-        "select_down": Key.DOWN,
-        "page_up": Key.PAGE_UP,
-        "page_down": Key.PAGE_DOWN,
-        "select_top": Key.Ctrl.HOME,
-        "select_bottom": Key.Ctrl.END,
-        "select": Key.ENTER,
-        "num_sort": Key.Q,
-        "num_des_sort": Key.Shift.Q,
-        "title_sort": Key.W,
-        "title_des_sort": Key.Shift.W,
-        "count_sort": Key.E,
-        "count_des_sort": Key.Shift.E,
-        "active_sort": Key.R,
-        "speed_sort": Key.T,
-        "speed_des_sort": Key.Shift.T,
-        "find": Key.Ctrl.F,
-        "ng_title": Key.N,
-        "update": Key.U,
-        "back": Key.B,
-        "favorite": Key.F
+        "select_up": Keys.UP,
+        "select_down": Keys.DOWN,
+        "page_up": Keys.PAGE_UP,
+        "page_down": Keys.PAGE_DOWN,
+        "select_top": Keys.Ctrl.HOME,
+        "select_bottom": Keys.Ctrl.END,
+        "select": Keys.ENTER,
+        "num_sort": Keys.Q,
+        "num_des_sort": Keys.Shift.Q,
+        "title_sort": Keys.W,
+        "title_des_sort": Keys.Shift.W,
+        "count_sort": Keys.E,
+        "count_des_sort": Keys.Shift.E,
+        "active_sort": Keys.R,
+        "speed_sort": Keys.T,
+        "speed_des_sort": Keys.Shift.T,
+        "find": Keys.Ctrl.F,
+        "ng_title": Keys.N,
+        "update": Keys.U,
+        "back": Keys.B,
+        "favorite": Keys.F
     },
     "thread": {
-        "scroll_up": Key.UP,
-        "scroll_down": Key.DOWN,
-        "page_up": Key.PAGE_UP,
-        "page_down": Key.PAGE_DOWN,
-        "go_to_top": Key.Ctrl.HOME,
-        "go_to_bottom": Key.Ctrl.END,
-        "open_link": Key.O,
-        "show_image": Key.S,
-        "go_to": Key.G,
-        "ng_name": Key.N,
-        "ng_id": Key.I,
-        "ng_word": Key.W,
-        "update": Key.U,
-        "back": Key.B,
-        "favorite": Key.F
+        "scroll_up": Keys.UP,
+        "scroll_down": Keys.DOWN,
+        "page_up": Keys.PAGE_UP,
+        "page_down": Keys.PAGE_DOWN,
+        "go_to_top": Keys.Ctrl.HOME,
+        "go_to_bottom": Keys.Ctrl.END,
+        "open_link": Keys.O,
+        "show_image": Keys.S,
+        "go_to": Keys.G,
+        "ng_name": Keys.N,
+        "ng_id": Keys.I,
+        "ng_word": Keys.W,
+        "update": Keys.U,
+        "back": Keys.B,
+        "favorite": Keys.F
     },
     "ng": {
-        "delete": Key.D,
-        "edit": Key.E
+        "delete": Keys.D,
+        "edit": Keys.E
     }
 }
 

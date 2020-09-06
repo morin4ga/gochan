@@ -136,32 +136,32 @@ class ThreadView(Frame):
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
-            if event.key_code == self._keybindings["open_link"]:
+            if event.key_code == self._keybindings["open_link"].value:
                 self._scene.add_effect(CommandLine(self._screen, "open:", self._open_link))
                 return None
-            elif event.key_code == self._keybindings["show_image"]:
+            elif event.key_code == self._keybindings["show_image"].value:
                 self._scene.add_effect(CommandLine(self._screen, "show:", self._show_image))
                 return None
-            elif event.key_code == self._keybindings["go_to"]:
+            elif event.key_code == self._keybindings["go_to"].value:
                 self._scene.add_effect(CommandLine(self._screen, "go to:", self._go_to))
                 return None
-            elif event.key_code == self._keybindings["ng_name"]:
+            elif event.key_code == self._keybindings["ng_name"].value:
                 self._scene.add_effect(CommandLine(self._screen, "ng name:", self._open_ngeditor_name))
                 return None
-            elif event.key_code == self._keybindings["ng_id"]:
+            elif event.key_code == self._keybindings["ng_id"].value:
                 self._scene.add_effect(CommandLine(self._screen, "ng id:", self._open_ngeditor_id))
                 return None
-            elif event.key_code == self._keybindings["ng_word"]:
+            elif event.key_code == self._keybindings["ng_word"].value:
                 self._scene.add_effect(CommandLine(self._screen, "ng word:", self._open_ngeditor_word))
                 return None
-            elif event.key_code == self._keybindings["update"]:
+            elif event.key_code == self._keybindings["update"].value:
                 self._data_context.update()
                 self._save_history()
                 return None
-            elif event.key_code == self._keybindings["back"]:
+            elif event.key_code == self._keybindings["back"].value:
                 self._save_history()
                 raise NextScene("Board")
-            elif event.key_code == self._keybindings["favorite"]:
+            elif event.key_code == self._keybindings["favorite"].value:
                 self._data_context.favorite()
             elif event.key_code == ord("r"):
                 self._scene.add_effect(CommandLine(self._screen, "show_replies:", self._show_replies))

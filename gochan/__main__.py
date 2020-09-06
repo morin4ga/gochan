@@ -28,17 +28,17 @@ def global_shortcuts(event):
     if isinstance(event, KeyboardEvent):
         c = event.key_code
 
-        if c == KEY_BINDINGS["global"]["exit"]:
+        if c == KEY_BINDINGS["global"]["exit"].value:
             raise StopApplication("stop")
-        elif c == KEY_BINDINGS["global"]["bbsmenu_view"]:
+        elif c == KEY_BINDINGS["global"]["bbsmenu_view"].value:
             raise NextScene("Bbsmenu")
-        elif c == KEY_BINDINGS["global"]["board_view"]:
+        elif c == KEY_BINDINGS["global"]["board_view"].value:
             raise NextScene("Board")
-        elif c == KEY_BINDINGS["global"]["thread_view"]:
+        elif c == KEY_BINDINGS["global"]["thread_view"].value:
             raise NextScene("Thread")
-        elif c == KEY_BINDINGS["global"]["ng_view"]:
+        elif c == KEY_BINDINGS["global"]["ng_view"].value:
             raise NextScene("NG")
-        elif c == KEY_BINDINGS["global"]["favorites_view"]:
+        elif c == KEY_BINDINGS["global"]["favorites_view"].value:
             raise NextScene("Favorites")
 
 
