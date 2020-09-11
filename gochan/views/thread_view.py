@@ -11,6 +11,7 @@ from gochan.effects.command_line import CommandLine
 from gochan.effects.ng_creator import NGCreator
 from gochan.effects.post_form import PostForm
 from gochan.effects.responses_popup import ResponsesPopup
+from gochan.effects.help import Help
 from gochan.event_handler import CollectionChangedEventArgs, PropertyChangedEventArgs
 from gochan.keybinding import KEY_BINDINGS
 from gochan.theme import THREAD_BRUSHES
@@ -136,7 +137,10 @@ class ThreadView(Frame):
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
-            if event.key_code == self._keybindings["open_link"].value:
+            if event.key_code == KEY_BINDINGS["global"]["help"].value:
+                self._scene.add_effect(Help(self.screen))
+                return None
+            elif event.key_code == self._keybindings["open_link"].value:
                 self._scene.add_effect(CommandLine(self._screen, "open:", self._open_link))
                 return None
             elif event.key_code == self._keybindings["show_image"].value:

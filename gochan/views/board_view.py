@@ -5,6 +5,7 @@ from asciimatics.widgets import Button, Divider, Frame, Label, Layout, Widget
 
 from gochan.effects.command_line import CommandLine
 from gochan.effects.ng_creator import NGCreator
+from gochan.effects.help import Help
 from gochan.event_handler import PropertyChangedEventArgs
 from gochan.keybinding import KEY_BINDINGS
 from gochan.view_models.boardvm import BoardVM
@@ -141,7 +142,10 @@ class BoardView(Frame):
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
-            if event.key_code == self._keybindings["num_sort"].value:
+            if event.key_code == KEY_BINDINGS["global"]["help"].value:
+                self._scene.add_effect(Help(self.screen))
+                return None
+            elif event.key_code == self._keybindings["num_sort"].value:
                 self._data_context.sort_threads("number")
                 return None
             elif event.key_code == self._keybindings["num_des_sort"].value:

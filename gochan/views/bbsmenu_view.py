@@ -1,3 +1,5 @@
+from gochan.effects.help import Help
+from asciimatics.event import KeyboardEvent
 from asciimatics.exceptions import NextScene
 from asciimatics.screen import Screen
 from asciimatics.widgets import Button, Divider, Frame, Layout, Widget
@@ -64,6 +66,14 @@ class BbsmenuView(Frame):
         layout.add_widget(self._board_list, 1)
 
         self.fix()
+
+    def process_event(self, event):
+        if isinstance(event, KeyboardEvent):
+            if event.key_code == KEY_BINDINGS["global"]["help"].value:
+                self._scene.add_effect(Help(self.screen))
+                return None
+
+        return super().process_event(event)
 
     def _data_context_changed(self, e: PropertyChangedEventArgs):
         if e.property_name == "categories":

@@ -9,6 +9,7 @@ from gochan.effects.ng_editor import NGEditor
 from gochan.event_handler import PropertyChangedEventArgs
 from gochan.keybinding import KEY_BINDINGS
 from gochan.view_models.ngvm import NGVM, NGId, NGItem, NGName, NGTitle, NGWord
+from gochan.effects.help import Help
 
 
 class NGView(Frame):
@@ -72,7 +73,10 @@ class NGView(Frame):
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
-            if event.key_code == self._keybindings["delete"]:
+            if event.key_code == KEY_BINDINGS["global"]["help"].value:
+                self._scene.add_effect(Help(self.screen))
+                return None
+            elif event.key_code == self._keybindings["delete"]:
                 if self.focussed_widget == self._ng_list and self._selected_item is not None:
                     self._data_context.delete_ng(self._selected_item.id)
                 return None

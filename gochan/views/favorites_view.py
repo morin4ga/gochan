@@ -5,6 +5,8 @@ from asciimatics.widgets import Frame, Layout, ListBox, Widget, Button, Divider
 
 from gochan.event_handler import OrderChangedEventArg, PropertyChangedEventArgs
 from gochan.view_models.favoritesvm import FavoritesVM, FavoriteThread
+from gochan.keybinding import KEY_BINDINGS
+from gochan.effects.help import Help
 
 
 class FavoritesView(Frame):
@@ -50,7 +52,10 @@ class FavoritesView(Frame):
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
-            if event.key_code == ord("u"):
+            if event.key_code == KEY_BINDINGS["global"]["help"].value:
+                self._scene.add_effect(Help(self.screen))
+                return None
+            elif event.key_code == ord("u"):
                 if self._selected_item is not None:
                     self._context.raise_order(self._selected_item)
                 return None
