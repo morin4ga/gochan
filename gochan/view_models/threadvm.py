@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from gochan.event_handler import (CollectionChangedEventArgs, CollectionChangedEventHandler, PropertyChangedEventArgs,
                                   PropertyChangedEventHandler)
@@ -54,6 +54,10 @@ class ThreadVM:
     @property
     def replies(self) -> Optional[List[str]]:
         return self._thread.replies if self._thread is not None else None
+
+    @property
+    def ids(self) -> Optional[Dict[str, List[Response]]]:
+        return self._thread.ids if self._thread is not None else None
 
     @property
     def bookmark(self) -> Optional[int]:

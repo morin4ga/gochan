@@ -88,13 +88,15 @@ class ThreadView(Frame):
         if e.property_name == "bookmark" or e.property_name == "ng":
             if self._data_context.responses is not None:
                 self._responses_viewer.set_data(self._data_context.filtered_responses,
-                                                self._data_context.replies, self._data_context.bookmark)
+                                                self._data_context.replies, self._data_context.ids,
+                                                self._data_context.bookmark)
         elif e.property_name == "responses":
             # If responses is changed, update title and scroll to top of unread responses
 
             if self._data_context.responses is not None:
                 self._responses_viewer.set_data(self._data_context.filtered_responses,
-                                                self._data_context.replies, self._data_context.bookmark)
+                                                self._data_context.replies, self._data_context.ids,
+                                                self._data_context.bookmark)
                 self._update_title()
                 self._responses_viewer.scroll_to_bookmark()
         elif e.property_name == "is_favorite":
@@ -227,7 +229,7 @@ class ThreadView(Frame):
             if number in self._data_context.replies:
                 replies = self._data_context.replies[number]
                 self._scene.add_effect(ResponsesPopup(self._screen, THREAD_BRUSHES, KEY_BINDINGS["thread"],
-                                                      replies, self._data_context.replies,
+                                                      replies, self._data_context.replies, self._data_context.ids,
                                                       self._show_replies, self._show_respones))
 
     def _show_respones(self, number: str):
@@ -237,7 +239,8 @@ class ThreadView(Frame):
             if len(self._data_context.responses) > idx and idx >= 0:
                 respones = self._data_context.responses[idx]
                 self._scene.add_effect(ResponsesPopup(self._screen, THREAD_BRUSHES,
-                                                      KEY_BINDINGS["thread"], [respones], self._data_context.replies,
+                                                      KEY_BINDINGS["thread"], [
+                                                          respones], self._data_context.replies, self._data_context.ids,
                                                       self._show_replies, self._show_respones))
 
     def _add_ng_name(self, value, use_reg, hide, auto_ng_id, scope_idx):

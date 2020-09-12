@@ -32,6 +32,7 @@ class Thread:
         self._is_pastlog: bool = False
         self.links = []
         self.replies = {}
+        self.ids = {}
         self.on_property_changed = PropertyChangedEventHandler()
         self.on_collection_changed = CollectionChangedEventHandler()
 
@@ -122,3 +123,8 @@ class Thread:
 
                 if response not in self.replies[key]:
                     self.replies[key].append(response)
+
+            if response.id in self.ids:
+                self.ids[response.id].append(response)
+            else:
+                self.ids[response.id] = [response]

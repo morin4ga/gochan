@@ -18,7 +18,8 @@ class ThreadBrushes:
 
 
 def _convert_to_buffer(responses: List[Union[Response, NGResponse]], replies: Dict[int, List[Response]],
-                       bookmark: int, width: int, brushes: ThreadBrushes) -> Tuple[Buffer, Dict[int, Tuple[int, int]]]:
+                       ids: Dict[str, List[Response]], bookmark: int, width: int, brushes: ThreadBrushes)\
+        -> Tuple[Buffer, Dict[int, Tuple[int, int]]]:
     buf = Buffer(width)
     anchors = {}
     link_idx = 0
@@ -49,7 +50,18 @@ def _convert_to_buffer(responses: List[Union[Response, NGResponse]], replies: Di
 
         buf.push(" " + r.name, brushes.name)
 
-        buf.push(" " + r.date + " " + r.id, brushes.normal)
+        buf.push(" " + r.date + " ", brushes.normal)
+
+        idx = ids[r.id].index(r) + 1
+
+        if len(ids[r.id]) == 1:
+            buf.push(r.id, brushes.normal)
+        elif len(ids[r.id]) >= 5:
+            buf.push(r.id + "(" + str(idx) + "/" + str(len(ids[r.id])) + ")", brushes.highlight2)
+        elif len(ids[r.id]) >= 3:
+            buf.push(r.id + "(" + str(idx) + "/" + str(len(ids[r.id])) + ")", brushes.highlight1)
+        else:
+            buf.push(r.id + "(" + str(idx) + "/" + str(len(ids[r.id])) + ")", brushes.normal)
 
         buf.break_line(2)
 
@@ -89,9 +101,10 @@ class ResponsesViewer(RichText):
         self._bookmark = None
         self._anchors = None
 
-    def set_data(self, responses: List[Response], replies: Dict[int, List[Response]], bookmark: int = None):
+    def set_data(self, responses: List[Response], replies: Dict[int, List[Response]],
+                 ids: Dict[str, List[Response]], bookmark: int = None):
         self._bookmark = bookmark
-        (buffer, anchors) = _convert_to_buffer(responses, replies, bookmark, self.width, self._brushes)
+        (buffer, anchors) = _convert_to_buffer(responses, replies, ids, bookmark, self.width, self._brushes)
         self._anchors = anchors
         self._value = buffer
 

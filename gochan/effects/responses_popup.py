@@ -11,7 +11,8 @@ from gochan.widgets.responses_viewer import ResponsesViewer, ThreadBrushes
 
 class ResponsesPopup(Frame):
     def __init__(self, screen: Screen, brushes: ThreadBrushes, keybindings, responses: List[Response],
-                 replies: Dict[int, List[Response]], show_replies, show_response) -> None:
+                 replies: Dict[int, List[Response]], ids: Dict[str, List[Response]], show_replies, show_response) \
+            -> None:
         super().__init__(screen,
                          screen.height,
                          screen.width,
@@ -37,7 +38,7 @@ class ResponsesPopup(Frame):
 
         self.fix()
 
-        self._responses_viewer.set_data(responses, replies)
+        self._responses_viewer.set_data(responses, replies, ids)
 
     def disappear(self):
         self._scene.remove_effect(self)
