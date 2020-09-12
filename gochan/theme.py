@@ -31,7 +31,9 @@ THEME = {
 
 THREAD_BRUSHES = ThreadBrushes(Brush(Screen.COLOUR_WHITE, Screen.COLOUR_BLACK, Screen.A_BOLD),
                                Brush(Screen.COLOUR_GREEN, Screen.COLOUR_BLACK, Screen.A_BOLD),
-                               Brush(Screen.COLOUR_BLUE, Screen.COLOUR_BLACK, Screen.A_BOLD)
+                               Brush(Screen.COLOUR_BLUE, Screen.COLOUR_BLACK, Screen.A_BOLD),
+                               Brush(Screen.COLOUR_BLUE, Screen.COLOUR_BLACK, Screen.A_NORMAL),
+                               Brush(Screen.COLOUR_RED, Screen.COLOUR_BLACK, Screen.A_NORMAL),
                                )
 
 

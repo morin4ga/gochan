@@ -9,10 +9,12 @@ link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
 
 
 class ThreadBrushes:
-    def __init__(self, normal: Brush, name: Brush, bookmark: Brush) -> None:
+    def __init__(self, normal: Brush, name: Brush, bookmark: Brush, highlight1: Brush, highlight2: Brush) -> None:
         self.normal = normal
         self.name = name
         self.bookmark = bookmark
+        self.highlight1 = highlight1
+        self.highlight2 = highlight2
 
 
 def _convert_to_buffer(responses: List[Union[Response, NGResponse]], replies: Dict[int, List[Response]],
@@ -37,10 +39,13 @@ def _convert_to_buffer(responses: List[Union[Response, NGResponse]], replies: Di
 
         start = len(buf)
 
-        buf.push(str(r.number), brushes.normal)
-
         if r.number in replies:
-            buf.push("(" + str(len(replies[r.number])) + ")", brushes.normal)
+            if len(replies[r.number]) >= 3:
+                buf.push(str(r.number) + "(" + str(len(replies[r.number])) + ")", brushes.highlight2)
+            else:
+                buf.push(str(r.number) + "(" + str(len(replies[r.number])) + ")", brushes.highlight1)
+        else:
+            buf.push(str(r.number), brushes.normal)
 
         buf.push(" " + r.name, brushes.name)
 
