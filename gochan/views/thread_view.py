@@ -175,6 +175,9 @@ class ThreadView(Frame):
             elif event.key_code == ord("t"):
                 self._scene.add_effect(CommandLine(self._screen, "show_response:", self._show_respones))
                 return None
+            elif event.key_code == KEY_BINDINGS["thread"]["extract_id"].value:
+                self._scene.add_effect(CommandLine(self._screen, "extract_id:", self._extract_id))
+                return None
 
         return super().process_event(event)
 
@@ -230,7 +233,7 @@ class ThreadView(Frame):
                 replies = self._data_context.replies[number]
                 self._scene.add_effect(ResponsesPopup(self._screen, THREAD_BRUSHES, KEY_BINDINGS["thread"],
                                                       replies, self._data_context.replies, self._data_context.ids,
-                                                      self._show_replies, self._show_respones))
+                                                      self._show_replies, self._show_respones, self._extract_id))
 
     def _show_respones(self, number: str):
         if self._data_context.responses is not None and number.isdecimal():
@@ -241,7 +244,19 @@ class ThreadView(Frame):
                 self._scene.add_effect(ResponsesPopup(self._screen, THREAD_BRUSHES,
                                                       KEY_BINDINGS["thread"], [
                                                           respones], self._data_context.replies, self._data_context.ids,
-                                                      self._show_replies, self._show_respones))
+                                                      self._show_replies, self._show_respones, self._extract_id))
+
+    def _extract_id(self, number: str):
+        if self._data_context.responses is not None and number.isdecimal():
+            idx = int(number) - 1
+
+            if len(self._data_context.responses) > idx and idx >= 0:
+                id = self._data_context.responses[idx].id
+                if id in self._data_context.ids:
+                    self._scene.add_effect(ResponsesPopup(self._screen, THREAD_BRUSHES,
+                                                          KEY_BINDINGS["thread"], self._data_context.ids[id],
+                                                          self._data_context.replies, self._data_context.ids,
+                                                          self._show_replies, self._show_respones, self._extract_id))
 
     def _add_ng_name(self, value, use_reg, hide, auto_ng_id, scope_idx):
         if scope_idx == 0:

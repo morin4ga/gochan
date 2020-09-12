@@ -1,3 +1,4 @@
+from gochan.keybinding import KEY_BINDINGS
 from typing import Dict, List
 
 from asciimatics.event import KeyboardEvent
@@ -11,8 +12,8 @@ from gochan.widgets.responses_viewer import ResponsesViewer, ThreadBrushes
 
 class ResponsesPopup(Frame):
     def __init__(self, screen: Screen, brushes: ThreadBrushes, keybindings, responses: List[Response],
-                 replies: Dict[int, List[Response]], ids: Dict[str, List[Response]], show_replies, show_response) \
-            -> None:
+                 replies: Dict[int, List[Response]], ids: Dict[str, List[Response]], show_replies, show_response,
+                 extract_id) -> None:
         super().__init__(screen,
                          screen.height,
                          screen.width,
@@ -26,6 +27,7 @@ class ResponsesPopup(Frame):
         self._replies = replies
         self._show_replies = show_replies
         self._show_response = show_response
+        self._extract_id = extract_id
 
         self.set_theme("user_theme")
 
@@ -53,6 +55,9 @@ class ResponsesPopup(Frame):
                 return None
             elif event.key_code == ord("t"):
                 self._scene.add_effect(CommandLine(self._screen, "show_response:", self._show_response))
+                return None
+            elif event.key_code == KEY_BINDINGS["thread"]["extract_id"].value:
+                self._scene.add_effect(CommandLine(self._screen, "extract_id:", self._extract_id))
                 return None
 
         return super().process_event(event)
