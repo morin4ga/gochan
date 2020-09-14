@@ -19,7 +19,7 @@ class Help(Frame):
         self.set_theme("user_theme")
 
         self._rich_text = RichText(screen.height - 3, Brush(
-            Screen.COLOUR_WHITE, Screen.COLOUR_BLACK, Screen.A_BOLD), KEY_BINDINGS["thread"])
+            Screen.COLOUR_WHITE, Screen.COLOUR_BLACK, Screen.A_BOLD))
 
         buf = Buffer(screen.width)
 

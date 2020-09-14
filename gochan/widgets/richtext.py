@@ -1,9 +1,19 @@
-from gochan.key import Key
+from gochan.key import Key, Keys
 from typing import Dict, List
 
 from asciimatics.event import KeyboardEvent
 from asciimatics.widgets import Widget
 from wcwidth import wcwidth
+
+
+DEFALUT_KEYBINDINGS = {
+    "scroll_down": Keys.DOWN,
+    "scroll_up": Keys.UP,
+    "page_down": Keys.PAGE_DOWN,
+    "page_up": Keys.PAGE_UP,
+    "go_to_top": Keys.Ctrl.HOME,
+    "go_to_bottom": Keys.Ctrl.END
+}
 
 
 class Brush:
@@ -70,7 +80,8 @@ class Buffer:
 
 
 class RichText(Widget):
-    def __init__(self, height, flush_brush: Brush, keybindings: Dict[str, Key], name=None, **kwargs):
+    def __init__(self, height, flush_brush: Brush, keybindings: Dict[str, Key] = DEFALUT_KEYBINDINGS,
+                 name=None, **kwargs):
         super().__init__(name, **kwargs)
         self._required_height = height
         self._scrl_offset = 0
