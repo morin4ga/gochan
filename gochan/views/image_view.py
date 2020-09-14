@@ -30,8 +30,7 @@ class ImageView(Frame):
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
-            if event.key_code == ord("q"):
-                raise NextScene("Thread")
+            raise NextScene("Thread")
 
         return super().process_event(event)
 
