@@ -36,7 +36,6 @@ class ThreadView(Frame):
 
         self._data_context: ThreadVM = data_context
         self._data_context.on_property_changed.add(self._data_context_changed)
-        self._data_context.on_collection_changed.add(self._collection_changed)
 
         self._anchors: List[int] = None
 
@@ -87,14 +86,14 @@ class ThreadView(Frame):
     def _data_context_changed(self, e: PropertyChangedEventArgs):
         if e.property_name == "bookmark" or e.property_name == "ng":
             if self._data_context.responses is not None:
-                self._responses_viewer.set_data(self._data_context.filtered_responses,
+                self._responses_viewer.set_data(self._data_context.responses,
                                                 self._data_context.replies, self._data_context.ids,
                                                 self._data_context.bookmark)
         elif e.property_name == "responses":
             # If responses is changed, update title and scroll to top of unread responses
 
             if self._data_context.responses is not None:
-                self._responses_viewer.set_data(self._data_context.filtered_responses,
+                self._responses_viewer.set_data(self._data_context.responses,
                                                 self._data_context.replies, self._data_context.ids,
                                                 self._data_context.bookmark)
                 self._update_title()

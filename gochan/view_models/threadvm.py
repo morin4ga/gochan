@@ -1,10 +1,11 @@
+import re
 from typing import Dict, List, Optional, Union
 
-from gochan.event_handler import (CollectionChangedEventArgs, CollectionChangedEventHandler, PropertyChangedEventArgs,
+from gochan.event_handler import (CollectionChangedEventArgs, PropertyChangedEventArgs,
                                   PropertyChangedEventHandler)
 from gochan.models.app_context import AppContext
 from gochan.models.favorites import FavoriteThread
-from gochan.models.ng import NG, NGResponse
+from gochan.models.ng import NG, NGKind, Hide, Aborn
 from gochan.models.thread import Response
 
 
@@ -14,9 +15,11 @@ class ThreadVM:
 
         self._app_context = app_context
         self._thread = app_context.thread
-        self._filtered_responses = None
+        self._responses = None
+        self._links = None
+        self._replies = None
+        self._ids = None
         self.on_property_changed = PropertyChangedEventHandler()
-        self.on_collection_changed = CollectionChangedEventHandler()
 
         app_context.on_property_changed.add(self._app_context_changed)
         app_context.ng.on_collection_changed.add(self._ng_changed)
@@ -44,20 +47,20 @@ class ThreadVM:
         return self._thread.is_pastlog if self._thread is not None else None
 
     @property
-    def responses(self) -> Optional[List[Response]]:
-        return self._thread.responses if self._thread is not None else None
+    def responses(self) -> Optional[List[Union[Response, Aborn, Hide]]]:
+        return self._responses
 
     @property
     def links(self) -> Optional[List[str]]:
-        return self._thread.links if self._thread is not None else None
+        return self._links
 
     @property
     def replies(self) -> Optional[List[str]]:
-        return self._thread.replies if self._thread is not None else None
+        return self._replies
 
     @property
     def ids(self) -> Optional[Dict[str, List[Response]]]:
-        return self._thread.ids if self._thread is not None else None
+        return self._ids
 
     @property
     def bookmark(self) -> Optional[int]:
@@ -72,10 +75,6 @@ class ThreadVM:
                 return True
             else:
                 return False
-
-    @property
-    def filtered_responses(self) -> Optional[List[Union[NGResponse, Response]]]:
-        return self._filtered_responses
 
     @property
     def ng(self) -> NG:
@@ -133,7 +132,13 @@ class ThreadVM:
             self._thread.on_property_changed.add(self._thread_property_changed)
             self._thread.on_collection_changed.add(self._thread_collection_changed)
 
-            self._filtered_responses = self._app_context.ng.filter_responses(self._thread)
+            self._responses = []
+            self._links = []
+            self._replies = {}
+            self._ids = {}
+
+            for r in self._thread.responses:
+                self._filter_response(r)
 
             self.on_property_changed.invoke(PropertyChangedEventArgs(self, "server"))
             self.on_property_changed.invoke(PropertyChangedEventArgs(self, "board"))
@@ -145,20 +150,34 @@ class ThreadVM:
 
     def _thread_property_changed(self, e: PropertyChangedEventArgs):
         if e.property_name == "responses":
-            self._filtered_responses = self._app_context.ng.filter_responses(self._thread)
+            self._responses = []
+            self._links = []
+            self._replies = {}
+            self._ids = {}
+
+            for r in self._thread.responses:
+                self._filter_response(r)
+
             self.on_property_changed.invoke(PropertyChangedEventArgs(self, "responses"))
-            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "filtered_responses"))
 
     def _thread_collection_changed(self, e: CollectionChangedEventArgs):
         if e.property_name == "responses":
-            self._filtered_responses = self._app_context.ng.filter_responses(self._thread)
-            self.on_collection_changed.invoke(CollectionChangedEventArgs(self, e.property_name, e.kind, e.item))
-            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "filtered_responses"))
+            for r in e.item:
+                self._filter_response(r)
+
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "responses"))
 
     def _ng_changed(self, e: CollectionChangedEventArgs):
         if self._thread is not None:
-            self._filtered_responses = self._app_context.ng.filter_responses(self._thread)
-            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "filtered_responses"))
+            self._responses = []
+            self._links = []
+            self._replies = {}
+            self._ids = {}
+
+            for r in self._thread.responses:
+                self._filter_response(r)
+
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "responses"))
 
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "ng"))
 
@@ -167,3 +186,35 @@ class ThreadVM:
 
     def _favorites_changed(self, e: PropertyChangedEventArgs):
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "is_favorite"))
+
+    def _filter_response(self, r: Response):
+        """
+        Before calling this method, make sure self._thread is not None &
+        self._responses, self._links, self._replies and self._ids have been initialized
+        """
+
+        kind = self._app_context.ng.is_ng_response(r, self._thread.board, self._thread.key)
+
+        if kind == NGKind.NOT_NG:
+            self._responses.append(r)
+
+            for link in re.finditer(r'(https?://.*?)(?=$|\n| )', r.message):
+                self._links.append(link.group(1))
+
+            for reply in re.finditer(r'>>(\d{1,4})', r.message):
+                key = int(reply.group(1))
+
+                if key not in self._replies:
+                    self._replies[key] = []
+
+                if r not in self._replies[key]:
+                    self._replies[key].append(r)
+
+            if r.id in self._ids:
+                self._ids[r.id].append(r)
+            else:
+                self._ids[r.id] = [r]
+        elif kind == NGKind.HIDE:
+            self._responses.append(Hide(r))
+        else:
+            self._responses.append(Aborn(r))

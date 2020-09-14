@@ -28,7 +28,7 @@ class NGView(Frame):
         self._keybindings = KEY_BINDINGS["ng"]
 
         self._data_context = data_context
-        self._data_context.on_property_changed = self._context_changed
+        self._data_context.on_property_changed.add(self._context_changed)
 
         self._selected_list: List[NGItem] = None
         self._selected_item: Optional[NGItem] = None

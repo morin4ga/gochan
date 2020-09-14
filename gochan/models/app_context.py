@@ -79,7 +79,7 @@ class AppContext:
                 return
 
         self.thread = Thread(server, board, key)
-        self.thread.update()
+        self.thread.init()
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "thread"))
 
     def save_board(self):

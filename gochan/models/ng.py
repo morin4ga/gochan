@@ -1,6 +1,7 @@
+from enum import Enum
 import json
 import re
-from typing import List, Optional, Union
+from typing import List, Optional
 
 from gochan.event_handler import CollectionChangedEventArgs, CollectionChangedEventHandler, CollectionChangedEventKind
 from gochan.models.board import ThreadHeader
@@ -11,10 +12,29 @@ class BreakException(Exception):
     pass
 
 
-class NGResponse:
-    def __init__(self, hide: bool, origin: Response):
+class NGKind(Enum):
+    NOT_NG = 0
+    ABORN = 1
+    HIDE = 2
+
+
+class Aborn:
+    """
+    Represent a response that should be displayed as あぼーん
+    """
+
+    def __init__(self, origin: Response):
         super().__init__()
-        self.hide = hide
+        self.origin = origin
+
+
+class Hide:
+    """
+    Represent a response that should not be displayed
+    """
+
+    def __init__(self, origin: Response) -> None:
+        super().__init__()
         self.origin = origin
 
 
@@ -224,52 +244,41 @@ class NG:
 
         return result
 
-    def filter_responses(self, thread: Thread) -> List[Union[Response, NGResponse]]:
-        self._add_auto_ng_id(thread)
+    def is_ng_response(self, r: Response, board: Optional[str], key: Optional[str]) -> NGKind:
+        for n in self.names + self.ids + self.words:
+            # Ignore ng when the response is out of ng's scope
+            if n.board is not None and n.board != board:
+                continue
 
-        result = []
+            if n.key is not None and n.key != key:
+                continue
 
-        for r in thread.responses:
-            try:
-                for n in self.names:
-                    # Ignore ng when the response is out of ng's scope
-                    if n.board is not None and n.board != thread.board:
-                        continue
-                    if n.key is not None and n.key != thread.key:
-                        continue
+            if n.match(r.name):
+                return (NGKind.HIDE if n.hide else NGKind.ABORN)
 
-                    if n.match(r.name):
-                        result.append(NGResponse(n.hide, r))
-                        raise BreakException()
+        for n in self.ids:
+            # Ignore ng when the response is out of ng's scope
+            if n.board is not None and n.board != board:
+                continue
 
-                for n in self.ids:
-                    # Ignore ng when the response is out of ng's scope
-                    if n.board is not None and n.board != thread.board:
-                        continue
-                    if n.key is not None and n.key != thread.key:
-                        continue
+            if n.key is not None and n.key != key:
+                continue
 
-                    if n.match(r.id):
-                        result.append(NGResponse(n.hide, r))
-                        raise BreakException()
+            if n.match(r.id):
+                return (NGKind.HIDE if n.hide else NGKind.ABORN)
 
-                for n in self.words:
-                    # Ignore ng when the response is out of ng's scope
-                    if n.board is not None and n.board != thread.board:
-                        continue
-                    if n.key is not None and n.key != thread.key:
-                        continue
+        for n in self.words:
+            # Ignore ng when the response is out of ng's scope
+            if n.board is not None and n.board != board:
+                continue
 
-                    if n.match(r.message):
-                        result.append(NGResponse(n.hide, r))
-                        raise BreakException()
+            if n.key is not None and n.key != key:
+                continue
 
-                result.append(r)
+            if n.match(r.message):
+                return (NGKind.HIDE if n.hide else NGKind.ABORN)
 
-            except BreakException:
-                pass
-
-        return result
+        return NGKind.NOT_NG
 
     def serialize(self):
         names = []

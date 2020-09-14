@@ -1,6 +1,5 @@
 import json
-import re
-from typing import Dict, List, Union
+from typing import List
 
 from gochan.client import get_responses_after, post_response
 from gochan.event_handler import (CollectionChangedEventArgs, CollectionChangedEventHandler, CollectionChangedEventKind,
@@ -30,9 +29,6 @@ class Thread:
         self.title = None
         self.responses: List[Response] = []
         self._is_pastlog: bool = False
-        self.links = []
-        self.replies = {}
-        self.ids = {}
         self.on_property_changed = PropertyChangedEventHandler()
         self.on_collection_changed = CollectionChangedEventHandler()
 
@@ -74,9 +70,27 @@ class Thread:
         t = Thread(d["server"], d["board"], d["key"])
         t.title = d["title"]
         t.is_pastlog = d["is_pastlog"]
-        t.add_response(d["responses"])
+
+        for r in d["responses"]:
+            t.responses.append(Response(r["number"], r["name"], r["mail"], r["date"], r["id"], r["message"]))
 
         return t
+
+    def init(self):
+        html = get_responses_after(self.server, self.board, self.key, len(self.responses))
+        parser = ThreadParserH(html)
+
+        self.is_pastlog = parser.is_pastlog()
+
+        if self.title is None:
+            self.title = parser.title()
+
+        for r in parser.responses():
+            self.responses.append(Response(r["number"], r["name"], r["mail"], r["date"], r["id"], r["message"]))
+
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "is_pastlog"))
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "title"))
+        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "responses"))
 
     def update(self):
         html = get_responses_after(self.server, self.board, self.key, len(self.responses))
@@ -85,46 +99,20 @@ class Thread:
         self.is_pastlog = parser.is_pastlog()
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "is_pastlog"))
 
-        if self.title is None:
-            self.title = parser.title()
-        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "title"))
+        new_responses = []
+        for r in parser.responses():
+            new_responses.append(Response(r["number"], r["name"], r["mail"], r["date"], r["id"], r["message"]))
 
-        # If responses has not initialtzed yet
-        if len(self.responses) == 0:
-            self.add_response(parser.responses())
-            self.on_collection_changed.invoke(CollectionChangedEventArgs(
-                self, "responses", CollectionChangedEventKind.EXTEND, self.responses[0:]))
-        else:
-            # Add new responses
-            rs = parser.responses()
+        last_count = len(self.responses)
 
-            if len(rs) > 1:
-                start = len(self.responses)
-                self.add_response(rs[1:])
-                self.on_collection_changed.invoke(CollectionChangedEventArgs(
-                    self, "responses", CollectionChangedEventKind.EXTEND, self.responses[start:]))
+        # There are no new posts
+        if len(new_responses) == 1:
+            return
+
+        self.responses.extend(new_responses[1:])
+
+        self.on_collection_changed.invoke(CollectionChangedEventArgs(
+            self, "responses", CollectionChangedEventKind.EXTEND, self.responses[last_count:]))
 
     def post(self, name: str, mail: str, message: str) -> str:
         return post_response(self.server, self.board, self.key, name, mail, message)
-
-    def add_response(self, rs: List[Dict[str, Union[int, str]]]):
-        for r in rs:
-            response = Response(r["number"], r["name"], r["mail"], r["date"], r["id"], r["message"])
-            self.responses.append(response)
-
-            for link in re.finditer(r'(https?://.*?)(?=$|\n| )', r["message"]):
-                self.links.append(link.group(1))
-
-            for reply in re.finditer(r'>>(\d{1,4})', r["message"]):
-                key = int(reply.group(1))
-
-                if key not in self.replies:
-                    self.replies[key] = []
-
-                if response not in self.replies[key]:
-                    self.replies[key].append(response)
-
-            if response.id in self.ids:
-                self.ids[response.id].append(response)
-            else:
-                self.ids[response.id] = [response]
