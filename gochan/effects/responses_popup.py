@@ -1,3 +1,4 @@
+from gochan.widgets.richtext import Brush
 from gochan.keybinding import KEY_BINDINGS
 from typing import Dict, List
 
@@ -7,11 +8,11 @@ from asciimatics.widgets import Frame, Layout
 
 from gochan.effects.command_line import CommandLine
 from gochan.models.thread import Response
-from gochan.widgets.responses_viewer import ResponsesViewer, ThreadBrushes
+from gochan.widgets.responses_viewer import ResponsesViewer
 
 
 class ResponsesPopup(Frame):
-    def __init__(self, screen: Screen, brushes: ThreadBrushes, keybindings, responses: List[Response],
+    def __init__(self, screen: Screen, brushes: Dict[str, Brush], keybindings, responses: List[Response],
                  replies: Dict[int, List[Response]], ids: Dict[str, List[Response]], show_replies, show_response,
                  extract_id) -> None:
         super().__init__(screen,

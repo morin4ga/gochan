@@ -8,17 +8,8 @@ from gochan.models.ng import Hide, Aborn
 link_reg = re.compile(r'(https?://.*?)(?=$|\n| )')
 
 
-class ThreadBrushes:
-    def __init__(self, normal: Brush, name: Brush, bookmark: Brush, highlight1: Brush, highlight2: Brush) -> None:
-        self.normal = normal
-        self.name = name
-        self.bookmark = bookmark
-        self.highlight1 = highlight1
-        self.highlight2 = highlight2
-
-
 def _convert_to_buffer(responses: List[Union[Response, Hide, Aborn]], replies: Dict[int, List[Response]],
-                       ids: Dict[str, List[Response]], bookmark: int, width: int, brushes: ThreadBrushes)\
+                       ids: Dict[str, List[Response]], bookmark: int, width: int, brushes: Dict[str, Brush])\
         -> Tuple[Buffer, Dict[int, Tuple[int, int]]]:
     buf = Buffer(width)
     anchors = {}
@@ -27,7 +18,7 @@ def _convert_to_buffer(responses: List[Union[Response, Hide, Aborn]], replies: D
     for r in responses:
         if isinstance(r, Aborn):
             start = len(buf)
-            buf.push(str(r.origin.number) + " " + "あぼーん", brushes.normal)
+            buf.push(str(r.origin.number) + " " + "あぼーん", brushes["normal"])
             buf.break_line(1)
             end = len(buf)
             anchors[r.origin.number] = ((start, end))
@@ -40,26 +31,26 @@ def _convert_to_buffer(responses: List[Union[Response, Hide, Aborn]], replies: D
 
         if r.number in replies:
             if len(replies[r.number]) >= 3:
-                buf.push(str(r.number) + "(" + str(len(replies[r.number])) + ")", brushes.highlight2)
+                buf.push(str(r.number) + "(" + str(len(replies[r.number])) + ")", brushes["number_highlight2"])
             else:
-                buf.push(str(r.number) + "(" + str(len(replies[r.number])) + ")", brushes.highlight1)
+                buf.push(str(r.number) + "(" + str(len(replies[r.number])) + ")", brushes["number_highlight1"])
         else:
-            buf.push(str(r.number), brushes.normal)
+            buf.push(str(r.number), brushes["number_normal"])
 
-        buf.push(" " + r.name, brushes.name)
+        buf.push(" " + r.name, brushes["name"])
 
-        buf.push(" " + r.date + " ", brushes.normal)
+        buf.push(" " + r.date + " ", brushes["normal"])
 
         idx = ids[r.id].index(r) + 1
 
         if len(ids[r.id]) == 1:
-            buf.push(r.id, brushes.normal)
+            buf.push(r.id, brushes["id_normal"])
         elif len(ids[r.id]) >= 5:
-            buf.push(r.id + "(" + str(idx) + "/" + str(len(ids[r.id])) + ")", brushes.highlight2)
+            buf.push(r.id + "(" + str(idx) + "/" + str(len(ids[r.id])) + ")", brushes["id_highlight2"])
         elif len(ids[r.id]) >= 3:
-            buf.push(r.id + "(" + str(idx) + "/" + str(len(ids[r.id])) + ")", brushes.highlight1)
+            buf.push(r.id + "(" + str(idx) + "/" + str(len(ids[r.id])) + ")", brushes["id_highlight1"])
         else:
-            buf.push(r.id + "(" + str(idx) + "/" + str(len(ids[r.id])) + ")", brushes.normal)
+            buf.push(r.id + "(" + str(idx) + "/" + str(len(ids[r.id])) + ")", brushes["id_normal"])
 
         buf.break_line(2)
 
@@ -74,7 +65,7 @@ def _convert_to_buffer(responses: List[Union[Response, Hide, Aborn]], replies: D
         marked_msg = link_reg.sub(_mark_link, r.message)
 
         for l in marked_msg.split("\n"):
-            buf.push(l, brushes.normal)
+            buf.push(l, brushes["normal"])
             buf.break_line(1)
 
         end = len(buf)
@@ -86,15 +77,15 @@ def _convert_to_buffer(responses: List[Union[Response, Hide, Aborn]], replies: D
         # don't render bookmark if bookmark points last response
         if r.number == bookmark and \
                 len(responses) != bookmark:
-            buf.push("─" * width, brushes.bookmark)
+            buf.push("─" * width, brushes["bookmark"])
             buf.break_line(2)
 
     return (buf, anchors)
 
 
 class ResponsesViewer(RichText):
-    def __init__(self, height, brushes: ThreadBrushes, keybindings, **kwargs):
-        super().__init__(height, brushes.normal, keybindings, **kwargs)
+    def __init__(self, height, brushes: Dict[str, Brush], keybindings, **kwargs):
+        super().__init__(height, brushes["normal"], keybindings, **kwargs)
         self._brushes = brushes
         self._bookmark = None
         self._anchors = None
