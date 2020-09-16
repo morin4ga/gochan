@@ -61,7 +61,9 @@ KEY_BINDINGS = {
         "update": Keys.U,
         "back": Keys.B,
         "favorite": Keys.F,
-        "extract_id": Keys.E
+        "extract_id": Keys.E,
+        "show_replies": Keys.R,
+        "show_response": Keys.Shift.R
     },
     "ng": {
         "delete": Keys.D,
@@ -181,3 +183,7 @@ if KEYBINDINGS_PATH.is_file():
             KEY_BINDINGS["thread"]["favorite"] = parse_key(keybindings["thread"]["favorite"])
         if "extract_id" in keybindings["thread"]:
             KEY_BINDINGS["thread"]["extract_id"] = parse_key(keybindings["thread"]["extract_id"])
+        if "show_replies" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["show_replies"] = parse_key(keybindings["thread"]["show_replies"])
+        if "show_response" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["show_response"] = parse_key(keybindings["thread"]["show_response"])

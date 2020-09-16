@@ -168,10 +168,10 @@ class ThreadView(Frame):
                 raise NextScene("Board")
             elif event.key_code == self._keybindings["favorite"].value:
                 self._data_context.favorite()
-            elif event.key_code == ord("r"):
+            elif event.key_code == KEY_BINDINGS["thread"]["show_replies"].value:
                 self._scene.add_effect(CommandLine(self._screen, "show_replies:", self._show_replies))
                 return None
-            elif event.key_code == ord("t"):
+            elif event.key_code == KEY_BINDINGS["thread"]["show_response"].value:
                 self._scene.add_effect(CommandLine(self._screen, "show_response:", self._show_respones))
                 return None
             elif event.key_code == KEY_BINDINGS["thread"]["extract_id"].value:
