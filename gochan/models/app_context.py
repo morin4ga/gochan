@@ -4,8 +4,8 @@ from typing import Optional, Union
 from urllib.request import HTTPError, URLError
 
 from gochan.client import download_image
-from gochan.config import (FAVORITES_PATH, HISTORY_PATH, MAX_HISTORY, NG_PATH, SAVE_THREAD_LOG, USE_BOARD_LOG,
-                           USE_IMAGE_CACHE)
+from gochan.config import (FAVORITES_PATH, HISTORY_PATH, MAX_HISTORY, NG_PATH, CACHE_THREAD, CACHE_BOARD,
+                           CACHE_IMAGE)
 from gochan.event_handler import PropertyChangedEventArgs, PropertyChangedEventHandler
 from gochan.models.bbsmenu import Bbsmenu
 from gochan.models.board import Board
@@ -13,7 +13,7 @@ from gochan.models.favorites import Favorites
 from gochan.models.history import History
 from gochan.models.ng import NG
 from gochan.models.thread import Thread
-from gochan.storage import board_log, image_cache, thread_log
+from gochan.storage import board_cache, image_cache, thread_cache
 
 
 class AppContext:
@@ -53,11 +53,11 @@ class AppContext:
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "bbsmenu"))
 
     def set_board(self, server: str, board: str):
-        if USE_BOARD_LOG:
+        if CACHE_BOARD:
             self.save_board()
 
-            if board_log.contains(board):
-                s = board_log.get(board)
+            if board_cache.contains(board):
+                s = board_cache.get(board)
                 self.board = Board.deserialize(s)
                 self.board.update()
                 self.on_property_changed.invoke(PropertyChangedEventArgs(self, "board"))
@@ -68,11 +68,11 @@ class AppContext:
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "board"))
 
     def set_thread(self, server: str, board: str, key: str):
-        if SAVE_THREAD_LOG:
+        if CACHE_THREAD:
             self.save_thread()
 
-            if thread_log.contains(board + key):
-                s = thread_log.get(board + key)
+            if thread_cache.contains(board + key):
+                s = thread_cache.get(board + key)
                 self.thread = Thread.deserialize(s)
                 self.thread.update()
                 self.on_property_changed.invoke(PropertyChangedEventArgs(self, "thread"))
@@ -85,18 +85,18 @@ class AppContext:
     def save_board(self):
         if self.board is not None:
             s = self.board.serialize()
-            board_log.store(self.board.board, s.encode())
+            board_cache.store(self.board.board, s.encode())
 
     def save_thread(self):
         if self.thread is not None:
             s = self.thread.serialize()
-            thread_log.store(self.thread.board + self.thread.key, s.encode())
+            thread_cache.store(self.thread.board + self.thread.key, s.encode())
 
     def save_context(self):
-        if USE_BOARD_LOG:
+        if CACHE_BOARD:
             self.save_board()
 
-        if SAVE_THREAD_LOG:
+        if CACHE_THREAD:
             self.save_thread()
 
         s = self.ng.serialize()
@@ -109,7 +109,7 @@ class AppContext:
         FAVORITES_PATH.write_text(s)
 
     def set_image(self, url: str):
-        if USE_IMAGE_CACHE:
+        if CACHE_IMAGE:
             file_name = re.sub(r'https?://|/', "", url)
 
             if image_cache.contains(file_name):
