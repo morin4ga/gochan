@@ -1,8 +1,8 @@
 import re
 from typing import Dict, List, Optional, Union
 
-from gochan.event_handler import (CollectionChangedEventArgs, PropertyChangedEventArgs,
-                                  PropertyChangedEventHandler)
+from gochan.event_handler import (CollectionChangedEventArgs, CollectionChangedEventHandler, CollectionChangedEventKind,
+                                  PropertyChangedEventArgs, PropertyChangedEventHandler)
 from gochan.models.app_context import AppContext
 from gochan.models.favorites import FavoriteThread
 from gochan.models.ng import NG, NGKind, Hide, Aborn
@@ -20,6 +20,7 @@ class ThreadVM:
         self._replies = None
         self._ids = None
         self.on_property_changed = PropertyChangedEventHandler()
+        self.on_collection_changed = CollectionChangedEventHandler()
 
         app_context.on_property_changed.add(self._app_context_changed)
         app_context.ng.on_collection_changed.add(self._ng_changed)
@@ -149,23 +150,18 @@ class ThreadVM:
             self.on_property_changed.invoke(PropertyChangedEventArgs(self, "links"))
 
     def _thread_property_changed(self, e: PropertyChangedEventArgs):
-        if e.property_name == "responses":
-            self._responses = []
-            self._links = []
-            self._replies = {}
-            self._ids = {}
-
-            for r in self._thread.responses:
-                self._filter_response(r)
-
-            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "responses"))
+        if e.property_name == "is_pastlog":
+            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "is_pastlog"))
 
     def _thread_collection_changed(self, e: CollectionChangedEventArgs):
         if e.property_name == "responses":
+            last_count = len(self._responses)
+
             for r in e.item:
                 self._filter_response(r)
 
-            self.on_property_changed.invoke(PropertyChangedEventArgs(self, "responses"))
+            self.on_collection_changed.invoke(CollectionChangedEventArgs(
+                self, "responses", CollectionChangedEventKind.EXTEND, self._responses[last_count:]))
 
     def _ng_changed(self, e: CollectionChangedEventArgs):
         if self._thread is not None:

@@ -36,6 +36,7 @@ class ThreadView(Frame):
 
         self._data_context: ThreadVM = data_context
         self._data_context.on_property_changed.add(self._data_context_changed)
+        self._data_context.on_collection_changed.add(self._collection_changed)
 
         self._anchors: List[int] = None
 
@@ -102,9 +103,10 @@ class ThreadView(Frame):
             self._update_title()
 
     def _collection_changed(self, e: CollectionChangedEventArgs):
-        if e.property_name == "responses":
-            self._update_buffer()
-            self._update_title()
+        self._responses_viewer.set_data(self._data_context.responses,
+                                        self._data_context.replies, self._data_context.ids,
+                                        self._data_context.bookmark)
+        self._update_title()
 
     def _update_title(self):
         title = ""

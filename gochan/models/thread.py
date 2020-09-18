@@ -90,7 +90,9 @@ class Thread:
 
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "is_pastlog"))
         self.on_property_changed.invoke(PropertyChangedEventArgs(self, "title"))
-        self.on_property_changed.invoke(PropertyChangedEventArgs(self, "responses"))
+
+        self.on_collection_changed.invoke(CollectionChangedEventArgs(
+            self, "responses", CollectionChangedEventKind.EXTEND, self.responses[0:]))
 
     def update(self):
         html = get_responses_after(self.server, self.board, self.key, len(self.responses))
