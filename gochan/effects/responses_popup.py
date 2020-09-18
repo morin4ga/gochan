@@ -48,13 +48,13 @@ class ResponsesPopup(Frame):
 
     def process_event(self, event):
         if isinstance(event, KeyboardEvent):
-            if event.key_code == ord("q"):
+            if event.key_code == KEY_BINDINGS["thread"]["close_popup"].value:
                 self.disappear()
                 return None
-            elif event.key_code == ord("r"):
+            elif event.key_code == KEY_BINDINGS["thread"]["show_replies"].value:
                 self._scene.add_effect(CommandLine(self._screen, "show_replies:", self._show_replies))
                 return None
-            elif event.key_code == ord("t"):
+            elif event.key_code == KEY_BINDINGS["thread"]["show_response"].value:
                 self._scene.add_effect(CommandLine(self._screen, "show_response:", self._show_response))
                 return None
             elif event.key_code == KEY_BINDINGS["thread"]["extract_id"].value:

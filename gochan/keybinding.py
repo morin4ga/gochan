@@ -63,7 +63,8 @@ KEY_BINDINGS = {
         "favorite": Keys.F,
         "extract_id": Keys.E,
         "show_replies": Keys.R,
-        "show_response": Keys.Shift.R
+        "show_response": Keys.Shift.R,
+        "close_popup": Keys.Q
     },
     "ng": {
         "delete": Keys.D,
@@ -187,3 +188,5 @@ if KEYBINDINGS_PATH.is_file():
             KEY_BINDINGS["thread"]["show_replies"] = parse_key(keybindings["thread"]["show_replies"])
         if "show_response" in keybindings["thread"]:
             KEY_BINDINGS["thread"]["show_response"] = parse_key(keybindings["thread"]["show_response"])
+        if "close_popup" in keybindings["thread"]:
+            KEY_BINDINGS["thread"]["close_popup"] = parse_key(keybindings["thread"]["close_popup"])
