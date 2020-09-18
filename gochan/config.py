@@ -49,6 +49,8 @@ if conf_file.is_file():
         CACHE_BOARD = conf["cache_board"]
     if "max_board_cache" in conf:
         MAX_BOARD_CACHE = conf["max_board_cache"]
+    if "max_history" in conf["max_history"]:
+        MAX_HISTORY = conf["max_history"]
     if "user_agent" in conf:
         USER_AGENT = conf["user_agent"]
     if "cookie" in conf:
